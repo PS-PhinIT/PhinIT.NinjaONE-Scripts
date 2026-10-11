@@ -30,7 +30,9 @@ try {
     $names = @($ServiceNames.Split(',') | ForEach-Object { $_.Trim() } | Select-Object -Unique)
     if ($names.Count -gt 20) { throw 'Maximal 20 Dienste / Maximum 20 services.' }
     foreach ($name in $names) {
-        if ($name -notmatch '^[a-zA-Z0-9_.-]{1,128}$') { throw 'Ungültiger Dienstname / Invalid service name.' }
+        if ($name.Length -gt 256 -or $name -match '[\x00-\x1F\x7F\\/*?\[\]]' -or -not $name) {
+            throw 'Ungültiger Dienstname / Invalid service name.'
+        }
     }
     $CustomField = $CustomField.Trim()
     if ($CustomField -eq 'null') { $CustomField = '' }

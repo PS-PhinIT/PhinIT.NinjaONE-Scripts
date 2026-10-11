@@ -21,8 +21,15 @@ EN: String; NinjaOne updateCacheMinimumAgeDays; default 30; integer 7-3650.
 .PARAMETER CustomField
 DE: String; NinjaOne resultCustomField; Standard leer; MultiLine-Feldname, 1-128 Zeichen, Buchstabe zuerst, danach Buchstaben/Ziffern/Unterstrich.
 EN: String; NinjaOne resultCustomField; default empty; MultiLine field name, 1-128 characters, letter first, then letters/digits/underscore.
+.NOTES
+DE: Exit 0 Erfolg/Inventur/WhatIf, Exit 1 Fehler. AllowCleanup=true bleibt erforderlich.
+EN: Exit 0 success/audit/WhatIf, exit 1 error. AllowCleanup=true remains required.
+DE: ConfirmImpact Medium vermeidet bei Standard-ConfirmPreference High unbeaufsichtigte Rückfragen.
+EN: ConfirmImpact Medium avoids unattended prompts with the default ConfirmPreference High.
+DE: -WhatIf simuliert Änderungen; -Confirm erzwingt Rückfragen und ist nicht für unbeaufsichtigte NinjaOne-Läufe geeignet.
+EN: -WhatIf simulates changes; -Confirm requests prompts and is unsuitable for unattended NinjaOne runs.
 #>
-[CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
+[CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'Medium')]
 param(
     [string]$AllowCleanup = $env:updateCacheAllowCleanup,
     [string]$MinimumAgeDays = $env:updateCacheMinimumAgeDays,

@@ -200,6 +200,16 @@ von Bootstrap-Skripten. / `checkChocolateyStatus.ps1` is a readiness diagnostic,
 not automatic software distribution: no package installation/upgrade and no
 bootstrap script downloads.
 
+Für unbeaufsichtigtes BitLocker-Escrow bzw. die Inaktivitätsrichtlinie sind
+zusätzlich zum expliziten Opt-in die Bestätigungsparameter zu beachten:
+nach Prüfung `-Confirm:$false` angeben. Netzwerk-/Benutzerinventare unterstützen
+`-WhatIf` für die Feldveröffentlichung; ihre lesenden Abfragen und der einzelne
+TCP-Verbindungstest werden dabei weiterhin ausgeführt.
+/ For unattended BitLocker escrow or inactivity policy changes, also observe
+confirmation parameters in addition to explicit opt-in: supply `-Confirm:$false`
+after review. Network/user inventories support `-WhatIf` for field publication;
+read-only queries and the single TCP connection test still execute.
+
 Zusätzliche Systemtests:
 `Invoke-Pester -Path ./Tests/SystemChecks.Tests.ps1`.
 Linux-Parsing/Mock-Tests ersetzen keinen Windows-PowerShell-5.1-/NinjaOne-Test.

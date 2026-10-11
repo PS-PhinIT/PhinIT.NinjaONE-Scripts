@@ -1,4 +1,5 @@
 ﻿#Requires -Version 5.1
+
 <#
 .SYNOPSIS
 DE: Lokales TCP-Verbindungsinventar. EN: Local TCP connection inventory.
@@ -13,8 +14,20 @@ EN: Explicit parameters override those NinjaOne variables; blanks use defaults.
 DE/EN: resultFormat = Json (default) / PlainText; optionales/optional CustomField:
 NinjaOne MultiLine (auch fuer JSON / also for JSON), maximal/maximum 4000 Zeichen/characters.
 DE/EN: Exit 0 = Erfolg/success, 1 = Fehler/error, 2 = Alarm/alert (hier nicht verwendet/not used).
+.PARAMETER ConnectionState
+DE/EN: NinjaOne tcpState; leer/null = All. Werte/values: All, Closed, SynSent,
+SynReceived, Established, FinWait1, FinWait2, CloseWait, Closing, LastAck,
+TimeWait, DeleteTCB, Bound. Listen ausgeschlossen/excluded.
+.PARAMETER MaxRecords
+DE/EN: NinjaOne maxRecords; leer/null = 10; Bereich/range 1..100.
+.PARAMETER ResultFormat
+DE/EN: NinjaOne resultFormat; leer/null = Json; Werte/values Json, PlainText.
+.PARAMETER CustomField
+DE/EN: -WhatIf liest weiter / still reads; unterdrueckt Feldschreiben / skips field write.
+DE/EN: NinjaOne resultCustomField; leer/null = kein Feld/no field.
+NinjaOne MultiLine; Name/name [A-Za-z][A-Za-z0-9_]{0,99}; maximal/maximum 4000 Zeichen/characters.
 #>
-[CmdletBinding()]
+[CmdletBinding(SupportsShouldProcess)]
 param(
     [string]$ConnectionState = $env:tcpState,
     [string]$MaxRecords = $env:maxRecords,
@@ -25,6 +38,7 @@ param(
 $ErrorActionPreference = 'Stop'
 
 function Write-InventoryReport {
+    [CmdletBinding(SupportsShouldProcess)]
     param([object]$Report, [string]$Format, [string]$Field)
     if ($Format -eq 'Json') {
         $content = ConvertTo-Json -InputObject $Report -Depth 6 -Compress
@@ -35,14 +49,14 @@ function Write-InventoryReport {
     }
     # DE: Steuerzeichen entfernen. EN: Remove terminal control characters.
     $content = $content -replace '[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]', ''
-    if ($Field) {
+    Write-Output $content
+    if ($Field -and $PSCmdlet.ShouldProcess($Field, 'Write NinjaOne field / NinjaOne-Feld schreiben')) {
         if ($content.Length -gt 4000) { throw 'Report exceeds 4000 characters; reduce maxRecords. / Bericht zu lang.' }
         if (-not (Get-Command Ninja-Property-Set -ErrorAction SilentlyContinue)) { throw 'Ninja-Property-Set unavailable / nicht verfuegbar.' }
         $global:LASTEXITCODE = 0
         Ninja-Property-Set -Name $Field -Value $content -ErrorAction Stop | Out-Null
         if ($global:LASTEXITCODE -ne 0) { throw 'Ninja-Property-Set failed / fehlgeschlagen.' }
     }
-    Write-Output $content
 }
 
 try {

@@ -1,4 +1,5 @@
 ﻿#Requires -Version 5.1
+
 <#
 .SYNOPSIS
 DE: Einen konfigurierten TCP-Endpunkt testen. EN: Test one configured TCP endpoint.
@@ -17,8 +18,21 @@ maximal/maximum 4000 Zeichen/characters; sonst Fehler / otherwise failure.
 DE: DNS/Verbindung werden gemeinsam zeitlich begrenzt; keine TLS/Anwendungspruefung.
 EN: DNS/connection share the timeout; no TLS/application health validation.
 DE/EN: Exit 0 = verbunden/connected, 1 = Fehler/error, 2 = nicht erreichbar/unreachable.
+.PARAMETER TargetHost
+DE/EN: NinjaOne targetHost; erforderlich/required; leer/null = Fehler/error.
+Ein DNS-Name oder IP / One DNS name or IP; DNS maximal/maximum 253 Zeichen/characters.
+.PARAMETER TargetPort
+DE/EN: NinjaOne targetPort; erforderlich/required; leer/null = Fehler/error; Bereich/range 1..65535.
+.PARAMETER ConnectionTimeoutMs
+DE/EN: NinjaOne connectionTimeoutMs; leer/null = 5000; Bereich/range 100..30000 ms.
+.PARAMETER ResultFormat
+DE/EN: NinjaOne resultFormat; leer/null = Json; Werte/values Json, PlainText.
+.PARAMETER CustomField
+DE/EN: -WhatIf testet weiterhin TCP / still tests TCP; kein Feldschreiben / skips field write.
+DE/EN: NinjaOne resultCustomField; leer/null = kein Feld/no field.
+NinjaOne MultiLine; Name/name [A-Za-z][A-Za-z0-9_]{0,99}; maximal/maximum 4000 Zeichen/characters.
 #>
-[CmdletBinding()]
+[CmdletBinding(SupportsShouldProcess)]
 param(
     [string]$TargetHost = $env:targetHost,
     [string]$TargetPort = $env:targetPort,
@@ -29,6 +43,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 function Write-InventoryReport {
+    [CmdletBinding(SupportsShouldProcess)]
     param([object]$Report, [string]$Format, [string]$Field)
     if ($Format -eq 'Json') {
         $content = ConvertTo-Json -InputObject $Report -Depth 6 -Compress
@@ -37,14 +52,14 @@ function Write-InventoryReport {
     }
     # DE: Steuerzeichen entfernen. EN: Remove terminal control characters.
     $content = $content -replace '[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]', ''
-    if ($Field) {
+    Write-Output $content
+    if ($Field -and $PSCmdlet.ShouldProcess($Field, 'Write NinjaOne field / NinjaOne-Feld schreiben')) {
         if ($content.Length -gt 4000) { throw 'Report exceeds 4000 characters / Bericht zu lang.' }
         if (-not (Get-Command Ninja-Property-Set -ErrorAction SilentlyContinue)) { throw 'Ninja-Property-Set unavailable / nicht verfuegbar.' }
         $global:LASTEXITCODE = 0
         Ninja-Property-Set -Name $Field -Value $content -ErrorAction Stop | Out-Null
         if ($global:LASTEXITCODE -ne 0) { throw 'Ninja-Property-Set failed / fehlgeschlagen.' }
     }
-    Write-Output $content
 }
 
 try {

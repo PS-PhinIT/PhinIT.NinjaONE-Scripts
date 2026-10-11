@@ -84,6 +84,14 @@ Describe 'Read-only system checks / Lesende Systemprüfungen' {
         $null = & $serviceScript -ServiceNames 'W32Time'
         $LASTEXITCODE | Should -Be 0
     }
+    It 'Accepts literal SQL instance and spaced service names / Akzeptiert SQL-Instanzen und Leerzeichen' {
+        Mock Get-Service {
+            [pscustomobject]@{ Name = 'MSSQL$SQLEXPRESS'; Status = 'Running' }
+            [pscustomobject]@{ Name = 'Example Service'; Status = 'Running' }
+        }
+        $null = & $serviceScript -ServiceNames 'MSSQL$SQLEXPRESS,Example Service'
+        $LASTEXITCODE | Should -Be 0
+    }
     It 'Rejects oversized field reports / Lehnt übergroße Feldberichte ab' {
         $names = @(1..20 | ForEach-Object { ('Service' + $_).PadRight(128, 'x') })
         Mock Get-Service {
