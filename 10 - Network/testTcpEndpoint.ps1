@@ -88,25 +88,30 @@ try {
     if (-not [int]::TryParse($ConnectionTimeoutMs, [ref]$timeout) -or $timeout -lt 100 -or $timeout -gt 30000) { throw 'connectionTimeoutMs must be 100..30000 / muss 100..30000 sein.' }
     if ($ResultFormat -notin @('Json', 'PlainText')) { throw 'resultFormat must be Json or PlainText / muss Json oder PlainText sein.' }
     if ($CustomField -and $CustomField -notmatch '^[A-Za-z][A-Za-z0-9_]{0,99}$') { throw 'Invalid custom field name / Ungueltiger Feldname.' }
-    # DE: IP-Literale mit passender Adressfamilie. EN: Match address family for IP literals.
-    if ($isIp) {
-        $client = New-Object System.Net.Sockets.TcpClient -ArgumentList $address.AddressFamily
-    } else {
-        $client = New-Object System.Net.Sockets.TcpClient
-    }
+    $client = $null
     $pending = $null
     $waitHandle = $null
     $timer = [Diagnostics.Stopwatch]::StartNew()
     $connected = $false
     $outcome = 'Unreachable / Nicht erreichbar'
     try {
+        # DE: DNS braucht beide Familien, auch auf .NET Framework. EN: DNS needs both families, including .NET Framework.
+        if ($isIp) {
+            $client = New-Object System.Net.Sockets.TcpClient -ArgumentList $address.AddressFamily
+        } elseif ([System.Net.Sockets.Socket]::OSSupportsIPv6) {
+            $client = New-Object System.Net.Sockets.TcpClient -ArgumentList ([System.Net.Sockets.AddressFamily]::InterNetworkV6)
+            $client.Client.DualMode = $true
+        } else {
+            $client = New-Object System.Net.Sockets.TcpClient -ArgumentList ([System.Net.Sockets.AddressFamily]::InterNetwork)
+        }
         if ($isIp) {
             $pending = $client.BeginConnect($address, $port, $null, $null)
         } else {
             $pending = $client.BeginConnect($TargetHost, $port, $null, $null)
         }
         $waitHandle = $pending.AsyncWaitHandle
-        if ($waitHandle.WaitOne($timeout, $false)) {
+        $remainingMs = [math]::Max(0, $timeout - $timer.ElapsedMilliseconds)
+        if ($waitHandle.WaitOne([int]$remainingMs, $false)) {
             $client.EndConnect($pending)
             $connected = $client.Connected
             if ($connected) { $outcome = 'Connected / Verbunden' }
@@ -116,7 +121,7 @@ try {
     } catch [System.Net.Sockets.SocketException] {
         $outcome = 'DNS or connection failure / DNS- oder Verbindungsfehler'
     } finally {
-        $client.Close()
+        if ($null -ne $client) { $client.Close() }
         if ($null -ne $waitHandle) { $waitHandle.Close() }
         $timer.Stop()
     }

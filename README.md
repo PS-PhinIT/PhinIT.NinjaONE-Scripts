@@ -127,6 +127,24 @@ the new system checks:
 | `checkTimeZone.ps1` | `expectedTimeZone` | Text, installierte Windows-Zeitzonen-ID / installed Windows time zone ID | leer: nur Inventar / empty: inventory only |
 | alle drei / all three | `resultCustomField` | Text, interner MultiLine-Feldname / internal MultiLine field name | leer: kein Export / empty: no export |
 
+Weitere zentrale Eingaben / Other key inputs:
+
+| Funktion / Function | NinjaOne-Variablen / Variables |
+| --- | --- |
+| DNS-Auflösung / resolution | `dnsHostName`, `dnsRecordType`, `dnsServer` |
+| TCP-Einzelziel / single endpoint | `targetHost`, `targetPort`, `connectionTimeoutMs` |
+| Administrator-Allowlist / administrator allowlist | `securityAllowedAdminIdentities` |
+| AD-DS-Recovery-Escrow | `bitlockerEscrowMountPoint`, `bitlockerEnableAdDsEscrow` (`true` ausdrücklich / explicitly) |
+| Computer-Inaktivität / machine inactivity | `securityInactivityTimeoutSeconds`, `securityApplyMachineInactivityPolicy` (`true` ausdrücklich / explicitly) |
+| Update-Wartung / maintenance | `updateCacheAllowCleanup`, `updateCacheMinimumAgeDays`, `updateRepairAllowRestart` |
+| Blockierte Software / blocked software | `blockedSoftwareNames` |
+| Chocolatey-Standardinstallation erforderlich / require standard installation | `chocolateyStatusRequireInstalled` |
+| Leere Ordner / empty folders | `emptyFoldersRootPath`, `emptyFoldersMaxFolders`, `emptyFoldersMaxRecords` |
+
+Die detaillierte Parameterhilfe bleibt maßgeblich für Syntax, Grenzwerte und
+Standardwerte. / Detailed parameter help remains authoritative for syntax,
+limits and defaults.
+
 - Alle neuen Skripte einzeln als Windows PowerShell-Automation importieren,
   als **SYSTEM und 64-Bit** ausführen. Benötigte Windows-Module sind
   betriebssystemabhängig; fehlende Module werden als Fehler gemeldet.
