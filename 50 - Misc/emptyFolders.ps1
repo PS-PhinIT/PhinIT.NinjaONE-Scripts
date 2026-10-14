@@ -92,15 +92,17 @@ try {
     if ($CustomField -and -not (Get-Command Ninja-Property-Set -ErrorAction SilentlyContinue)) {
         throw 'Ninja-Property-Set fehlt / is unavailable.'
     }
-    $queue = New-Object 'System.Collections.Generic.Queue[string]'
-    $queue.Enqueue($root.FullName)
+    # DE: DirectoryInfo-Objekte einreihen, damit kein zusätzliches Get-Item je Ordner nötig ist.
+    # EN: Queue DirectoryInfo objects to avoid an extra Get-Item per folder.
+    $queue = New-Object 'System.Collections.Generic.Queue[System.IO.DirectoryInfo]'
+    $queue.Enqueue($root)
     $scanned = 0
     $emptyCount = 0
     $skippedLinks = 0
     $records = @()
     while ($queue.Count -gt 0 -and $scanned -lt $scanLimit) {
-        $path = $queue.Dequeue()
-        $folder = Get-Item -LiteralPath $path -Force -ErrorAction Stop
+        $folder = $queue.Dequeue()
+        $path = $folder.FullName
         if ($folder.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {
             $skippedLinks++
             continue
@@ -114,7 +116,7 @@ try {
         foreach ($child in $children) {
             if ($child.PSIsContainer) {
                 if ($child.Attributes -band [System.IO.FileAttributes]::ReparsePoint) { $skippedLinks++ }
-                else { $queue.Enqueue($child.FullName) }
+                else { $queue.Enqueue($child) }
             }
         }
     }

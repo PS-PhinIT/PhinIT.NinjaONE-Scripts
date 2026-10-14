@@ -47,9 +47,16 @@ try {
     }
     # DE: Feste, ausschließlich lesende Argumente; keine Benutzereingabe.
     # EN: Fixed, read-only arguments; no user-supplied command arguments.
+    # DE: PS 5.1 wandelt stderr bei 2>&1 und ErrorActionPreference=Stop in einen Abbruch um; Exitcode selbst auswerten.
+    # EN: PS 5.1 turns stderr into a terminating error with 2>&1 and Stop; evaluate the exit code instead.
     $global:LASTEXITCODE = 0
-    $lines = @(& $executable /query /status 2>&1)
-    $queryExitCode = $global:LASTEXITCODE
+    $ErrorActionPreference = 'Continue'
+    try {
+        $lines = @(& $executable /query /status 2>&1)
+        $queryExitCode = $global:LASTEXITCODE
+    } finally {
+        $ErrorActionPreference = 'Stop'
+    }
     $text = ($lines | ForEach-Object { "$_" }) -join [Environment]::NewLine
     if ($queryExitCode -ne 0) {
         throw ("w32tm-Abfrage fehlgeschlagen / w32tm query failed (exit {0}): {1}" -f $queryExitCode, $text.Substring(0, [Math]::Min(1000, $text.Length)))

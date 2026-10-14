@@ -16,7 +16,9 @@
 * Für einige Module: .NET 4.8 oder höher
 
 # Mitwirken
-* Pull-Requests und Issues sind willkommen!
+* Pull-Requests und Issues sind willkommen! Regeln: [CONTRIBUTING.md](CONTRIBUTING.md)
+* Änderungshistorie: [CHANGELOG.md](CHANGELOG.md)
+* Sicherheitslücken bitte vertraulich melden: [SECURITY.md](SECURITY.md)
 
 # Diagnose-Skripte / Diagnostic scripts
 
@@ -229,9 +231,11 @@ after review. Network/user inventories support `-WhatIf` for field publication;
 read-only queries and the single TCP connection test still execute.
 
 Zusätzliche Systemtests:
-`Invoke-Pester -Path ./Tests/SystemChecks.Tests.ps1`.
+`Invoke-Pester -Path ./Tests/SystemChecks.Tests.ps1`; DNS-Skripte:
+`Invoke-Pester -Path ./Tests/DnsScripts.Tests.ps1`; alle Tests: `Invoke-Pester -Path ./Tests`.
 Linux-Parsing/Mock-Tests ersetzen keinen Windows-PowerShell-5.1-/NinjaOne-Test.
-/ Additional system tests: `Invoke-Pester -Path ./Tests/SystemChecks.Tests.ps1`.
+/ Additional system tests: `Invoke-Pester -Path ./Tests/SystemChecks.Tests.ps1`;
+DNS scripts: `Invoke-Pester -Path ./Tests/DnsScripts.Tests.ps1`; all tests: `Invoke-Pester -Path ./Tests`.
 Linux parsing/mock tests do not replace Windows PowerShell 5.1/NinjaOne testing.
 
 ## Referenzen / References
@@ -266,7 +270,7 @@ No third-party scripts are copied; NinjaRMM/ninjaone_scripts in particular has
 its own usage and redistribution restrictions.
 
 # Lizenz
-* Dieses Repository steht unter der MIT-Lizenz.
+* Dieses Repository steht unter der MIT-Lizenz ([LICENSE](LICENSE)).
 * Sie dürfen die Skripte frei verwenden, ändern und in Ihren RMM-Umgebungen verteilen. 
 
 ---

@@ -85,8 +85,19 @@ try {
     if ($ResultFormat -notin @('Json', 'PlainText')) { throw 'resultFormat must be Json or PlainText / muss Json oder PlainText sein.' }
     if ($CustomField -and $CustomField -notmatch '^[A-Za-z][A-Za-z0-9_]{0,99}$') { throw 'Invalid custom field name / Ungueltiger Feldname.' }
     if ($ConnectionState -notin @('All', 'Closed', 'SynSent', 'SynReceived', 'Established', 'FinWait1', 'FinWait2', 'CloseWait', 'Closing', 'LastAck', 'TimeWait', 'DeleteTCB', 'Bound')) { throw 'Invalid tcpState / Ungueltiger tcpState (Listen excluded / ausgeschlossen).' }
-    $connections = @(Get-NetTCPConnection -ErrorAction Stop | Where-Object {
-        $_.State -ne 'Listen' -and ($ConnectionState -eq 'All' -or $_.State -eq $ConnectionState)
+    # DE: Zustand an der Quelle filtern, statt alle Verbindungen zu laden; "keine Treffer" ist kein Fehler.
+    # EN: Filter state at the source instead of loading all connections; "no match" is not an error.
+    $rawConnections = if ($ConnectionState -eq 'All') {
+        @(Get-NetTCPConnection -ErrorAction Stop)
+    } else {
+        $tcpErrors = $null
+        $found = @(Get-NetTCPConnection -State $ConnectionState -ErrorAction SilentlyContinue -ErrorVariable tcpErrors)
+        $realErrors = @($tcpErrors | Where-Object { $_.CategoryInfo.Category -ne 'ObjectNotFound' })
+        if ($realErrors.Count -gt 0) { throw $realErrors[0] }
+        $found
+    }
+    $connections = @($rawConnections | Where-Object {
+        $null -ne $_ -and [string]$_.State -ne 'Listen' -and ($ConnectionState -eq 'All' -or [string]$_.State -eq $ConnectionState)
     } | Sort-Object LocalAddress, LocalPort, RemoteAddress, RemotePort)
     $records = @($connections | Select-Object -First $limit | ForEach-Object {
         [pscustomobject]@{

@@ -62,6 +62,16 @@ Describe 'Read-only system checks / Lesende Systemprüfungen' {
         $null = & $diskScript
         $LASTEXITCODE | Should -Be 1
     }
+    It 'Lists unavailable volumes without aborting / Meldet gesperrte Volumes ohne Abbruch' {
+        Mock Get-CimInstance {
+            [pscustomobject]@{ DeviceID = 'C:'; Size = 100GB; FreeSpace = 50GB }
+            [pscustomobject]@{ DeviceID = 'D:'; Size = $null; FreeSpace = $null }
+        }
+        $report = & $diskScript | ConvertFrom-Json
+        $LASTEXITCODE | Should -Be 0
+        @($report.Disks).Count | Should -Be 1
+        @($report.UnavailableDrives) | Should -Be @('D:')
+    }
     It 'Reports field write failures / Meldet Schreibfehler' {
         Mock Ninja-Property-Set { $global:LASTEXITCODE = 4 }
         $null = & $diskScript -CustomField 'diskStatus'

@@ -9,12 +9,15 @@
         gibt Größe, freien Speicher und freien Anteil als JSON aus und schreibt den
         Bericht optional in ein MultiLine-Feld (max. 4000 Zeichen). Exit 0 = alle
         Laufwerke über dem Grenzwert, 1 = Eingabe-, Abfrage- oder Schreibfehler,
-        2 = mindestens ein Laufwerk unter MinimumFreePercent.
+        2 = mindestens ein Laufwerk unter MinimumFreePercent. Volumes ohne Größenangabe
+        (z. B. gesperrt durch BitLocker) erscheinen in UnavailableDrives; nur wenn kein
+        Laufwerk auswertbar ist, endet das Skript mit Exit 1.
     EN: Reads all fixed local disks (Win32_LogicalDisk, DriveType 3) via CIM,
         outputs size, free space and free percentage as JSON and optionally writes
         the report to a MultiLine field (max. 4000 characters). Exit 0 = all disks
         above the threshold, 1 = input, query or write error, 2 = at least one
-        disk below MinimumFreePercent.
+        disk below MinimumFreePercent. Volumes without size data (e.g. BitLocker-locked)
+        are listed in UnavailableDrives; the script exits 1 only if no disk is usable.
 .PARAMETER MinimumFreePercent
     DE: NinjaOne Integer minimumFreePercent, 1..99; Standard 15.
     EN: NinjaOne Integer minimumFreePercent, 1..99; default 15.
@@ -56,9 +59,13 @@ try {
     $disks = @(Get-CimInstance -ClassName Win32_LogicalDisk -Filter 'DriveType = 3')
     if ($disks.Count -eq 0) { throw 'Keine lokalen Laufwerke / No local disks.' }
     $warning = $false
+    $unavailable = New-Object System.Collections.Generic.List[string]
     $records = @(foreach ($disk in $disks) {
+        # DE: Gesperrte/unformatierte Volumes (z. B. BitLocker) melden statt die ganze Prüfung abzubrechen.
+        # EN: Report locked/unformatted volumes (e.g. BitLocker) instead of aborting the whole check.
         if ($null -eq $disk.Size -or $disk.Size -le 0 -or $null -eq $disk.FreeSpace) {
-            throw "Ungültige Laufwerksdaten / Invalid disk data: $($disk.DeviceID)"
+            $unavailable.Add([string]$disk.DeviceID)
+            continue
         }
         $percent = 100 * $disk.FreeSpace / $disk.Size
         if ($percent -lt $limit) { $warning = $true }
@@ -70,7 +77,8 @@ try {
             LowSpace = $percent -lt $limit
         }
     })
-    $report = ConvertTo-Json -InputObject ([ordered]@{ MinimumFreePercent = $limit; Disks = $records }) -Depth 4
+    if ($records.Count -eq 0) { throw "Keine auswertbaren Laufwerksdaten / No usable disk data: $($unavailable -join ', ')" }
+    $report = ConvertTo-Json -InputObject ([ordered]@{ MinimumFreePercent = $limit; Disks = $records; UnavailableDrives = @($unavailable) }) -Depth 4
     Write-Output $report
     # DE: Feld muss existieren und Skript-Schreibrechte haben; kein stilles Abschneiden.
     # EN: Field must exist and allow script writes; never silently truncate.

@@ -87,8 +87,11 @@ try {
     $port = 0
     $timeout = 0
     $address = $null
-    $isIp = [System.Net.IPAddress]::TryParse($TargetHost, [ref]$address)
-    $isDns = $TargetHost.Length -le 253 -and $TargetHost -match '^[A-Za-z0-9](?:[A-Za-z0-9.-]*[A-Za-z0-9])?$' -and [Uri]::CheckHostName($TargetHost) -eq 'Dns'
+    # DE: Nur vollständige IPv4-Punktnotation oder IPv6; Kurzformen wie "1234" oder "10.1" ablehnen.
+    # EN: Only full dotted IPv4 or IPv6; reject shorthand such as "1234" or "10.1".
+    $isIp = ($TargetHost -match '^(?:(?:25[0-5]|2[0-4]\d|1?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|1?\d?\d)$' -or $TargetHost -match ':') -and
+        [System.Net.IPAddress]::TryParse($TargetHost, [ref]$address)
+    $isDns = $TargetHost.Length -le 253 -and $TargetHost -notmatch '^[\d.]+$' -and $TargetHost -match '^[A-Za-z0-9](?:[A-Za-z0-9.-]*[A-Za-z0-9])?$' -and [Uri]::CheckHostName($TargetHost) -eq 'Dns'
     if (-not $TargetHost -or (-not $isIp -and -not $isDns)) { throw 'targetHost must be a single DNS name or IP / Ein DNS-Name oder eine IP erforderlich.' }
     if (-not [int]::TryParse($TargetPort, [ref]$port) -or $port -lt 1 -or $port -gt 65535) { throw 'targetPort must be 1..65535 / muss 1..65535 sein.' }
     if (-not [int]::TryParse($ConnectionTimeoutMs, [ref]$timeout) -or $timeout -lt 100 -or $timeout -gt 30000) { throw 'connectionTimeoutMs must be 100..30000 / muss 100..30000 sein.' }

@@ -18,6 +18,10 @@ DE: SID-Vergleich vermeidet lokalisierte Gruppennamen. Auch SYSTEM muss explizit
 EN: SID comparison avoids localized group names. Even SYSTEM must be explicitly allowed.
 DE: Erlaubte Domaingruppen koennen indirekt weitere Administratoren enthalten; separat pruefen.
 EN: Allowed domain groups may contain indirect administrators; audit separately.
+DE: Bekannte Windows-Einschraenkung: Get-LocalGroupMember scheitert bei verwaisten SIDs oder
+    manchen Entra-ID-Mitgliedern; das Skript endet dann mit Exit 1 (verwaiste SIDs bereinigen).
+EN: Known Windows limitation: Get-LocalGroupMember fails on orphaned SIDs or some Entra ID
+    members; the script then exits 1 (clean up orphaned SIDs).
 DE: CustomField / resultCustomField: optionales MultiLine-JSON-Feld, maximal 4000 Zeichen.
 EN: CustomField / resultCustomField: optional MultiLine JSON field, maximum 4000 characters.
 DE: Explizite Parameter haben Vorrang; keine Konten/Gruppen werden geaendert.
@@ -59,7 +63,7 @@ try {
         if (-not $identity -or $identity -match '[*?\[\]]') { throw 'Leere Identitaet/Platzhalter nicht erlaubt / Empty identity/wildcard not allowed.' }
         if ($identity -match '^S-\d+(?:-\d+)+$') {
             $sid = New-Object System.Security.Principal.SecurityIdentifier($identity)
-        } elseif ($identity -match '^[^\\\s]+\\[^\\]+$' -or $identity -match '^[^@\s]+@[^@\s]+$') {
+        } elseif ($identity -match '^[^\\]+\\[^\\]+$' -or $identity -match '^[^@\s]+@[^@\s]+$') {
             $account = New-Object System.Security.Principal.NTAccount($identity)
             $sid = $account.Translate([System.Security.Principal.SecurityIdentifier])
         } else { throw 'Qualifizierter Kontoname oder SID erforderlich / Qualified account name or SID required.' }

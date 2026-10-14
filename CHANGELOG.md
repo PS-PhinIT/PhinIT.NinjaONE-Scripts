@@ -60,12 +60,41 @@ first); older entries were reconstructed from the Git history and pull requests.
   - `Ninja-Property-Set`-Fehler werden zuverlässig erkannt.
 - Beide DNS-Hauptskripte: UTF-8 **mit BOM** gespeichert, damit Umlaute unter
   Windows PowerShell 5.1 korrekt dargestellt werden.
-- Weitere Befunde der Themenordner siehe unten (Audit-Ergebnisse).
+- `03 - Software/checkPowerShellPolicy.ps1`: verglich die Prozess-Policy (unter
+  NinjaOne immer `Bypass`) – jetzt wird die konfigurierte Policy (GPO
+  MachinePolicy/UserPolicy, dann CurrentUser/LocalMachine) geprüft; die effektive
+  Policy bleibt als Info im Bericht.
+  / Compared the process policy (always `Bypass` under NinjaOne); now checks the
+  configured policy.
+- `03 - Software/checkBlockedSoftware.ps1`, `readInstalledSoftware.ps1`: ein
+  zwischenzeitlich gelöschter Uninstall-Schlüssel (`OpenSubKey` = `$null`) brach
+  den gesamten Lauf ab – wird jetzt übersprungen.
+- `07 - Security/detectUnauthorizedLocalAdmins.ps1`: Mitglieder mit Leerzeichen
+  in der Domäne (z. B. `NT AUTHORITY\SYSTEM`) wurden als ungültig abgelehnt –
+  Namensprüfung korrigiert; bekannte `Get-LocalGroupMember`-Einschränkung
+  (verwaiste SIDs/Entra ID) dokumentiert.
+- `10 - Network/testTcpEndpoint.ps1`: Kurzformen wie `1234` oder `10.1` wurden
+  von `[IPAddress]::TryParse` als IP akzeptiert (`0.0.4.210`) – jetzt nur volle
+  IPv4-Punktnotation oder IPv6.
+- `50 - Misc/readTimeSyncStatus.ps1`: Ausgaben von `w32tm` auf stderr führten
+  unter Windows PowerShell 5.1 mit `ErrorActionPreference = Stop` zum Abbruch,
+  bevor der Exitcode ausgewertet wurde.
+- `01 - System/checkDiskSpace.ps1`: ein gesperrtes/unformatiertes Volume (z. B.
+  BitLocker) ließ die ganze Prüfung mit Exit `1` scheitern – es wird jetzt unter
+  `UnavailableDrives` gemeldet; Exit `1` nur, wenn kein Laufwerk auswertbar ist.
+- `Get-Help` lieferte in 29 Skripten keine Hilfe, weil `<#` direkt auf
+  `#Requires` folgte – Leerzeile ergänzt.
+  / `Get-Help` returned no help in 29 scripts because `<#` directly followed
+  `#Requires`; a blank line was added.
 
 ### Performance
 - `00-readDNSSettingsClient.ps1`: `Get-ComputerInfo` (oft 10–60 s) durch
   `Get-CimInstance` ersetzt; WMI-Fallback nutzt CIM statt `Get-WmiObject`.
 - `01-setDNSSettingsClient.ps1`: keine überflüssigen `Get-NetAdapterHardwareInfo`-Aufrufe.
+- `10 - Network/auditTcpConnections.ps1`: filtert den Verbindungsstatus direkt
+  über `Get-NetTCPConnection -State` statt alle Verbindungen zu laden.
+- `50 - Misc/emptyFolders.ps1`: kein zusätzliches `Get-Item` pro Ordner mehr
+  (DirectoryInfo-Objekte werden direkt eingereiht).
 
 ### Dokumentation / Documentation
 - Neu: `CHANGELOG.md`, `CONTRIBUTING.md`, `SECURITY.md`, `LICENSE` (MIT, wie in
@@ -78,6 +107,7 @@ first); older entries were reconstructed from the Git history and pull requests.
 ### Tests
 - Neu: `Tests/DnsScripts.Tests.ps1` (Pester, Windows-Cmdlets simuliert) für
   Adapterauswahl, Fallback, WhatIf, Custom Fields, Mismatch und Rotation.
+- `Tests/SystemChecks.Tests.ps1`: Test für nicht auswertbare Volumes ergänzt.
 
 ## 2026-10-11 – PR [#1](https://github.com/PS-PhinIT/PhinIT.NinjaONE-Scripts/pull/1): 51 NinjaOne-PowerShell-Skripte mit DE/EN-Hilfe
 

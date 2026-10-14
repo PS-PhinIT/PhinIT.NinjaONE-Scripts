@@ -49,7 +49,8 @@ try {
             if ($null -eq $key) { continue }
             foreach ($name in $key.GetSubKeyNames()) {
                 $entry = $key.OpenSubKey($name)
-                if ($null -eq $entry) { throw 'Registryeintrag nicht lesbar / Registry entry unreadable.' }
+                # DE: Während Installationen entfernte Schlüssel überspringen. EN: Skip keys removed during installs.
+                if ($null -eq $entry) { continue }
                 try {
                     $display = [string]$entry.GetValue('DisplayName')
                     if (-not [string]::IsNullOrWhiteSpace($display) -and (-not $filter -or $display.IndexOf($filter, [StringComparison]::OrdinalIgnoreCase) -ge 0)) {
