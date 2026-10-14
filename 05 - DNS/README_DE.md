@@ -1,18 +1,20 @@
 ### NinjaOne bringt (Frühjahr 2025) keinen „fertigen" Bericht mit, der systemübergreifend alle auf den Endpunkten konfigurierten DNS-Server sammelt und in einem Dashboard/Report anzeigt.
 
 **NinjaOne Integration Guide**
-* https://github.com/PS-easyIT/NinjaONE-Scripts/blob/main/05%20-%20DNS%20Settings/NinjaRMM-Guide_ENG.md
+* [NinjaONE-DNS_Guide_DE.md](NinjaONE-DNS_Guide_DE.md) · Englisch: [README.md](README.md), [NinjaONE-DNS_Guide_ENG.md](NinjaONE-DNS_Guide_ENG.md)
 
 ---
 
 # DNS-Client-Skripte für NinjaOne
 
-Dieses Repository enthält **zwei PowerShell-Skripte**, die Hand in Hand arbeiten:
+Dieser Ordner enthält **zwei Haupt-Skripte**, die Hand in Hand arbeiten
+(zusätzlich die lesenden Diagnosen `resolveDnsName.ps1`, `readDnsCache.ps1` und
+`readDnsClientConfiguration.ps1`, siehe [Haupt-README](../README.md)):
 
 | Skript | Zweck |
 | ------ | ------- |
-| **setDNSSettingsClient.ps1** | Setzt _statische_ IPv4-DNS-Server **oder** setzt Adapter auf DHCP zurück, auf allen *produktiven* physischen Adaptern. |
-| **readDNSSettingsClient.ps1** | Liest die aktuellen DNS-Einstellungen von allen produktiven Adaptern und erstellt einen menschenlesbaren Bericht (Markdown/Konsole), einen optionalen CSV-Export und aktualisiert Zusammenfassungs-Custom-Fields in NinjaOne. |
+| **01-setDNSSettingsClient.ps1** | Setzt _statische_ IPv4-DNS-Server **oder** setzt Adapter auf DHCP zurück, auf allen *produktiven* physischen Adaptern. |
+| **00-readDNSSettingsClient.ps1** | Liest die aktuellen DNS-Einstellungen von allen produktiven Adaptern und erstellt einen menschenlesbaren Bericht (Markdown/Konsole), einen optionalen CSV-Export und aktualisiert Zusammenfassungs-Custom-Fields in NinjaOne. |
 
 Beide Skripte wurden von **Andreas Hepp** entwickelt - **www.phinit.de** oder **www.psscripts.de**
 
@@ -20,22 +22,24 @@ Beide Skripte wurden von **Andreas Hepp** entwickelt - **www.phinit.de** oder **
 
 ## 1. Funktionen auf einen Blick
 
-### setDNSSettingsClient.ps1
+### 01-setDNSSettingsClient.ps1
 
 * Erkennt *produktive* Adapter (Standard-GW vorhanden **oder** innerhalb des Ziel-Subnetzes **oder** passend zum expliziten Gateway).
 * Unterstützt nur physische LAN/WLAN – schließt vNICs, VPN, Hyper-V, WSL, Docker usw. aus.
 * Verwendet `Set-DnsClientServerAddress` mit `netsh`-Fallback für ältere Betriebssysteme/hängende Treiber.
-* Optionale Custom-Field-Aktualisierung (`DNS_LastChange`) mit vollständiger Audit-Zeichenfolge.
+* Optionale Custom-Field-Aktualisierung (`DNS_LastChange`) mit vollständiger Audit-Zeichenfolge - nur wenn mindestens ein Adapter geändert wurde.
+* Unterstützt `-WhatIf` (keine Änderung, kein Custom-Field-Schreibvorgang).
 * Gibt **Exit-Codes** zurück:  
-  `0` = geändert | `2` = nichts zu tun | `1` = Fehler | `3` = DNS geändert, aber CF-Update fehlgeschlagen.
+  `0` = geändert | `2` = nichts zu tun (oder `-WhatIf`) | `1` = Fehler, auch wenn mindestens ein Adapter nicht geändert werden konnte | `3` = DNS geändert, aber CF-Update fehlgeschlagen.
 
-### readDNSSettingsClient.ps1
+### 00-readDNSSettingsClient.ps1
 
 * Moderne `Get-DnsClient*`-Cmdlets mit automatischem WMI-Fallback für ≤ Win 2008 R2.
 * Erstellt Konsolen-Markdown plus optionales CSV (`C:\ProgramData\NinjaRMMAgent\Logs\Reports`).
 * Erkennt DNS-Abweichungen zwischen aktiven Adaptern.
 * Schreibt `DNS_Summary` (Text) und `DNS_Mismatch` (Boolean) Custom-Fields.
-* Log- & Berichtsrotation (`LogRetentionDays`, Standard 30).
+* Log- & Berichtsrotation (`LogRetentionDays`, 0-3650, Standard 30; zusammen mit dem CSV-Export).
+* Exit-Codes: `0` = Bericht erstellt | `1` = keine Adapter / Abfragefehler.
 
 ---
 
@@ -43,8 +47,8 @@ Beide Skripte wurden von **Andreas Hepp** entwickelt - **www.phinit.de** oder **
 
 | Skript | Hauptparameter | Hinweise |
 | ------ | -------------- | ----- |
-| **setDNSSettingsClient.ps1** | `-PrimaryDNS` `-SecondaryDNS` `-TargetSubnet` `-TargetGateway` `-AdapterName` `-ResetDHCP` `-NoCustomField` | `-PrimaryDNS` erforderlich, außer bei `-ResetDHCP`. Alle Parameter können über Custom Fields vorausgefüllt werden. |
-| **readDNSSettingsClient.ps1** | `-NoCSV` `-NoCustomField` `-LogRetentionDays` | Sicher eigenständig oder im Zeitplan ausführbar. |
+| **01-setDNSSettingsClient.ps1** | `-PrimaryDNS` `-SecondaryDNS` `-TargetSubnet` `-TargetGateway` `-AdapterName` `-ResetDHCP` `-NoCustomField` | `-PrimaryDNS` erforderlich, außer bei `-ResetDHCP`. Alle Parameter können über Custom Fields vorausgefüllt werden. |
+| **00-readDNSSettingsClient.ps1** | `-NoCSV` `-NoCustomField` `-LogRetentionDays` | Sicher eigenständig oder im Zeitplan ausführbar. |
 
 Führen Sie beide Skripte mit `-Verbose` aus, um den detaillierten Ablauf zu sehen.
 
@@ -75,4 +79,4 @@ C:\ProgramData\NinjaRMMAgent\Logs
 └─ Reports
 ```
 
-Die Rotation wird automatisch verwaltet.
+Die Rotation von `DNS_Report_*.csv`, `DNS*.log` und temporären `DNSReport_*.csv`-Anhängen übernimmt das Leseskript (außer mit `-NoCSV`).

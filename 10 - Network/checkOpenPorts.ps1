@@ -26,6 +26,12 @@ DE/EN: NinjaOne resultFormat; leer/null = Json; Werte/values Json, PlainText.
 DE/EN: -WhatIf liest weiter / still reads; unterdrueckt Feldschreiben / skips field write.
 DE/EN: NinjaOne resultCustomField; leer/null = kein Feld/no field.
 NinjaOne MultiLine; Name/name [A-Za-z][A-Za-z0-9_]{0,99}; maximal/maximum 4000 Zeichen/characters.
+.EXAMPLE
+.\checkOpenPorts.ps1 -LocalPort 3389
+DE: Zeigt TCP-Listener und UDP-Endpunkte auf Port 3389. EN: Shows TCP listeners and UDP endpoints on port 3389.
+.EXAMPLE
+.\checkOpenPorts.ps1 -IncludeUdp false -MaxRecords 50 -CustomField openPorts
+DE: Nur TCP-Listener (max. 50) als JSON in openPorts. EN: TCP listeners only (max. 50) as JSON to openPorts.
 #>
 [CmdletBinding(SupportsShouldProcess)]
 param(

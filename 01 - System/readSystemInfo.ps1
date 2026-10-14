@@ -1,4 +1,5 @@
 ﻿#Requires -Version 5.1
+
 <#
 .SYNOPSIS
     DE: Erfasst grundlegende Systeminformationen für NinjaOne.
@@ -11,6 +12,14 @@
 .PARAMETER CustomField
     DE: Optionales Geräteattribut vom Typ MultiLine. Variable: systemInfoCustomField.
     EN: Optional device custom field of type MultiLine. Variable: systemInfoCustomField.
+.EXAMPLE
+    .\readSystemInfo.ps1
+    DE: Gibt OS, Modell, CPU und RAM als JSON aus.
+    EN: Outputs OS, model, CPU and RAM as JSON.
+.EXAMPLE
+    .\readSystemInfo.ps1 -CustomField systemInfo
+    DE: Schreibt den JSON-Bericht zusätzlich in das MultiLine-Feld systemInfo.
+    EN: Additionally writes the JSON report to the MultiLine field systemInfo.
 .NOTES
     DE: Als SYSTEM ausführen. Explizite Parameter überschreiben Skriptvariablen.
         Exit 0 = erfolgreich, 1 = Abfrage- oder Schreibfehler.

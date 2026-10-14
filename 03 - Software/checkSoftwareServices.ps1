@@ -1,4 +1,5 @@
 ﻿#Requires -Version 5.1
+
 <#
 .SYNOPSIS
 DE: Erwartete Anwendungsdienste auf Vorhandensein und Laufstatus prüfen.
@@ -10,6 +11,8 @@ DE: RequireRunning=false prüft nur Vorhandensein. Keine Dienständerung. Abweic
 EN: RequireRunning=false checks presence only. No service changes. Mismatch: exit 2.
 DE: MultiLine-CustomField: Klartext-JSON, maximal 4000 Zeichen; keine Anmeldekonten/Startbefehle.
 EN: MultiLine CustomField: plain-text JSON, maximum 4000 characters; no logon accounts/start commands.
+DE: Exit 0 = OK, 1 = Eingabe-, Abfrage- oder Schreibfehler, 2 = Dienst fehlt oder läuft nicht (bei RequireRunning=true).
+EN: Exit 0 = OK, 1 = input, query or write error, 2 = service missing or not running (with RequireRunning=true).
 .PARAMETER ServiceNames
 DE: String; NinjaOne softwareServicesNames; Standard Spooler; 1-30 semikolongetrennte Namen, je 1-128 Zeichen, insgesamt maximal 2000; Muster ^[A-Za-z0-9][A-Za-z0-9_. $-]{0,127}$.
 EN: String; NinjaOne softwareServicesNames; default Spooler; 1-30 semicolon-separated names, each 1-128 characters, maximum 2000 total; pattern ^[A-Za-z0-9][A-Za-z0-9_. $-]{0,127}$.
@@ -19,6 +22,14 @@ EN: String containing Boolean true/false; NinjaOne softwareServicesRequireRunnin
 .PARAMETER CustomField
 DE: String; NinjaOne resultCustomField; Standard leer; MultiLine-Feldname, 1-128 Zeichen, Buchstabe zuerst, danach Buchstaben/Ziffern/Unterstrich.
 EN: String; NinjaOne resultCustomField; default empty; MultiLine field name, 1-128 characters, letter first, then letters/digits/underscore.
+.EXAMPLE
+.\checkSoftwareServices.ps1 -ServiceNames 'Spooler;W32Time'
+DE: Prüft, ob Spooler und W32Time vorhanden sind und laufen.
+EN: Checks whether Spooler and W32Time exist and are running.
+.EXAMPLE
+.\checkSoftwareServices.ps1 -ServiceNames 'MSSQLSERVER;SQLSERVERAGENT' -RequireRunning false -CustomField softwareServicesReport
+DE: Prüft nur das Vorhandensein der SQL-Dienste; JSON in softwareServicesReport.
+EN: Checks presence of the SQL services only; JSON to softwareServicesReport.
 #>
 [CmdletBinding()]
 param(

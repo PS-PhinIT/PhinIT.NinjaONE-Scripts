@@ -1,4 +1,5 @@
 ﻿#Requires -Version 5.1
+
 <#
 .SYNOPSIS
 DE: Downloadcache prüfen; optional alte Dateien gezielt bereinigen.
@@ -21,6 +22,18 @@ EN: String; NinjaOne updateCacheMinimumAgeDays; default 30; integer 7-3650.
 .PARAMETER CustomField
 DE: String; NinjaOne resultCustomField; Standard leer; MultiLine-Feldname, 1-128 Zeichen, Buchstabe zuerst, danach Buchstaben/Ziffern/Unterstrich.
 EN: String; NinjaOne resultCustomField; default empty; MultiLine field name, 1-128 characters, letter first, then letters/digits/underscore.
+.EXAMPLE
+.\cleanupWindowsUpdateCache.ps1 -MinimumAgeDays 30
+DE: Nur Inventur: zählt Cachedateien älter als 30 Tage, löscht nichts.
+EN: Audit only: counts cache files older than 30 days, deletes nothing.
+.EXAMPLE
+.\cleanupWindowsUpdateCache.ps1 -AllowCleanup true -MinimumAgeDays 60 -WhatIf
+DE: Simuliert die Bereinigung von Dateien älter als 60 Tage; keine Dienste/Dateien werden geändert.
+EN: Simulates cleanup of files older than 60 days; no services/files are changed.
+.EXAMPLE
+.\cleanupWindowsUpdateCache.ps1 -AllowCleanup true -MinimumAgeDays 60 -CustomField updateCacheReport
+DE: Löscht Dateien älter als 60 Tage (ohne Rückfrage, ConfirmImpact Medium) und schreibt das JSON in updateCacheReport.
+EN: Deletes files older than 60 days (no prompt, ConfirmImpact Medium) and writes the JSON to updateCacheReport.
 .NOTES
 DE: Exit 0 Erfolg/Inventur/WhatIf, Exit 1 Fehler. AllowCleanup=true bleibt erforderlich.
 EN: Exit 0 success/audit/WhatIf, exit 1 error. AllowCleanup=true remains required.

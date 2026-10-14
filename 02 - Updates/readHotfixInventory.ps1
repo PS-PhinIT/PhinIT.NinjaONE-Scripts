@@ -1,4 +1,5 @@
 ﻿#Requires -Version 5.1
+
 <#
 .SYNOPSIS
 DE: Installierte Windows-Hotfixes inventarisieren (keine vollständige Updateinventur).
@@ -8,12 +9,22 @@ DE: Windows SYSTEM, 64-Bit. RecentDays=0 zeigt alle, 1-3650 filtert nach Install
 EN: Windows SYSTEM, 64-bit. RecentDays=0 shows all; 1-3650 filters by installation date.
 DE: Unbekannte Installationsdaten bleiben sichtbar. MultiLine-CustomField: Klartext-JSON, max. 4000 Zeichen.
 EN: Unknown installation dates remain visible. MultiLine CustomField: plain-text JSON, max. 4000 characters.
+DE: Exit 0 = Erfolg, 1 = Eingabe-, Abfrage- oder Schreibfehler.
+EN: Exit 0 = success, 1 = input, query or write error.
 .PARAMETER RecentDays
 DE: String; NinjaOne hotfixInventoryRecentDays; Standard 0; ganze Zahl 0-3650, 0 ohne Datumsfilter.
 EN: String; NinjaOne hotfixInventoryRecentDays; default 0; integer 0-3650, 0 disables date filtering.
 .PARAMETER CustomField
 DE: String; NinjaOne resultCustomField; Standard leer; MultiLine-Feldname, 1-128 Zeichen, Buchstabe zuerst, danach Buchstaben/Ziffern/Unterstrich.
 EN: String; NinjaOne resultCustomField; default empty; MultiLine field name, 1-128 characters, letter first, then letters/digits/underscore.
+.EXAMPLE
+.\readHotfixInventory.ps1
+DE: Listet alle installierten Hotfixes auf (RecentDays 0).
+EN: Lists all installed hotfixes (RecentDays 0).
+.EXAMPLE
+.\readHotfixInventory.ps1 -RecentDays 30 -CustomField hotfixInventory
+DE: Nur Hotfixes der letzten 30 Tage (plus unbekannte Daten); JSON in hotfixInventory schreiben.
+EN: Only hotfixes from the last 30 days (plus unknown dates); write JSON to hotfixInventory.
 #>
 [CmdletBinding()]
 param(

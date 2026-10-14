@@ -1,4 +1,5 @@
 ﻿#Requires -Version 5.1
+
 <#
 .SYNOPSIS
 DE: .NET-Framework-Registry und moderne .NET-Laufzeitordner inventarisieren.
@@ -10,12 +11,22 @@ DE: Keine dotnet.exe-Ausführung; benutzerdefinierte/portable Installationen wer
 EN: No dotnet.exe execution; custom/portable installations are not detected.
 DE: MultiLine-CustomField: Klartext-JSON, maximal 4000 Zeichen.
 EN: MultiLine CustomField: plain-text JSON, maximum 4000 characters.
+DE: Exit 0 = Erfolg, 1 = Eingabe-, Abfrage- oder Schreibfehler.
+EN: Exit 0 = success, 1 = input, query or write error.
 .PARAMETER IncludeModern
 DE: String mit Boolean-Wert true/false; NinjaOne dotNetInventoryIncludeModern; Standard true.
 EN: String containing Boolean true/false; NinjaOne dotNetInventoryIncludeModern; default true.
 .PARAMETER CustomField
 DE: String; NinjaOne resultCustomField; Standard leer; MultiLine-Feldname, 1-128 Zeichen, Buchstabe zuerst, danach Buchstaben/Ziffern/Unterstrich.
 EN: String; NinjaOne resultCustomField; default empty; MultiLine field name, 1-128 characters, letter first, then letters/digits/underscore.
+.EXAMPLE
+.\readDotNetInventory.ps1 -IncludeModern false
+DE: Nur .NET-Framework-Versionen aus der Registry.
+EN: Only .NET Framework versions from the registry.
+.EXAMPLE
+.\readDotNetInventory.ps1 -IncludeModern true -CustomField dotNetInventory
+DE: Framework und moderne .NET-Laufzeiten; JSON in dotNetInventory schreiben.
+EN: Framework and modern .NET runtimes; write JSON to dotNetInventory.
 #>
 [CmdletBinding()]
 param(

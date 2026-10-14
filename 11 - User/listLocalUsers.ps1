@@ -26,6 +26,12 @@ DE/EN: NinjaOne resultFormat; leer/null = Json; Werte/values Json, PlainText.
 DE/EN: -WhatIf liest weiter / still reads; unterdrueckt Feldschreiben / skips field write.
 DE/EN: NinjaOne resultCustomField; leer/null = kein Feld/no field.
 NinjaOne MultiLine; Name/name [A-Za-z][A-Za-z0-9_]{0,99}; maximal/maximum 4000 Zeichen/characters.
+.EXAMPLE
+.\listLocalUsers.ps1 -AccountFilter Enabled
+DE: Nur aktivierte lokale Konten (max. 10). EN: Enabled local accounts only (max. 10).
+.EXAMPLE
+.\listLocalUsers.ps1 -AccountFilter All -MaxRecords 100 -ResultFormat PlainText -CustomField localUsers
+DE: Alle Konten als Text in localUsers. EN: All accounts as text to localUsers.
 #>
 [CmdletBinding(SupportsShouldProcess)]
 param(

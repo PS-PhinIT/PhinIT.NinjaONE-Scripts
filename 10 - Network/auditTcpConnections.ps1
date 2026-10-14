@@ -26,6 +26,12 @@ DE/EN: NinjaOne resultFormat; leer/null = Json; Werte/values Json, PlainText.
 DE/EN: -WhatIf liest weiter / still reads; unterdrueckt Feldschreiben / skips field write.
 DE/EN: NinjaOne resultCustomField; leer/null = kein Feld/no field.
 NinjaOne MultiLine; Name/name [A-Za-z][A-Za-z0-9_]{0,99}; maximal/maximum 4000 Zeichen/characters.
+.EXAMPLE
+.\auditTcpConnections.ps1 -ConnectionState Established -MaxRecords 25
+DE: Bis zu 25 aufgebaute TCP-Verbindungen als JSON. EN: Up to 25 established TCP connections as JSON.
+.EXAMPLE
+.\auditTcpConnections.ps1 -ConnectionState TimeWait -ResultFormat PlainText -CustomField tcpConnections
+DE: TimeWait-Verbindungen als Text in tcpConnections schreiben. EN: Write TimeWait connections as text to tcpConnections.
 #>
 [CmdletBinding(SupportsShouldProcess)]
 param(

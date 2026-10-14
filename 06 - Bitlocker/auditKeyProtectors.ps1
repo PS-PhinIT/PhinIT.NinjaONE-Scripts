@@ -17,12 +17,22 @@ EN: CustomField / resultCustomField: optional MultiLine JSON field, maximum 4000
 DE: Explizite Parameter haben Vorrang; nur Erkennung.
 EN: Explicit parameters take precedence; detection only.
 DE/EN: Exit 0 = OK, 1 = Fehler/error, 2 = Warnung/warning.
+DE: Exit 2 = Volume ohne Protector oder (bei RequireRecoveryProtector=true) ohne RecoveryPassword-Protector.
+EN: Exit 2 = volume without protectors or (with RequireRecoveryProtector=true) without a RecoveryPassword protector.
 .PARAMETER RequireRecoveryProtector
 DE: Recovery-Protector verlangen; bitlockerRequireRecoveryProtector; Standard false.
 EN: Require a recovery protector; bitlockerRequireRecoveryProtector; default false.
 .PARAMETER CustomField
 DE: Optionales MultiLine-JSON-Feld; resultCustomField; Standard leer.
 EN: Optional MultiLine JSON field; resultCustomField; default empty.
+.EXAMPLE
+.\auditKeyProtectors.ps1
+DE: Listet Protector-Typen und IDs aller Volumes; Warnung nur bei Volumes ohne Protector.
+EN: Lists protector types and IDs of all volumes; warns only for volumes without protectors.
+.EXAMPLE
+.\auditKeyProtectors.ps1 -RequireRecoveryProtector true -CustomField bitlockerProtectors
+DE: Verlangt einen RecoveryPassword-Protector je Volume; JSON in bitlockerProtectors.
+EN: Requires a RecoveryPassword protector per volume; JSON to bitlockerProtectors.
 #>
 [CmdletBinding()]
 param([string]$RequireRecoveryProtector = 'false', [string]$CustomField = '')

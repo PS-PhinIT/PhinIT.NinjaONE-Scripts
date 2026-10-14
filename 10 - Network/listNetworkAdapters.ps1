@@ -25,6 +25,12 @@ DE/EN: NinjaOne resultFormat; leer/null = Json; Werte/values Json, PlainText.
 DE/EN: -WhatIf liest weiter / still reads; unterdrueckt Feldschreiben / skips field write.
 DE/EN: NinjaOne resultCustomField; leer/null = kein Feld/no field.
 NinjaOne MultiLine; Name/name [A-Za-z][A-Za-z0-9_]{0,99}; maximal/maximum 4000 Zeichen/characters.
+.EXAMPLE
+.\listNetworkAdapters.ps1
+DE: Sichtbare Adapter (max. 10) als JSON. EN: Visible adapters (max. 10) as JSON.
+.EXAMPLE
+.\listNetworkAdapters.ps1 -IncludeHidden true -MaxRecords 25 -ResultFormat PlainText -CustomField networkAdapters
+DE: Auch versteckte Adapter als Text in networkAdapters. EN: Include hidden adapters as text to networkAdapters.
 #>
 [CmdletBinding(SupportsShouldProcess)]
 param(

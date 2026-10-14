@@ -1,4 +1,5 @@
 ﻿#Requires -Version 5.1
+
 <#
 .SYNOPSIS
     DE: Liest die Windows-Laufzeit und meldet eine konfigurierte Überschreitung.
@@ -14,6 +15,14 @@
 .PARAMETER CustomField
     DE: Optionales Geräteattribut vom Typ Integer. Variable: uptimeCustomField.
     EN: Optional device custom field of type Integer. Variable: uptimeCustomField.
+.EXAMPLE
+    .\readUptime.ps1 -MaximumUptimeHours 168
+    DE: Warnt (Exit 2), wenn das Gerät seit mindestens 7 Tagen (168 h) läuft.
+    EN: Warns (exit 2) if the device has been up for at least 7 days (168 h).
+.EXAMPLE
+    .\readUptime.ps1 -MaximumUptimeHours 720 -CustomField uptimeHours
+    DE: Standardgrenzwert 720 h; Laufzeit in Stunden in das Integer-Feld uptimeHours schreiben.
+    EN: Default threshold 720 h; write uptime in hours to the Integer field uptimeHours.
 .NOTES
     DE: Als SYSTEM ausführen. Exit 0 = OK, 1 = Fehler, 2 = Grenzwert erreicht.
     EN: Run as SYSTEM. Exit 0 = OK, 1 = error, 2 = threshold reached.

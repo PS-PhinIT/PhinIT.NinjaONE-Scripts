@@ -31,6 +31,12 @@ DE/EN: NinjaOne resultFormat; leer/null = Json; Werte/values Json, PlainText.
 DE/EN: -WhatIf liest weiter / still reads; unterdrueckt Feldschreiben / skips field write.
 DE/EN: NinjaOne resultCustomField; leer/null = kein Feld/no field.
 NinjaOne MultiLine; Name/name [A-Za-z][A-Za-z0-9_]{0,99}; maximal/maximum 4000 Zeichen/characters.
+.EXAMPLE
+.\listLocalGroupMembers.ps1
+DE: Direkte Mitglieder der lokalen Administratoren (S-1-5-32-544). EN: Direct members of local Administrators (S-1-5-32-544).
+.EXAMPLE
+.\listLocalGroupMembers.ps1 -Group S-1-5-32-555 -MaxRecords 50 -CustomField rdpUsers
+DE: Mitglieder der Remotedesktopbenutzer (SID) als JSON in rdpUsers. EN: Remote Desktop Users members (SID) as JSON to rdpUsers.
 #>
 [CmdletBinding(SupportsShouldProcess)]
 param(

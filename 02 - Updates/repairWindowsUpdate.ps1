@@ -1,4 +1,5 @@
 ﻿#Requires -Version 5.1
+
 <#
 .SYNOPSIS
 DE: Updatedienste prüfen; optional laufende Dienste kontrolliert neu starten.
@@ -16,6 +17,18 @@ EN: String containing Boolean true/false; NinjaOne updateRepairAllowRestart; def
 .PARAMETER CustomField
 DE: String; NinjaOne resultCustomField; Standard leer; MultiLine-Feldname, 1-128 Zeichen, Buchstabe zuerst, danach Buchstaben/Ziffern/Unterstrich.
 EN: String; NinjaOne resultCustomField; default empty; MultiLine field name, 1-128 characters, letter first, then letters/digits/underscore.
+.EXAMPLE
+.\repairWindowsUpdate.ps1
+DE: Nur Inventur: zeigt den Zustand von BITS und wuauserv, startet nichts neu.
+EN: Audit only: shows the state of BITS and wuauserv, restarts nothing.
+.EXAMPLE
+.\repairWindowsUpdate.ps1 -AllowRepair true -WhatIf
+DE: Simuliert den Neustart laufender Updatedienste ohne Änderung.
+EN: Simulates restarting running update services without changes.
+.EXAMPLE
+.\repairWindowsUpdate.ps1 -AllowRepair true -CustomField updateRepairReport
+DE: Startet laufende Dienste neu (ohne Rückfrage, ConfirmImpact Medium) und schreibt das JSON in updateRepairReport.
+EN: Restarts running services (no prompt, ConfirmImpact Medium) and writes the JSON to updateRepairReport.
 .NOTES
 DE: Exit 0 Erfolg/Inventur/WhatIf, Exit 1 Fehler. AllowRepair=true bleibt erforderlich.
 EN: Exit 0 success/audit/WhatIf, exit 1 error. AllowRepair=true remains required.

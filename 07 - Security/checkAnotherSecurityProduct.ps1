@@ -27,6 +27,14 @@ EN: Literal name substring; securityExpectedProduct; default empty = any third-p
 .PARAMETER CustomField
 DE: Optionales MultiLine-JSON-Feld; resultCustomField; Standard leer.
 EN: Optional MultiLine JSON field; resultCustomField; default empty.
+.EXAMPLE
+.\checkAnotherSecurityProduct.ps1
+DE: Exit 0, wenn irgendein registriertes Fremd-Antivirenprodukt gefunden wird.
+EN: Exit 0 if any registered third-party antivirus product is found.
+.EXAMPLE
+.\checkAnotherSecurityProduct.ps1 -ExpectedProduct 'Sophos' -CustomField securityProducts
+DE: Verlangt ein Produkt mit "Sophos" im Anzeigenamen; JSON in securityProducts.
+EN: Requires a product with "Sophos" in its display name; JSON to securityProducts.
 #>
 [CmdletBinding()]
 param([string]$ExpectedProduct = '', [string]$CustomField = '')

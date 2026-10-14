@@ -1,4 +1,5 @@
 ﻿#Requires -Version 5.1
+
 <#
 .SYNOPSIS
 DE: Zertifikatsmetadaten oder genau ein ÖFFENTLICHES DER-Zertifikat als Base64-JSON exportieren.
@@ -6,10 +7,12 @@ EN: Export certificate metadata or exactly one PUBLIC DER certificate as Base64 
 .DESCRIPTION
 DE: Windows SYSTEM, 64-Bit. Kein Dateiexport, keine PFX/privaten Schlüssel; Ausgabe nur in stdout/Feld.
 EN: Windows SYSTEM, 64-bit. No disk export, no PFX/private keys; output only to stdout/field.
-DE: StoreName=My; Thumbprint leer liefert nur Metadaten, sonst exakt 40 Hexzeichen.
-EN: StoreName=My; empty Thumbprint returns metadata only, otherwise exactly 40 hex characters.
+DE: StoreName (Standard: My); Thumbprint leer liefert nur Metadaten, sonst exakt 40 Hexzeichen.
+EN: StoreName (default: My); empty Thumbprint returns metadata only, otherwise exactly 40 hex characters.
 DE: MultiLine-CustomField: Klartext-JSON; über 4000 Zeichen Fehler nach Konsolenausgabe.
 EN: MultiLine CustomField: plain-text JSON; over 4000 characters fails after console output.
+DE: Exit 0 = Erfolg, 1 = Eingabe-, Abfrage- oder Schreibfehler.
+EN: Exit 0 = success, 1 = input, query or write error.
 .PARAMETER StoreName
 DE: String; NinjaOne certificateExportStoreName; Standard My; My, Root, CA, TrustedPublisher oder TrustedPeople, nur LocalMachine.
 EN: String; NinjaOne certificateExportStoreName; default My; My, Root, CA, TrustedPublisher or TrustedPeople, LocalMachine only.
@@ -19,6 +22,14 @@ EN: String; NinjaOne certificateExportThumbprint; default empty (metadata); othe
 .PARAMETER CustomField
 DE: String; NinjaOne resultCustomField; Standard leer; MultiLine-Feldname, 1-128 Zeichen, Buchstabe zuerst, danach Buchstaben/Ziffern/Unterstrich.
 EN: String; NinjaOne resultCustomField; default empty; MultiLine field name, 1-128 characters, letter first, then letters/digits/underscore.
+.EXAMPLE
+.\exportCertificateStore.ps1 -StoreName My
+DE: Gibt nur Metadaten aller Zertifikate in LocalMachine\My aus.
+EN: Outputs metadata only for all certificates in LocalMachine\My.
+.EXAMPLE
+.\exportCertificateStore.ps1 -StoreName Root -Thumbprint 'CABD2A79A1076A31F21D253635CB039D4329A5E8' -CustomField certificateExport
+DE: Exportiert genau dieses öffentliche Stammzertifikat (ISRG Root X1) als Base64-DER; JSON in certificateExport.
+EN: Exports exactly this public root certificate (ISRG Root X1) as Base64 DER; JSON to certificateExport.
 #>
 [CmdletBinding()]
 param(

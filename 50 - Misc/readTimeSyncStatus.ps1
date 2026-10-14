@@ -1,4 +1,5 @@
 ﻿#Requires -Version 5.1
+
 <#
 .SYNOPSIS
     DE: Liest den Windows-Zeitsynchronisationsstatus mit w32tm /query /status.
@@ -15,6 +16,14 @@
 .PARAMETER CustomField
     DE: Optionales MultiLine-Geräteattribut; resultCustomField.
     EN: Optional MultiLine device custom field; resultCustomField.
+.EXAMPLE
+    .\readTimeSyncStatus.ps1
+    DE: Gibt die Ausgabe von w32tm /query /status aus.
+    EN: Outputs the result of w32tm /query /status.
+.EXAMPLE
+    .\readTimeSyncStatus.ps1 -CustomField timeSyncStatus
+    DE: Schreibt die w32tm-Ausgabe zusätzlich in timeSyncStatus.
+    EN: Additionally writes the w32tm output to timeSyncStatus.
 .NOTES
     DE: SYSTEM, 64-Bit-PowerShell. Explizite Parameter vor Umgebungsvariablen.
         Exit 0 = Abfrage erfolgreich, 1 = Fehler, 2 = leere Ausgabe.

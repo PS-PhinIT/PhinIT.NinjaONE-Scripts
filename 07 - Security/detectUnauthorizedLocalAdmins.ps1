@@ -29,6 +29,14 @@ EN: Required SID/account list; securityAllowedAdminIdentities; no default.
 .PARAMETER CustomField
 DE: Optionales MultiLine-JSON-Feld; resultCustomField; Standard leer.
 EN: Optional MultiLine JSON field; resultCustomField; default empty.
+.EXAMPLE
+.\detectUnauthorizedLocalAdmins.ps1 -AllowedIdentities 'S-1-5-18;S-1-5-21-1004336348-1177238915-682003330-500'
+DE: Erlaubt nur SYSTEM und das angegebene lokale Administratorkonto (SID).
+EN: Allows only SYSTEM and the given local Administrator account (SID).
+.EXAMPLE
+.\detectUnauthorizedLocalAdmins.ps1 -AllowedIdentities 'S-1-5-18;CONTOSO\Domain Admins;CONTOSO\IT-Support' -CustomField localAdminAudit
+DE: SID und qualifizierte Domaingruppen erlauben; Exit 2 bei weiteren Mitgliedern; JSON in localAdminAudit.
+EN: Allows a SID and qualified domain groups; exit 2 for other members; JSON to localAdminAudit.
 #>
 [CmdletBinding()]
 param([string]$AllowedIdentities = '', [string]$CustomField = '')

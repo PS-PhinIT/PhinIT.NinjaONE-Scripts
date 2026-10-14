@@ -1,15 +1,18 @@
 ﻿#Requires -Version 5.1
+
 <#
 .SYNOPSIS
 DE: Öffentliche Zertifikatsmetadaten und EKU-OIDs inventarisieren.
 EN: Inventory public certificate metadata and EKU OIDs.
 .DESCRIPTION
-DE: Windows SYSTEM, 64-Bit. StoreName=My; SubjectContains ist ein literaler Filter.
-EN: Windows SYSTEM, 64-bit. StoreName=My; SubjectContains is a literal filter.
+DE: Windows SYSTEM, 64-Bit. StoreName (Standard: My); SubjectContains ist ein literaler Filter.
+EN: Windows SYSTEM, 64-bit. StoreName (default: My); SubjectContains is a literal filter.
 DE: LocalMachine schreibgeschützt; keine Schlüssel-/Vertrauenskettendaten.
 EN: LocalMachine read-only; no key/trust-chain data.
 DE: MultiLine-CustomField: Klartext-JSON, maximal 4000 Zeichen.
 EN: MultiLine CustomField: plain-text JSON, maximum 4000 characters.
+DE: Exit 0 = Erfolg, 1 = Eingabe-, Abfrage- oder Schreibfehler.
+EN: Exit 0 = success, 1 = input, query or write error.
 .PARAMETER StoreName
 DE: String; NinjaOne certificateInventoryStoreName; Standard My; My, Root, CA, TrustedPublisher oder TrustedPeople, nur LocalMachine.
 EN: String; NinjaOne certificateInventoryStoreName; default My; My, Root, CA, TrustedPublisher or TrustedPeople, LocalMachine only.
@@ -19,6 +22,14 @@ EN: String; NinjaOne certificateInventorySubjectContains; default empty; literal
 .PARAMETER CustomField
 DE: String; NinjaOne resultCustomField; Standard leer; MultiLine-Feldname, 1-128 Zeichen, Buchstabe zuerst, danach Buchstaben/Ziffern/Unterstrich.
 EN: String; NinjaOne resultCustomField; default empty; MultiLine field name, 1-128 characters, letter first, then letters/digits/underscore.
+.EXAMPLE
+.\readCertificateInventory.ps1
+DE: Inventarisiert alle Zertifikate in LocalMachine\My.
+EN: Inventories all certificates in LocalMachine\My.
+.EXAMPLE
+.\readCertificateInventory.ps1 -StoreName My -SubjectContains 'contoso.com' -CustomField certificateInventory
+DE: Nur Zertifikate mit "contoso.com" im Betreff; JSON in certificateInventory.
+EN: Only certificates with "contoso.com" in the subject; JSON to certificateInventory.
 #>
 [CmdletBinding()]
 param(

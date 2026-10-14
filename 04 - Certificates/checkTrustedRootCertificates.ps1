@@ -1,4 +1,5 @@
 ﻿#Requires -Version 5.1
+
 <#
 .SYNOPSIS
 DE: Maschinenvertrauensanker auf Gültigkeit und optional gegen eine Freigabeliste prüfen.
@@ -12,12 +13,22 @@ DE: Freigabeliste wird vom Betreiber gepflegt, nicht als Microsoft-Vertrauenslis
 EN: Allow list is operator maintained, not interpreted as Microsoft's trust list.
 DE: MultiLine-CustomField: Klartext-JSON, maximal 4000 Zeichen. Befunde: Exit 2.
 EN: MultiLine CustomField: plain-text JSON, maximum 4000 characters. Findings: exit 2.
+DE: Exit 0 = keine Befunde, 1 = Eingabe-, Abfrage- oder Schreibfehler, 2 = Stammzertifikat abgelaufen, noch nicht gültig oder nicht auf der Freigabeliste.
+EN: Exit 0 = no findings, 1 = input, query or write error, 2 = root certificate expired, not yet valid or not on the allow list.
 .PARAMETER AllowedThumbprints
 DE: String; NinjaOne trustedRootAllowedThumbprints; Standard leer (nur Gültigkeit); 1-1000 semikolongetrennte Fingerabdrücke mit je 40 Hexzeichen, insgesamt maximal 41000 Zeichen.
 EN: String; NinjaOne trustedRootAllowedThumbprints; default empty (validity only); 1-1000 semicolon-separated thumbprints of 40 hex characters each, maximum 41000 total characters.
 .PARAMETER CustomField
 DE: String; NinjaOne resultCustomField; Standard leer; MultiLine-Feldname, 1-128 Zeichen, Buchstabe zuerst, danach Buchstaben/Ziffern/Unterstrich.
 EN: String; NinjaOne resultCustomField; default empty; MultiLine field name, 1-128 characters, letter first, then letters/digits/underscore.
+.EXAMPLE
+.\checkTrustedRootCertificates.ps1
+DE: Prüft nur die Gültigkeit aller Zertifikate in LocalMachine\Root.
+EN: Checks only the validity of all certificates in LocalMachine\Root.
+.EXAMPLE
+.\checkTrustedRootCertificates.ps1 -AllowedThumbprints 'CABD2A79A1076A31F21D253635CB039D4329A5E8;A8985D3A65E5E5C4B2D7D66D40C6DD2FB19C5436' -CustomField trustedRootReport
+DE: Meldet zusätzlich jedes Stammzertifikat außerhalb der Freigabeliste; JSON in trustedRootReport.
+EN: Additionally reports every root certificate not on the allow list; JSON to trustedRootReport.
 #>
 [CmdletBinding()]
 param(

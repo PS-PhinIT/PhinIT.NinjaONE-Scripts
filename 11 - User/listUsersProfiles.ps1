@@ -26,6 +26,12 @@ DE/EN: NinjaOne resultFormat; leer/null = Json; Werte/values Json, PlainText.
 DE/EN: -WhatIf liest weiter / still reads; unterdrueckt Feldschreiben / skips field write.
 DE/EN: NinjaOne resultCustomField; leer/null = kein Feld/no field.
 NinjaOne MultiLine; Name/name [A-Za-z][A-Za-z0-9_]{0,99}; maximal/maximum 4000 Zeichen/characters.
+.EXAMPLE
+.\listUsersProfiles.ps1 -MaxRecords 25
+DE: Bis zu 25 Benutzerprofile ohne Systemprofile. EN: Up to 25 user profiles without special profiles.
+.EXAMPLE
+.\listUsersProfiles.ps1 -IncludeSpecial true -MaxRecords 50 -CustomField userProfiles
+DE: Inklusive Systemprofile; JSON in userProfiles. EN: Including special profiles; JSON to userProfiles.
 #>
 [CmdletBinding(SupportsShouldProcess)]
 param(

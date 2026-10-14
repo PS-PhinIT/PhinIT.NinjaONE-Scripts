@@ -1,4 +1,5 @@
 ﻿#Requires -Version 5.1
+
 <#
 .SYNOPSIS
 DE: Installierte Software gegen eine vorgegebene Sperrliste prüfen, ohne Deinstallation.
@@ -10,12 +11,22 @@ DE: Nur maschinenweite Uninstall-Einträge; kein Beweis für Ausführungsblockie
 EN: Machine-wide uninstall entries only; not evidence of execution blocking. Match: exit 2.
 DE: MultiLine-CustomField: Klartext-JSON, maximal 4000 Zeichen.
 EN: MultiLine CustomField: plain-text JSON, maximum 4000 characters.
+DE: Exit 0 = kein Treffer, 1 = Eingabe-, Registry- oder Schreibfehler, 2 = mindestens ein gesperrter Anzeigename gefunden.
+EN: Exit 0 = no match, 1 = input, registry or write error, 2 = at least one blocked display name found.
 .PARAMETER BlockedNames
 DE: String; NinjaOne blockedSoftwareNames; kein Standard, erforderlich; 1-50 exakte Namen, semikolongetrennt; je 1-200, insgesamt maximal 3000 Zeichen; keine Steuerzeichen, * oder ?.
 EN: String; NinjaOne blockedSoftwareNames; no default, required; 1-50 exact names separated by semicolons; each 1-200, maximum 3000 total characters; no control characters, * or ?.
 .PARAMETER CustomField
 DE: String; NinjaOne resultCustomField; Standard leer; MultiLine-Feldname, 1-128 Zeichen, Buchstabe zuerst, danach Buchstaben/Ziffern/Unterstrich.
 EN: String; NinjaOne resultCustomField; default empty; MultiLine field name, 1-128 characters, letter first, then letters/digits/underscore.
+.EXAMPLE
+.\checkBlockedSoftware.ps1 -BlockedNames 'TeamViewer;AnyDesk'
+DE: Meldet Exit 2, wenn TeamViewer oder AnyDesk exakt so maschinenweit installiert ist.
+EN: Returns exit 2 if TeamViewer or AnyDesk is installed machine-wide with exactly that name.
+.EXAMPLE
+.\checkBlockedSoftware.ps1 -BlockedNames 'WinRAR 6.02 (64-bit);Google Toolbar for Internet Explorer' -CustomField blockedSoftwareReport
+DE: Prüft zwei exakte Anzeigenamen und schreibt das JSON in blockedSoftwareReport.
+EN: Checks two exact display names and writes the JSON to blockedSoftwareReport.
 #>
 [CmdletBinding()]
 param(

@@ -1,23 +1,34 @@
 ﻿#Requires -Version 5.1
+
 <#
 .SYNOPSIS
 DE: Selbst ausgestellte Zertifikate als Kandidaten für selbst signierte Zertifikate melden.
 EN: Report self-issued certificates as candidates for self-signed certificates.
 .DESCRIPTION
-DE: Windows SYSTEM, 64-Bit; StoreName=My, LocalMachine schreibgeschützt.
-EN: Windows SYSTEM, 64-bit; StoreName=My, LocalMachine read-only.
+DE: Windows SYSTEM, 64-Bit; StoreName (Standard: My), LocalMachine schreibgeschützt.
+EN: Windows SYSTEM, 64-bit; StoreName (default: My), LocalMachine read-only.
 DE: Vergleicht rohe Aussteller-/Betreffnamen; kein kryptografischer Signaturnachweis.
 EN: Compares raw issuer/subject names; not a cryptographic proof of self-signature.
 DE: CA-Schlüsselwechsel kann ebenfalls selbst ausgestellte Zertifikate erzeugen; manuell prüfen.
 EN: CA key rollover can also create self-issued certificates; review manually.
 DE: MultiLine-CustomField: Klartext-JSON, maximal 4000 Zeichen. Kandidaten: Exit 2.
 EN: MultiLine CustomField: plain-text JSON, maximum 4000 characters. Candidates: exit 2.
+DE: Exit 0 = keine Kandidaten, 1 = Eingabe-, Abfrage- oder Schreibfehler, 2 = mindestens ein selbst ausgestelltes Zertifikat (Aussteller = Betreff).
+EN: Exit 0 = no candidates, 1 = input, query or write error, 2 = at least one self-issued certificate (issuer = subject).
 .PARAMETER StoreName
 DE: String; NinjaOne selfSignedCertificateStoreName; Standard My; My, Root, CA, TrustedPublisher oder TrustedPeople, nur LocalMachine.
 EN: String; NinjaOne selfSignedCertificateStoreName; default My; My, Root, CA, TrustedPublisher or TrustedPeople, LocalMachine only.
 .PARAMETER CustomField
 DE: String; NinjaOne resultCustomField; Standard leer; MultiLine-Feldname, 1-128 Zeichen, Buchstabe zuerst, danach Buchstaben/Ziffern/Unterstrich.
 EN: String; NinjaOne resultCustomField; default empty; MultiLine field name, 1-128 characters, letter first, then letters/digits/underscore.
+.EXAMPLE
+.\checkSelfSignedCertificates.ps1
+DE: Prüft LocalMachine\My auf selbst ausgestellte Zertifikate.
+EN: Checks LocalMachine\My for self-issued certificates.
+.EXAMPLE
+.\checkSelfSignedCertificates.ps1 -StoreName TrustedPeople -CustomField selfSignedCertificates
+DE: Prüft LocalMachine\TrustedPeople; JSON in selfSignedCertificates.
+EN: Checks LocalMachine\TrustedPeople; JSON to selfSignedCertificates.
 #>
 [CmdletBinding()]
 param(

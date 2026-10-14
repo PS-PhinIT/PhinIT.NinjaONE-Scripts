@@ -15,12 +15,22 @@ EN: CustomField / resultCustomField: optional MultiLine JSON field, maximum 4000
 DE: Explizite Parameter haben Vorrang. Auch unverschluesselte Datenvolumes erzeugen Warnungen.
 EN: Explicit parameters take precedence. Unencrypted data volumes also produce warnings.
 DE/EN: Exit 0 = OK, 1 = Fehler/error, 2 = Warnung/warning.
+DE: Exit 2 = Volume unter MinimumEncryptionPercent, Verfahren None oder Status Decryption/Paused.
+EN: Exit 2 = volume below MinimumEncryptionPercent, method None or status Decryption/Paused.
 .PARAMETER MinimumEncryptionPercent
 DE: Minimum 0..100; bitlockerMinimumEncryptionPercent; Standard 100.
 EN: Minimum 0..100; bitlockerMinimumEncryptionPercent; default 100.
 .PARAMETER CustomField
 DE: Optionales MultiLine-JSON-Feld; resultCustomField; Standard leer.
 EN: Optional MultiLine JSON field; resultCustomField; default empty.
+.EXAMPLE
+.\auditVolumeEncryption.ps1
+DE: Verlangt 100 % Verschluesselung auf allen Volumes.
+EN: Requires 100% encryption on all volumes.
+.EXAMPLE
+.\auditVolumeEncryption.ps1 -MinimumEncryptionPercent 90 -CustomField bitlockerEncryption
+DE: Akzeptiert ab 90 % (z.B. laufende Verschluesselung); JSON in bitlockerEncryption.
+EN: Accepts 90% or more (e.g. encryption in progress); JSON to bitlockerEncryption.
 #>
 [CmdletBinding()]
 param([string]$MinimumEncryptionPercent = '100', [string]$CustomField = '')

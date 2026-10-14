@@ -1,14 +1,34 @@
 ﻿#Requires -Version 5.1
+
 <#
 .SYNOPSIS
     DE: Prüft freien Speicher lokaler Festplatten, ohne Daten zu löschen.
     EN: Checks free space on local disks without deleting data.
+.DESCRIPTION
+    DE: Liest alle festen lokalen Laufwerke (Win32_LogicalDisk, DriveType 3) per CIM,
+        gibt Größe, freien Speicher und freien Anteil als JSON aus und schreibt den
+        Bericht optional in ein MultiLine-Feld (max. 4000 Zeichen). Exit 0 = alle
+        Laufwerke über dem Grenzwert, 1 = Eingabe-, Abfrage- oder Schreibfehler,
+        2 = mindestens ein Laufwerk unter MinimumFreePercent.
+    EN: Reads all fixed local disks (Win32_LogicalDisk, DriveType 3) via CIM,
+        outputs size, free space and free percentage as JSON and optionally writes
+        the report to a MultiLine field (max. 4000 characters). Exit 0 = all disks
+        above the threshold, 1 = input, query or write error, 2 = at least one
+        disk below MinimumFreePercent.
 .PARAMETER MinimumFreePercent
     DE: NinjaOne Integer minimumFreePercent, 1..99; Standard 15.
     EN: NinjaOne Integer minimumFreePercent, 1..99; default 15.
 .PARAMETER CustomField
     DE: NinjaOne Text resultCustomField: interner Name eines MultiLine-Gerätefeldes.
     EN: NinjaOne Text resultCustomField: internal name of a MultiLine device field.
+.EXAMPLE
+    .\checkDiskSpace.ps1 -MinimumFreePercent 10
+    DE: Warnt (Exit 2), wenn ein lokales Laufwerk weniger als 10 % frei hat.
+    EN: Warns (exit 2) if any local disk has less than 10% free space.
+.EXAMPLE
+    .\checkDiskSpace.ps1 -MinimumFreePercent 20 -CustomField diskSpaceReport
+    DE: Grenzwert 20 % und JSON-Bericht ins MultiLine-Feld diskSpaceReport schreiben.
+    EN: Threshold 20% and write the JSON report to the MultiLine field diskSpaceReport.
 .NOTES
     DE: Windows PowerShell 5.1, SYSTEM, 64-Bit. Parameter überschreiben Variablen.
         Exit 0 = OK, 1 = Fehler, 2 = wenig Speicher. Nur lesend.

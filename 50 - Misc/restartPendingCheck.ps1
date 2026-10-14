@@ -1,4 +1,5 @@
 ﻿#Requires -Version 5.1
+
 <#
 .SYNOPSIS
     DE: Prüft typische Windows-Indikatoren für einen ausstehenden Neustart.
@@ -11,6 +12,14 @@
 .PARAMETER CustomField
     DE: Optionales Geräteattribut vom Typ Checkbox. Variable: rebootPendingCustomField.
     EN: Optional device custom field of type Checkbox. Variable: rebootPendingCustomField.
+.EXAMPLE
+    .\restartPendingCheck.ps1
+    DE: Exit 2, wenn ein Neustart-Indikator gefunden wird.
+    EN: Exit 2 if a pending reboot indicator is found.
+.EXAMPLE
+    .\restartPendingCheck.ps1 -CustomField rebootPending
+    DE: Ergebnis zusätzlich in das Checkbox-Feld rebootPending schreiben.
+    EN: Additionally write the result to the Checkbox field rebootPending.
 .NOTES
     DE: Als SYSTEM mit 64-Bit-PowerShell ausführen. Parameter haben Vorrang.
         Exit 0 = kein Indikator, 1 = Fehler, 2 = Neustart ausstehend.

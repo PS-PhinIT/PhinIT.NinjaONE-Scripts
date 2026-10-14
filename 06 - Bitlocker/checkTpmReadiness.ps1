@@ -15,12 +15,22 @@ EN: CustomField / resultCustomField: optional MultiLine JSON field, maximum 4000
 DE: Explizite Parameter haben Vorrang; Besitz-Geheimnisse werden nicht gelesen.
 EN: Explicit parameters take precedence; ownership secrets are not read.
 DE/EN: Exit 0 = OK, 1 = Fehler/error, 2 = Warnung/warning.
+DE: Exit 2 = kein TPM, TPM nicht bereit, gesperrt (LockedOut) oder (bei RequireTpm20=true) kein TPM 2.0.
+EN: Exit 2 = no TPM, TPM not ready, locked out or (with RequireTpm20=true) not TPM 2.0.
 .PARAMETER RequireTpm20
 DE: TPM 2.0 verlangen; bitlockerRequireTpm20; Standard false.
 EN: Require TPM 2.0; bitlockerRequireTpm20; default false.
 .PARAMETER CustomField
 DE: Optionales MultiLine-JSON-Feld; resultCustomField; Standard leer.
 EN: Optional MultiLine JSON field; resultCustomField; default empty.
+.EXAMPLE
+.\checkTpmReadiness.ps1
+DE: Prueft Vorhandensein, Bereitschaft und Sperrstatus des TPM.
+EN: Checks TPM presence, readiness and lockout state.
+.EXAMPLE
+.\checkTpmReadiness.ps1 -RequireTpm20 true -CustomField tpmReadiness
+DE: Verlangt zusaetzlich TPM 2.0; JSON in tpmReadiness.
+EN: Additionally requires TPM 2.0; JSON to tpmReadiness.
 #>
 [CmdletBinding()]
 param([string]$RequireTpm20 = 'false', [string]$CustomField = '')

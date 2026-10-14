@@ -31,6 +31,12 @@ DE/EN: NinjaOne resultFormat; leer/null = Json; Werte/values Json, PlainText.
 DE/EN: -WhatIf testet weiterhin TCP / still tests TCP; kein Feldschreiben / skips field write.
 DE/EN: NinjaOne resultCustomField; leer/null = kein Feld/no field.
 NinjaOne MultiLine; Name/name [A-Za-z][A-Za-z0-9_]{0,99}; maximal/maximum 4000 Zeichen/characters.
+.EXAMPLE
+.\testTcpEndpoint.ps1 -TargetHost fileserver.contoso.local -TargetPort 445
+DE: Testet SMB auf fileserver.contoso.local; Exit 2, wenn nicht erreichbar. EN: Tests SMB on fileserver.contoso.local; exit 2 if unreachable.
+.EXAMPLE
+.\testTcpEndpoint.ps1 -TargetHost 192.168.10.5 -TargetPort 443 -ConnectionTimeoutMs 2000 -CustomField tcpEndpointTest
+DE: HTTPS-Port mit 2 s Timeout; JSON in tcpEndpointTest. EN: HTTPS port with 2 s timeout; JSON to tcpEndpointTest.
 #>
 [CmdletBinding(SupportsShouldProcess)]
 param(

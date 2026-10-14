@@ -1,4 +1,5 @@
 ﻿#Requires -Version 5.1
+
 <#
 .SYNOPSIS
     DE: Löst einen ausdrücklich konfigurierten DNS-Namen auf.
@@ -20,13 +21,21 @@
 .PARAMETER CustomField
     DE: Optionales MultiLine-Geräteattribut; resultCustomField.
     EN: Optional MultiLine device custom field; resultCustomField.
+.EXAMPLE
+    .\resolveDnsName.ps1 -HostName www.microsoft.com
+    DE: Löst den A-Eintrag über die konfigurierten DNS-Server auf.
+    EN: Resolves the A record using the configured DNS servers.
+.EXAMPLE
+    .\resolveDnsName.ps1 -HostName contoso.com -RecordType MX -Server 1.1.1.1 -CustomField dnsResolveReport
+    DE: Fragt MX-Einträge direkt bei 1.1.1.1 ab; JSON in dnsResolveReport schreiben.
+    EN: Queries MX records directly at 1.1.1.1; write JSON to dnsResolveReport.
 .NOTES
     DE: SYSTEM, 64-Bit-PowerShell. Explizite Parameter haben Vorrang vor
         Umgebungsvariablen; leere Werte verwenden dokumentierte Standards.
-        Exit 0 = Erfolg/keine Aktion, 1 = Fehler, 2 = Warnung.
+        Exit 0 = Erfolg/keine Aktion, 1 = Fehler, 2 = Warnung (keine Einträge erhalten).
     EN: SYSTEM, 64-bit PowerShell. Explicit parameters override environment
         variables; empty values use documented defaults.
-        Exit 0 = success/no action, 1 = error, 2 = warning.
+        Exit 0 = success/no action, 1 = error, 2 = warning (no records returned).
 #>
 [CmdletBinding()]
 param(

@@ -13,11 +13,21 @@ EN: MountPoint / bitlockerMountPoint (empty = all volumes); explicit parameters 
 DE: CustomField / resultCustomField ist ein optionales NinjaOne MultiLine-Feld (JSON, maximal 4000 Zeichen).
 EN: CustomField / resultCustomField is an optional NinjaOne MultiLine field (JSON, maximum 4000 characters).
 DE/EN: Exit 0 = OK, 1 = Fehler/error, 2 = Warnung/warning.
+DE: Exit 2 = mindestens ein Volume mit ProtectionStatus ungleich On.
+EN: Exit 2 = at least one volume with ProtectionStatus other than On.
 .PARAMETER MountPoint
 DE: Laufwerk; bitlockerMountPoint; Standard leer = alle. EN: Drive; bitlockerMountPoint; default empty = all.
 .PARAMETER CustomField
 DE: Optionales MultiLine-JSON-Feld; resultCustomField; Standard leer.
 EN: Optional MultiLine JSON field; resultCustomField; default empty.
+.EXAMPLE
+.\readBitLockerStatus.ps1
+DE: Prueft den Schutzstatus aller Volumes.
+EN: Checks the protection status of all volumes.
+.EXAMPLE
+.\readBitLockerStatus.ps1 -MountPoint C: -CustomField bitlockerStatus
+DE: Nur Laufwerk C:; JSON in bitlockerStatus.
+EN: Drive C: only; JSON to bitlockerStatus.
 #>
 [CmdletBinding()]
 param([string]$MountPoint = '', [string]$CustomField = '')

@@ -1,14 +1,34 @@
 ﻿#Requires -Version 5.1
+
 <#
 .SYNOPSIS
     DE: Liest die Zeitzone und prüft optional eine erwartete Windows-Zeitzonen-ID.
     EN: Reads the time zone and optionally checks an expected Windows time zone ID.
+.DESCRIPTION
+    DE: Liest die aktuelle Zeitzone per Get-TimeZone und gibt ID, UTC-Basisversatz
+        (Minuten) und Sommerzeitunterstützung als JSON aus; optional Export in ein
+        MultiLine-Feld (max. 4000 Zeichen). Eine erwartete ID wird gegen die
+        installierten Zeitzonen validiert. Exit 0 = OK oder keine Vorgabe,
+        1 = unbekannte ID, Abfrage- oder Schreibfehler, 2 = Zeitzone weicht ab.
+    EN: Reads the current time zone via Get-TimeZone and outputs the ID, base UTC
+        offset (minutes) and daylight saving support as JSON; optional export to a
+        MultiLine field (max. 4000 characters). An expected ID is validated against
+        the installed time zones. Exit 0 = OK or no expectation, 1 = unknown ID,
+        query or write error, 2 = time zone mismatch.
 .PARAMETER ExpectedTimeZone
     DE: NinjaOne Text expectedTimeZone, optional; z.B. W. Europe Standard Time.
     EN: NinjaOne Text expectedTimeZone, optional; e.g. W. Europe Standard Time.
 .PARAMETER CustomField
     DE: NinjaOne Text resultCustomField, optionales MultiLine-Gerätefeld.
     EN: NinjaOne Text resultCustomField, optional MultiLine device field.
+.EXAMPLE
+    .\checkTimeZone.ps1
+    DE: Gibt nur die aktuelle Zeitzone aus (keine Prüfung, Exit 0).
+    EN: Outputs the current time zone only (no check, exit 0).
+.EXAMPLE
+    .\checkTimeZone.ps1 -ExpectedTimeZone 'W. Europe Standard Time' -CustomField timeZoneReport
+    DE: Warnt (Exit 2) bei Abweichung und schreibt den JSON-Bericht in timeZoneReport.
+    EN: Warns (exit 2) on mismatch and writes the JSON report to timeZoneReport.
 .NOTES
     DE: Windows PowerShell 5.1, SYSTEM, 64-Bit; keine Änderung. Parameter vor Variablen.
         Exit 0 = OK, 1 = Fehler, 2 = Abweichung.

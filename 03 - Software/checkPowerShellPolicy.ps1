@@ -1,4 +1,5 @@
 ﻿#Requires -Version 5.1
+
 <#
 .SYNOPSIS
 DE: PowerShell-Ausführungsrichtlinie schreibgeschützt prüfen.
@@ -10,12 +11,22 @@ DE: Richtlinie gilt für diesen Host/Benutzer (SYSTEM), nicht für alle Hosts; k
 EN: Policy applies to this host/user (SYSTEM), not all hosts; it is not a security boundary.
 DE: MultiLine-CustomField: Klartext-JSON, maximal 4000 Zeichen. Abweichung: Exit 2.
 EN: MultiLine CustomField: plain-text JSON, maximum 4000 characters. Mismatch: exit 2.
+DE: Exit 0 = OK/Inventur, 1 = Eingabe-, Abfrage- oder Schreibfehler, 2 = effektive Richtlinie weicht von ExpectedPolicy ab.
+EN: Exit 0 = OK/inventory, 1 = input, query or write error, 2 = effective policy differs from ExpectedPolicy.
 .PARAMETER ExpectedPolicy
 DE: String; NinjaOne powerShellPolicyExpected; Standard leer (Inventur); Restricted, AllSigned, RemoteSigned, Unrestricted, Bypass oder Undefined.
 EN: String; NinjaOne powerShellPolicyExpected; default empty (inventory); Restricted, AllSigned, RemoteSigned, Unrestricted, Bypass or Undefined.
 .PARAMETER CustomField
 DE: String; NinjaOne resultCustomField; Standard leer; MultiLine-Feldname, 1-128 Zeichen, Buchstabe zuerst, danach Buchstaben/Ziffern/Unterstrich.
 EN: String; NinjaOne resultCustomField; default empty; MultiLine field name, 1-128 characters, letter first, then letters/digits/underscore.
+.EXAMPLE
+.\checkPowerShellPolicy.ps1
+DE: Nur Inventur der Ausführungsrichtlinien.
+EN: Execution policy inventory only.
+.EXAMPLE
+.\checkPowerShellPolicy.ps1 -ExpectedPolicy RemoteSigned -CustomField powerShellPolicyReport
+DE: Meldet Exit 2, wenn die effektive Richtlinie nicht RemoteSigned ist; JSON in powerShellPolicyReport.
+EN: Returns exit 2 if the effective policy is not RemoteSigned; JSON to powerShellPolicyReport.
 #>
 [CmdletBinding()]
 param(
