@@ -1,4 +1,5 @@
 ﻿#Requires -Version 5.1
+
 <#
 .SYNOPSIS
 DE: Abgelaufene, bald ablaufende und noch nicht gültige Zertifikate prüfen.
@@ -10,6 +11,8 @@ DE: Nur LocalMachine, schreibgeschützt; keine privaten Schlüssel/Vertrauensket
 EN: LocalMachine only, read-only; no private keys/trust chain lookup.
 DE: WarningDays: 0-3650 (Standard 30). MultiLine-CustomField: Klartext-JSON, max. 4000 Zeichen.
 EN: WarningDays: 0-3650 (default 30). MultiLine CustomField: plain-text JSON, max. 4000 characters.
+DE: Exit 0 = keine Befunde, 1 = Eingabe-, Abfrage- oder Schreibfehler, 2 = Zertifikat abgelaufen, läuft innerhalb WarningDays ab oder ist noch nicht gültig.
+EN: Exit 0 = no findings, 1 = input, query or write error, 2 = certificate expired, expiring within WarningDays or not yet valid.
 .PARAMETER StoreName
 DE: String; NinjaOne certificateExpiryStoreName; Standard My; My, Root, CA, TrustedPublisher oder TrustedPeople, nur LocalMachine.
 EN: String; NinjaOne certificateExpiryStoreName; default My; My, Root, CA, TrustedPublisher or TrustedPeople, LocalMachine only.
@@ -19,6 +22,14 @@ EN: String; NinjaOne certificateExpiryWarningDays; default 30; integer 0-3650.
 .PARAMETER CustomField
 DE: String; NinjaOne resultCustomField; Standard leer; MultiLine-Feldname, 1-128 Zeichen, Buchstabe zuerst, danach Buchstaben/Ziffern/Unterstrich.
 EN: String; NinjaOne resultCustomField; default empty; MultiLine field name, 1-128 characters, letter first, then letters/digits/underscore.
+.EXAMPLE
+.\checkExpiredCertificates.ps1 -WarningDays 30
+DE: Prüft LocalMachine\My und meldet Zertifikate, die in 30 Tagen ablaufen.
+EN: Checks LocalMachine\My and reports certificates expiring within 30 days.
+.EXAMPLE
+.\checkExpiredCertificates.ps1 -StoreName CA -WarningDays 60 -CustomField certificateExpiryReport
+DE: Prüft LocalMachine\CA mit 60 Tagen Vorlauf; JSON in certificateExpiryReport.
+EN: Checks LocalMachine\CA with 60 days lead time; JSON to certificateExpiryReport.
 #>
 [CmdletBinding()]
 param(

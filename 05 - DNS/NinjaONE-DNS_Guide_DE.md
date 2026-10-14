@@ -31,7 +31,7 @@
 | `DNS_Summary` | Text (Multi-Line) | Wird vom **read**-Skript gefüllt |
 | `DNS_Mismatch` | Boolean | **read** setzt *true*, wenn Adapter unterschiedliche DNS-Server nutzen |
 
-**Hinweis:** Werden Custom‑Fields nicht angelegt, funktionieren die Skripte trotzdem, nur werden keine Werte übernommen bzw. geschrieben.
+**Hinweis:** Werden Custom-Fields nicht angelegt, funktionieren die Skripte trotzdem, nur werden keine Werte übernommen bzw. geschrieben.
 
 ### Anlegen des Custom Field „DNS_Summary"
 
@@ -47,14 +47,15 @@
 
 ---
 
-## 3  Skripte importieren
+## 3. Skripte importieren
 
 ### Import des PowerShell-Skripts
 
 1. Klicken Sie auf **Neues Skript** → **Script importieren**.
-2. Name: `readDNSSettingsClient`
-3. Beschreibung: Liest DNS-Server-IPs aus und speichert sie in DNS_Summary.
-4. Typ: **PowerShell**
+2. Name: `00-readDNSSettingsClient`
+3. Beschreibung: Liest DNS-Server-IPs aus und speichert sie in DNS_Summary / DNS_Mismatch.
+4. Typ: **PowerShell**, Ausführen als **System**
+5. `01-setDNSSettingsClient.ps1` genauso importieren; zuerst mit `-WhatIf -Verbose` testen.
 
 ### Überprüfung
 
@@ -63,20 +64,22 @@ Nach dem nächsten Agent-Check-In erscheint im Geräte-Detailfenster unter **Ben
 
 ---
 
-## 4  Automations-/Richtlinienbeispiele
+## 4. Automations-/Richtlinienbeispiele
 
 | Aufgabe | Zeitplan | Skript | Bemerkung |
 |---------|----------|--------|-----------|
 | DNS prüfen | Stündlich | **read** | Schreibt Zusammenfassung + CSV-Bericht |
 
 
-## 5  Berichte
+## 5. Berichte
 
-Das **read**‑Skript legt CSV‑Dateien in  
+Das **read**-Skript legt CSV-Dateien in  
 ```
-C:\\ProgramData\\NinjaRMMAgent\\Logs\\Reports\\DNS_Report_<Hostname>_<Zeitstempel>.csv
+C:\ProgramData\NinjaRMMAgent\Logs\Reports\DNS_Report_<Hostname>_<Zeitstempel>.csv
 ```  
-ab. Die letzten *n* Tage (Standard 30) werden automatisch aufgeräumt.  
-NinjaOne hängt zusätzlich die jeweils aktuelle CSV als Attachment an die
-Skriptausgabe (erkennbar an `SCRIPT_FILE:`).
+ab. Dateien älter als *n* Tage (`LogRetentionDays`, Standard 30) werden
+automatisch aufgeräumt - ebenso `DNS*.log` und temporäre `DNSReport_*.csv`.  
+Zusätzlich wird eine Kopie im TEMP-Verzeichnis erzeugt und mit dem Präfix
+`SCRIPT_FILE:` ausgegeben. Ob NinjaOne diese Datei als Anhang übernimmt, ist
+nicht offiziell dokumentiert - bitte im eigenen Mandanten prüfen.
 

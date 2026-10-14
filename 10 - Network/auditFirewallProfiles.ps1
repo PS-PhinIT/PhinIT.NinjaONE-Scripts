@@ -26,6 +26,12 @@ DE/EN: NinjaOne resultFormat; leer/null = Json; Werte/values Json, PlainText.
 DE/EN: -WhatIf liest weiter / still reads; unterdrueckt Feldschreiben / skips field write.
 DE/EN: NinjaOne resultCustomField; leer/null = kein Feld/no field.
 NinjaOne MultiLine; Name/name [A-Za-z][A-Za-z0-9_]{0,99}; maximal/maximum 4000 Zeichen/characters.
+.EXAMPLE
+.\auditFirewallProfiles.ps1 -ResultFormat PlainText
+DE: Profile als Text ausgeben; Exit 2 bei deaktiviertem Profil. EN: Output profiles as text; exit 2 for a disabled profile.
+.EXAMPLE
+.\auditFirewallProfiles.ps1 -AlertOnDisabled false -MaxRecords 3 -CustomField firewallProfiles
+DE: Nur Inventar ohne Alarm; JSON in firewallProfiles. EN: Inventory only without alert; JSON to firewallProfiles.
 #>
 [CmdletBinding(SupportsShouldProcess)]
 param(

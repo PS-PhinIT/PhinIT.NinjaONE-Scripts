@@ -1,4 +1,5 @@
 ﻿#Requires -Version 5.1
+
 <#
 .SYNOPSIS
 DE: Lokalen Updateverlauf und Neustartstatus lesen, ohne Updatesuche.
@@ -8,12 +9,22 @@ DE: Als Windows SYSTEM in 64-Bit-PowerShell ausführen. historyCount: 1-200.
 EN: Run as Windows SYSTEM in 64-bit PowerShell. historyCount: 1-200.
 DE: CustomField benötigt ein beschreibbares MultiLine-Feld; JSON als Klartext.
 EN: CustomField requires a writable MultiLine field; JSON is plain text.
+DE: Exit 0 = OK, 1 = Eingabe-, Abfrage- oder Schreibfehler, 2 = Neustart ausstehend oder Verlaufseintrag mit ResultCode 3/4/5 (mit Fehlern/fehlgeschlagen/abgebrochen).
+EN: Exit 0 = OK, 1 = input, query or write error, 2 = reboot pending or history entry with ResultCode 3/4/5 (succeeded with errors/failed/aborted).
 .PARAMETER HistoryCount
 DE: String; NinjaOne updateStatusHistoryCount; Standard 20; ganze Zahl 1-200.
 EN: String; NinjaOne updateStatusHistoryCount; default 20; integer 1-200.
 .PARAMETER CustomField
 DE: String; NinjaOne resultCustomField; Standard leer; MultiLine-Feldname, 1-128 Zeichen, Buchstabe zuerst, danach Buchstaben/Ziffern/Unterstrich.
 EN: String; NinjaOne resultCustomField; default empty; MultiLine field name, 1-128 characters, letter first, then letters/digits/underscore.
+.EXAMPLE
+.\readWindowsUpdateStatus.ps1 -HistoryCount 10
+DE: Zeigt die letzten 10 Verlaufseinträge und den Neustartstatus.
+EN: Shows the last 10 history entries and the reboot status.
+.EXAMPLE
+.\readWindowsUpdateStatus.ps1 -HistoryCount 50 -CustomField updateStatusReport
+DE: Liest 50 Einträge und schreibt das JSON in updateStatusReport (max. 4000 Zeichen).
+EN: Reads 50 entries and writes the JSON to updateStatusReport (max. 4000 characters).
 #>
 [CmdletBinding()]
 param(

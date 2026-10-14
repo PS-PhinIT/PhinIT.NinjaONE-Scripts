@@ -19,12 +19,22 @@ EN: CustomField / resultCustomField: optional MultiLine JSON field, maximum 4000
 DE: Explizite Parameter haben Vorrang.
 EN: Explicit parameters take precedence.
 DE/EN: Exit 0 = OK, 1 = Fehler/error, 2 = Warnung/warning.
+DE: Exit 2 = Dienst/Antivirus/Echtzeit-/Verhaltensschutz aus, AMRunningMode nicht Normal oder Signaturen aelter als MaxSignatureAgeHours/unbekannt.
+EN: Exit 2 = service/antivirus/real-time/behavior protection off, AMRunningMode not Normal or signatures older than MaxSignatureAgeHours/unknown.
 .PARAMETER MaxSignatureAgeHours
 DE: Signaturalter 1..8760 Stunden; securityDefenderMaxSignatureAgeHours; Standard 48.
 EN: Signature age 1..8760 hours; securityDefenderMaxSignatureAgeHours; default 48.
 .PARAMETER CustomField
 DE: Optionales MultiLine-JSON-Feld; resultCustomField; Standard leer.
 EN: Optional MultiLine JSON field; resultCustomField; default empty.
+.EXAMPLE
+.\checkWindowsDefender.ps1
+DE: Prueft Defender-Schutz und Signaturen mit Standardgrenze 48 Stunden.
+EN: Checks Defender protection and signatures with the default 48-hour limit.
+.EXAMPLE
+.\checkWindowsDefender.ps1 -MaxSignatureAgeHours 24 -CustomField defenderStatus
+DE: Signaturen duerfen hoechstens 24 Stunden alt sein; JSON in defenderStatus.
+EN: Signatures may be at most 24 hours old; JSON to defenderStatus.
 #>
 [CmdletBinding()]
 param([string]$MaxSignatureAgeHours = '48', [string]$CustomField = '')

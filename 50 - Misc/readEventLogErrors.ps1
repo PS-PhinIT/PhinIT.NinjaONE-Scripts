@@ -1,4 +1,5 @@
 ﻿#Requires -Version 5.1
+
 <#
 .SYNOPSIS
     DE: Meldet begrenzte Metadaten aktueller kritischer/Fehler-Ereignisse.
@@ -22,6 +23,14 @@
 .PARAMETER CustomField
     DE: Optionales MultiLine-Geräteattribut; resultCustomField.
     EN: Optional MultiLine device custom field; resultCustomField.
+.EXAMPLE
+    .\readEventLogErrors.ps1 -LogName System -LookbackHours 24
+    DE: Kritische/Fehler-Ereignisse im System-Log der letzten 24 Stunden.
+    EN: Critical/error events in the System log from the last 24 hours.
+.EXAMPLE
+    .\readEventLogErrors.ps1 -LogName Application -LookbackHours 72 -MaxRecords 50 -CustomField eventLogErrors
+    DE: Application-Log, 72 Stunden, bis zu 50 Einträge; JSON in eventLogErrors.
+    EN: Application log, 72 hours, up to 50 entries; JSON to eventLogErrors.
 .NOTES
     DE: SYSTEM, 64-Bit-PowerShell. Explizite Parameter vor Umgebungsvariablen;
         leere Werte verwenden Standards. Keine Änderungen.

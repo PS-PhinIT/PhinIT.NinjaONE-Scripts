@@ -1,4 +1,5 @@
 ﻿#Requires -Version 5.1
+
 <#
 .SYNOPSIS
 DE: Startkonfiguration der Updatedienste schreibgeschützt prüfen.
@@ -10,12 +11,22 @@ DE: Warnung bei fehlenden Pflichtdiensten/deaktivierten Diensten; gestoppt kann 
 EN: Warn on missing required/disabled services; stopped can be normal.
 DE: MultiLine-CustomField: Klartext-JSON, maximal 4000 Zeichen.
 EN: MultiLine CustomField: plain-text JSON, maximum 4000 characters.
+DE: Exit 0 = OK, 1 = Eingabe-, Abfrage- oder Schreibfehler, 2 = Pflichtdienst (wuauserv/BITS/CryptSvc) fehlt oder ein geprüfter Dienst ist deaktiviert.
+EN: Exit 0 = OK, 1 = input, query or write error, 2 = required service (wuauserv/BITS/CryptSvc) missing or a checked service is disabled.
 .PARAMETER IncludeOptional
 DE: String mit Boolean-Wert true/false; NinjaOne updateServicesIncludeOptional; Standard true.
 EN: String containing Boolean true/false; NinjaOne updateServicesIncludeOptional; default true.
 .PARAMETER CustomField
 DE: String; NinjaOne resultCustomField; Standard leer; MultiLine-Feldname, 1-128 Zeichen, Buchstabe zuerst, danach Buchstaben/Ziffern/Unterstrich.
 EN: String; NinjaOne resultCustomField; default empty; MultiLine field name, 1-128 characters, letter first, then letters/digits/underscore.
+.EXAMPLE
+.\checkWindowsUpdateServices.ps1 -IncludeOptional false
+DE: Prüft nur wuauserv, BITS und CryptSvc.
+EN: Checks only wuauserv, BITS and CryptSvc.
+.EXAMPLE
+.\checkWindowsUpdateServices.ps1 -IncludeOptional true -CustomField updateServicesReport
+DE: Prüft zusätzlich UsoSvc/WaaSMedicSvc und schreibt das JSON in updateServicesReport.
+EN: Also checks UsoSvc/WaaSMedicSvc and writes the JSON to updateServicesReport.
 #>
 [CmdletBinding()]
 param(

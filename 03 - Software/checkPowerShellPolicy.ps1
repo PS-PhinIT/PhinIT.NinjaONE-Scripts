@@ -1,4 +1,5 @@
 ﻿#Requires -Version 5.1
+
 <#
 .SYNOPSIS
 DE: PowerShell-Ausführungsrichtlinie schreibgeschützt prüfen.
@@ -6,16 +7,28 @@ EN: Audit PowerShell execution policy without changing it.
 .DESCRIPTION
 DE: Windows SYSTEM, 64-Bit. ExpectedPolicy leer: nur Inventur; sonst exakter Richtlinienvergleich.
 EN: Windows SYSTEM, 64-bit. Empty ExpectedPolicy: inventory only; otherwise exact policy comparison.
+DE: Verglichen wird die konfigurierte Richtlinie ohne Process-Scope (erste definierte aus MachinePolicy, UserPolicy, CurrentUser, LocalMachine, sonst Undefined), da NinjaOne Skripte meist mit -ExecutionPolicy Bypass startet. EffectivePolicy (Prozess) wird nur informativ ausgegeben.
+EN: The configured policy excluding the Process scope is compared (first defined of MachinePolicy, UserPolicy, CurrentUser, LocalMachine, otherwise Undefined) because NinjaOne usually starts scripts with -ExecutionPolicy Bypass. EffectivePolicy (process) is informational only.
 DE: Richtlinie gilt für diesen Host/Benutzer (SYSTEM), nicht für alle Hosts; keine Sicherheitsgrenze.
 EN: Policy applies to this host/user (SYSTEM), not all hosts; it is not a security boundary.
 DE: MultiLine-CustomField: Klartext-JSON, maximal 4000 Zeichen. Abweichung: Exit 2.
 EN: MultiLine CustomField: plain-text JSON, maximum 4000 characters. Mismatch: exit 2.
+DE: Exit 0 = OK/Inventur, 1 = Eingabe-, Abfrage- oder Schreibfehler, 2 = konfigurierte Richtlinie weicht von ExpectedPolicy ab.
+EN: Exit 0 = OK/inventory, 1 = input, query or write error, 2 = configured policy differs from ExpectedPolicy.
 .PARAMETER ExpectedPolicy
 DE: String; NinjaOne powerShellPolicyExpected; Standard leer (Inventur); Restricted, AllSigned, RemoteSigned, Unrestricted, Bypass oder Undefined.
 EN: String; NinjaOne powerShellPolicyExpected; default empty (inventory); Restricted, AllSigned, RemoteSigned, Unrestricted, Bypass or Undefined.
 .PARAMETER CustomField
 DE: String; NinjaOne resultCustomField; Standard leer; MultiLine-Feldname, 1-128 Zeichen, Buchstabe zuerst, danach Buchstaben/Ziffern/Unterstrich.
 EN: String; NinjaOne resultCustomField; default empty; MultiLine field name, 1-128 characters, letter first, then letters/digits/underscore.
+.EXAMPLE
+.\checkPowerShellPolicy.ps1
+DE: Nur Inventur der Ausführungsrichtlinien.
+EN: Execution policy inventory only.
+.EXAMPLE
+.\checkPowerShellPolicy.ps1 -ExpectedPolicy RemoteSigned -CustomField powerShellPolicyReport
+DE: Meldet Exit 2, wenn die konfigurierte Richtlinie nicht RemoteSigned ist; JSON in powerShellPolicyReport.
+EN: Returns exit 2 if the configured policy is not RemoteSigned; JSON to powerShellPolicyReport.
 #>
 [CmdletBinding()]
 param(
@@ -35,8 +48,14 @@ try {
     $policies = @(Get-ExecutionPolicy -List -ErrorAction Stop | ForEach-Object {
         [pscustomobject]@{ Scope = [string]$_.Scope; ExecutionPolicy = [string]$_.ExecutionPolicy }
     })
-    $warning = [bool]($expected -and $effective -ne $expected)
-    $json = [pscustomobject]@{ Computer = $env:COMPUTERNAME; HostVersion = $PSVersionTable.PSVersion.ToString(); EffectivePolicy = $effective; ExpectedPolicy = $expected; Warning = $warning; Policies = $policies } | ConvertTo-Json -Depth 5
+    # DE: Process-Scope ausblenden (NinjaOne: -ExecutionPolicy Bypass). EN: Ignore Process scope (NinjaOne: -ExecutionPolicy Bypass).
+    $configured = 'Undefined'
+    foreach ($scope in @('MachinePolicy', 'UserPolicy', 'CurrentUser', 'LocalMachine')) {
+        $entry = $policies | Where-Object { $_.Scope -eq $scope } | Select-Object -First 1
+        if ($entry -and $entry.ExecutionPolicy -ne 'Undefined') { $configured = $entry.ExecutionPolicy; break }
+    }
+    $warning = [bool]($expected -and $configured -ne $expected)
+    $json = [pscustomobject]@{ Computer = $env:COMPUTERNAME; HostVersion = $PSVersionTable.PSVersion.ToString(); ConfiguredPolicy = $configured; EffectivePolicy = $effective; ExpectedPolicy = $expected; Warning = $warning; Policies = $policies } | ConvertTo-Json -Depth 5
     Write-Output $json
     $field = if ($null -eq $CustomField) { '' } else { $CustomField.Trim() }
     if ($field -and $field -ne 'null') {

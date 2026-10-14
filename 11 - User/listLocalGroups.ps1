@@ -23,6 +23,12 @@ DE/EN: NinjaOne resultFormat; leer/null = Json; Werte/values Json, PlainText.
 DE/EN: -WhatIf liest weiter / still reads; unterdrueckt Feldschreiben / skips field write.
 DE/EN: NinjaOne resultCustomField; leer/null = kein Feld/no field.
 NinjaOne MultiLine; Name/name [A-Za-z][A-Za-z0-9_]{0,99}; maximal/maximum 4000 Zeichen/characters.
+.EXAMPLE
+.\listLocalGroups.ps1 -MaxRecords 50
+DE: Bis zu 50 lokale Gruppen als JSON. EN: Up to 50 local groups as JSON.
+.EXAMPLE
+.\listLocalGroups.ps1 -ResultFormat PlainText -CustomField localGroups
+DE: Gruppen als Text in localGroups schreiben. EN: Write groups as text to localGroups.
 #>
 [CmdletBinding(SupportsShouldProcess)]
 param(

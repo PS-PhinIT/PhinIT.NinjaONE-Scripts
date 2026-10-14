@@ -1,4 +1,5 @@
 ﻿#Requires -Version 5.1
+
 <#
 .SYNOPSIS
     DE: Liest den Windows-Zeitsynchronisationsstatus mit w32tm /query /status.
@@ -15,6 +16,14 @@
 .PARAMETER CustomField
     DE: Optionales MultiLine-Geräteattribut; resultCustomField.
     EN: Optional MultiLine device custom field; resultCustomField.
+.EXAMPLE
+    .\readTimeSyncStatus.ps1
+    DE: Gibt die Ausgabe von w32tm /query /status aus.
+    EN: Outputs the result of w32tm /query /status.
+.EXAMPLE
+    .\readTimeSyncStatus.ps1 -CustomField timeSyncStatus
+    DE: Schreibt die w32tm-Ausgabe zusätzlich in timeSyncStatus.
+    EN: Additionally writes the w32tm output to timeSyncStatus.
 .NOTES
     DE: SYSTEM, 64-Bit-PowerShell. Explizite Parameter vor Umgebungsvariablen.
         Exit 0 = Abfrage erfolgreich, 1 = Fehler, 2 = leere Ausgabe.
@@ -38,9 +47,16 @@ try {
     }
     # DE: Feste, ausschließlich lesende Argumente; keine Benutzereingabe.
     # EN: Fixed, read-only arguments; no user-supplied command arguments.
+    # DE: PS 5.1 wandelt stderr bei 2>&1 und ErrorActionPreference=Stop in einen Abbruch um; Exitcode selbst auswerten.
+    # EN: PS 5.1 turns stderr into a terminating error with 2>&1 and Stop; evaluate the exit code instead.
     $global:LASTEXITCODE = 0
-    $lines = @(& $executable /query /status 2>&1)
-    $queryExitCode = $global:LASTEXITCODE
+    $ErrorActionPreference = 'Continue'
+    try {
+        $lines = @(& $executable /query /status 2>&1)
+        $queryExitCode = $global:LASTEXITCODE
+    } finally {
+        $ErrorActionPreference = 'Stop'
+    }
     $text = ($lines | ForEach-Object { "$_" }) -join [Environment]::NewLine
     if ($queryExitCode -ne 0) {
         throw ("w32tm-Abfrage fehlgeschlagen / w32tm query failed (exit {0}): {1}" -f $queryExitCode, $text.Substring(0, [Math]::Min(1000, $text.Length)))

@@ -1,4 +1,5 @@
 ﻿#Requires -Version 5.1
+
 <#
 .SYNOPSIS
 DE: Chocolatey-Standardinstallation anhand geschützter Dateien schreibgeschützt prüfen.
@@ -14,12 +15,22 @@ DE: Datei-/Versionsmetadaten sind kein Integritätsnachweis; portable/abweichend
 EN: File/version metadata is not proof of integrity; portable/nonstandard installations are omitted.
 DE: Keine Paketinstallation, Aktualisierung oder Paketskriptausführung; keine Paketinventur.
 EN: No package installation, upgrade or package script execution; no package inventory.
+DE: Exit 0 = OK, 1 = Eingabe-, Abfrage- oder Schreibfehler, 2 = Befund (Reparsepunkt, unerwarteter Pfadtyp, nicht vertrauenswürdiger Besitzer, Schreibrecht für nicht privilegierte Konten) oder fehlende Installation bei RequireInstalled=true.
+EN: Exit 0 = OK, 1 = input, query or write error, 2 = finding (reparse point, unexpected path type, untrusted owner, nonprivileged write permission) or missing installation with RequireInstalled=true.
 .PARAMETER RequireInstalled
 DE: String mit Boolean-Wert true/false; NinjaOne chocolateyStatusRequireInstalled; Standard false. true meldet fehlende Standardinstallation mit Exit 2.
 EN: String containing Boolean true/false; NinjaOne chocolateyStatusRequireInstalled; default false. true reports a missing standard installation with exit 2.
 .PARAMETER CustomField
 DE: String; NinjaOne resultCustomField; Standard leer; MultiLine-Feldname, 1-128 Zeichen, Buchstabe zuerst, danach Buchstaben/Ziffern/Unterstrich. Klartext-JSON, maximal 4000 Zeichen, keine Kürzung.
 EN: String; NinjaOne resultCustomField; default empty; MultiLine field name, 1-128 characters, letter first, then letters/digits/underscore. Plain-text JSON, maximum 4000 characters, no truncation.
+.EXAMPLE
+.\checkChocolateyStatus.ps1
+DE: Prüft die Standardinstallation; fehlendes Chocolatey ist kein Befund.
+EN: Audits the standard installation; missing Chocolatey is not a finding.
+.EXAMPLE
+.\checkChocolateyStatus.ps1 -RequireInstalled true -CustomField chocolateyStatus
+DE: Meldet fehlendes Chocolatey mit Exit 2 und schreibt das JSON in chocolateyStatus.
+EN: Reports missing Chocolatey with exit 2 and writes the JSON to chocolateyStatus.
 #>
 [CmdletBinding()]
 param(

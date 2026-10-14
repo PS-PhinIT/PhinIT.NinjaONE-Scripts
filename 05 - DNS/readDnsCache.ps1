@@ -1,4 +1,5 @@
 ﻿#Requires -Version 5.1
+
 <#
 .SYNOPSIS
     DE: Meldet begrenzte DNS-Cache-Metadaten, ohne Cache zu leeren.
@@ -14,6 +15,14 @@
 .PARAMETER CustomField
     DE: Optionales MultiLine-Geräteattribut; resultCustomField.
     EN: Optional MultiLine device custom field; resultCustomField.
+.EXAMPLE
+    .\readDnsCache.ps1 -MaxRecords 50
+    DE: Meldet Typ, Status und TTL von bis zu 50 Cache-Einträgen (Exit 2 bei Kürzung).
+    EN: Reports type, status and TTL of up to 50 cache entries (exit 2 if truncated).
+.EXAMPLE
+    .\readDnsCache.ps1 -MaxRecords 25 -CustomField dnsCacheReport
+    DE: Standardumfang 25; JSON in das MultiLine-Feld dnsCacheReport schreiben.
+    EN: Default size 25; write JSON to the MultiLine field dnsCacheReport.
 .NOTES
     DE: SYSTEM, 64-Bit-PowerShell. Explizite Parameter vor Umgebungsvariablen.
         Leere Werte verwenden Standards. Exit 0 = Erfolg, 1 = Fehler, 2 = gekürzt.

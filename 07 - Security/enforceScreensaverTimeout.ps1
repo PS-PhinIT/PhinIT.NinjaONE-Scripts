@@ -34,6 +34,18 @@ EN: Set machine policy; securityApplyMachineInactivityPolicy; default false.
 .PARAMETER CustomField
 DE: Optionales MultiLine-JSON-Feld; resultCustomField; Standard leer.
 EN: Optional MultiLine JSON field; resultCustomField; default empty.
+.EXAMPLE
+.\enforceScreensaverTimeout.ps1 -TimeoutSeconds 900
+DE: Nur Pruefung: Exit 2, wenn InactivityTimeoutSecs nicht 900 (DWORD) ist; keine Aenderung.
+EN: Audit only: exit 2 if InactivityTimeoutSecs is not 900 (DWORD); no changes.
+.EXAMPLE
+.\enforceScreensaverTimeout.ps1 -TimeoutSeconds 600 -ApplyMachinePolicy true -WhatIf
+DE: Simuliert das Setzen auf 600 Sekunden; nichts wird geschrieben (Skipped, Exit 2).
+EN: Simulates setting 600 seconds; nothing is written (Skipped, exit 2).
+.EXAMPLE
+.\enforceScreensaverTimeout.ps1 -TimeoutSeconds 600 -ApplyMachinePolicy true -Confirm:$false -CustomField inactivityPolicy
+DE: Setzt 600 Sekunden unbeaufsichtigt; NinjaOne-Laeufe benoetigen -Confirm:$false, da ConfirmImpact High sonst eine Rueckfrage ausloest.
+EN: Sets 600 seconds unattended; NinjaOne runs need -Confirm:$false because ConfirmImpact High otherwise triggers a prompt.
 #>
 [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'High')]
 param([string]$TimeoutSeconds = '900', [string]$ApplyMachinePolicy = 'false', [string]$CustomField = '')

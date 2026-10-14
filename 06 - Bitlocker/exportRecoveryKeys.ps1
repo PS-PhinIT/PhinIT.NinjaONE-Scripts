@@ -34,6 +34,18 @@ EN: Enable AD DS backup; bitlockerEnableAdDsEscrow; default false.
 .PARAMETER CustomField
 DE: Optionales MultiLine-JSON-Feld; resultCustomField; Standard leer.
 EN: Optional MultiLine JSON field; resultCustomField; default empty.
+.EXAMPLE
+.\exportRecoveryKeys.ps1 -MountPoint C:
+DE: Nur Inventar der RecoveryPassword-Protector-IDs auf C:; keine Aenderung, keine Kennwoerter.
+EN: Inventory of RecoveryPassword protector IDs on C: only; no changes, no passwords.
+.EXAMPLE
+.\exportRecoveryKeys.ps1 -MountPoint C: -EnableAdDsEscrow true -WhatIf
+DE: Simuliert das AD-DS-Escrow; nichts wird gesichert (Status Skipped_NotVerified, Exit 2).
+EN: Simulates AD DS escrow; nothing is backed up (status Skipped_NotVerified, exit 2).
+.EXAMPLE
+.\exportRecoveryKeys.ps1 -MountPoint C: -EnableAdDsEscrow true -Confirm:$false -CustomField bitlockerEscrowStatus
+DE: Unbeaufsichtigtes AD-DS-Escrow; NinjaOne-Laeufe benoetigen -Confirm:$false, da ConfirmImpact High sonst eine Rueckfrage ausloest.
+EN: Unattended AD DS escrow; NinjaOne runs need -Confirm:$false because ConfirmImpact High otherwise triggers a prompt.
 #>
 [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'High')]
 param([string]$MountPoint = $env:SystemDrive, [string]$EnableAdDsEscrow = 'false', [string]$CustomField = '')

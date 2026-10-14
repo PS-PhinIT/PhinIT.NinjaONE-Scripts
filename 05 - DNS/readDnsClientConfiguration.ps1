@@ -1,4 +1,5 @@
 ﻿#Requires -Version 5.1
+
 <#
 .SYNOPSIS
     DE: Liest globale und adapterbezogene DNS-Client-Konfiguration.
@@ -16,6 +17,14 @@
 .PARAMETER CustomField
     DE: Optionales MultiLine-Geräteattribut; resultCustomField.
     EN: Optional MultiLine device custom field; resultCustomField.
+.EXAMPLE
+    .\readDnsClientConfiguration.ps1
+    DE: Liest die DNS-Client-Konfiguration aller Adapter.
+    EN: Reads the DNS client configuration of all interfaces.
+.EXAMPLE
+    .\readDnsClientConfiguration.ps1 -InterfaceIndex 12 -CustomField dnsClientConfiguration
+    DE: Nur Adapter mit Index 12; JSON in dnsClientConfiguration schreiben.
+    EN: Only interface index 12; write JSON to dnsClientConfiguration.
 .NOTES
     DE: SYSTEM, 64-Bit-PowerShell. Explizite Parameter vor Umgebungsvariablen.
         Exit 0 = Erfolg, 1 = Fehler, 2 = keine Adapter.

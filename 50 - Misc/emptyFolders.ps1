@@ -1,4 +1,5 @@
 ﻿#Requires -Version 5.1
+
 <#
 .SYNOPSIS
     DE: Meldet leere Ordner unter einem ausdrücklich konfigurierten Pfad.
@@ -24,6 +25,14 @@
 .PARAMETER CustomField
     DE: Optionales MultiLine-Geräteattribut; resultCustomField.
     EN: Optional MultiLine device custom field; resultCustomField.
+.EXAMPLE
+    .\emptyFolders.ps1 -RootPath 'D:\Shares\Projects'
+    DE: Meldet bis zu 25 leere Ordner unter D:\Shares\Projects (max. 1000 geprüft).
+    EN: Reports up to 25 empty folders under D:\Shares\Projects (max. 1000 inspected).
+.EXAMPLE
+    .\emptyFolders.ps1 -RootPath '\\fileserver\Data' -MaxFolders 5000 -MaxRecords 50 -CustomField emptyFolders
+    DE: UNC-Pfad, bis zu 5000 Ordner prüfen, 50 melden; JSON in emptyFolders.
+    EN: UNC path, inspect up to 5000 folders, report 50; JSON to emptyFolders.
 .NOTES
     DE: SYSTEM, 64-Bit-PowerShell. Explizite Parameter vor Umgebungsvariablen;
         leere Werte verwenden Standards. Maximal 4000 Zeichen.
@@ -83,15 +92,17 @@ try {
     if ($CustomField -and -not (Get-Command Ninja-Property-Set -ErrorAction SilentlyContinue)) {
         throw 'Ninja-Property-Set fehlt / is unavailable.'
     }
-    $queue = New-Object 'System.Collections.Generic.Queue[string]'
-    $queue.Enqueue($root.FullName)
+    # DE: DirectoryInfo-Objekte einreihen, damit kein zusätzliches Get-Item je Ordner nötig ist.
+    # EN: Queue DirectoryInfo objects to avoid an extra Get-Item per folder.
+    $queue = New-Object 'System.Collections.Generic.Queue[System.IO.DirectoryInfo]'
+    $queue.Enqueue($root)
     $scanned = 0
     $emptyCount = 0
     $skippedLinks = 0
     $records = @()
     while ($queue.Count -gt 0 -and $scanned -lt $scanLimit) {
-        $path = $queue.Dequeue()
-        $folder = Get-Item -LiteralPath $path -Force -ErrorAction Stop
+        $folder = $queue.Dequeue()
+        $path = $folder.FullName
         if ($folder.Attributes -band [System.IO.FileAttributes]::ReparsePoint) {
             $skippedLinks++
             continue
@@ -105,7 +116,7 @@ try {
         foreach ($child in $children) {
             if ($child.PSIsContainer) {
                 if ($child.Attributes -band [System.IO.FileAttributes]::ReparsePoint) { $skippedLinks++ }
-                else { $queue.Enqueue($child.FullName) }
+                else { $queue.Enqueue($child) }
             }
         }
     }

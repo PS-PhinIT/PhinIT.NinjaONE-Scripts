@@ -19,12 +19,22 @@ EN: CustomField / resultCustomField: optional MultiLine JSON field, maximum 4000
 DE: Explizite Parameter haben Vorrang; keine Remediation.
 EN: Explicit parameters take precedence; no remediation.
 DE/EN: Exit 0 = OK, 1 = Fehler/error, 2 = Warnung/warning.
+DE: Exit 2 = Profil fehlt/deaktiviert, Standard-Inbound nicht Block oder (bei RequireOutboundBlock=true) Standard-Outbound nicht Block.
+EN: Exit 2 = profile missing/disabled, default inbound not Block or (with RequireOutboundBlock=true) default outbound not Block.
 .PARAMETER RequireOutboundBlock
 DE: Standard-Outbound-Block verlangen; securityFirewallRequireOutboundBlock; Standard false.
 EN: Require default outbound block; securityFirewallRequireOutboundBlock; default false.
 .PARAMETER CustomField
 DE: Optionales MultiLine-JSON-Feld; resultCustomField; Standard leer.
 EN: Optional MultiLine JSON field; resultCustomField; default empty.
+.EXAMPLE
+.\auditWindowsFirewall.ps1
+DE: Prueft Domain-, Private- und Public-Profil auf aktiviert und Inbound-Block.
+EN: Checks Domain, Private and Public profiles for enabled state and inbound block.
+.EXAMPLE
+.\auditWindowsFirewall.ps1 -RequireOutboundBlock true -CustomField firewallAudit
+DE: Verlangt zusaetzlich Standard-Outbound-Block; JSON in firewallAudit.
+EN: Additionally requires default outbound block; JSON to firewallAudit.
 #>
 [CmdletBinding()]
 param([string]$RequireOutboundBlock = 'false', [string]$CustomField = '')

@@ -1,4 +1,5 @@
 ﻿#Requires -Version 5.1
+
 <#
 .SYNOPSIS
 DE: Maschinenweite Uninstall-Registry inventarisieren, ohne MSI-Reparatur auszulösen.
@@ -8,12 +9,22 @@ DE: Windows SYSTEM, 64-Bit; keine Benutzerprofile/AppX-Pakete. NameContains ist 
 EN: Windows SYSTEM, 64-bit; no user profiles/AppX packages. NameContains is literal text.
 DE: Optionales MultiLine-CustomField: Klartext-JSON, maximal 4000 Zeichen; keine Kürzung.
 EN: Optional MultiLine CustomField: plain-text JSON, maximum 4000 characters; no truncation.
+DE: Exit 0 = Erfolg, 1 = Eingabe-, Registry- oder Schreibfehler.
+EN: Exit 0 = success, 1 = input, registry or write error.
 .PARAMETER NameContains
 DE: String; NinjaOne softwareInventoryNameContains; Standard leer; literaler Teilname, maximal 200 Zeichen, keine Steuerzeichen.
 EN: String; NinjaOne softwareInventoryNameContains; default empty; literal substring, maximum 200 characters, no control characters.
 .PARAMETER CustomField
 DE: String; NinjaOne resultCustomField; Standard leer; MultiLine-Feldname, 1-128 Zeichen, Buchstabe zuerst, danach Buchstaben/Ziffern/Unterstrich.
 EN: String; NinjaOne resultCustomField; default empty; MultiLine field name, 1-128 characters, letter first, then letters/digits/underscore.
+.EXAMPLE
+.\readInstalledSoftware.ps1
+DE: Listet alle maschinenweiten Uninstall-Einträge auf.
+EN: Lists all machine-wide uninstall entries.
+.EXAMPLE
+.\readInstalledSoftware.ps1 -NameContains 'Microsoft Office' -CustomField softwareInventory
+DE: Nur Einträge mit "Microsoft Office" im Namen; JSON in softwareInventory schreiben.
+EN: Only entries containing "Microsoft Office"; write JSON to softwareInventory.
 #>
 [CmdletBinding()]
 param(
@@ -38,7 +49,8 @@ try {
             if ($null -eq $key) { continue }
             foreach ($name in $key.GetSubKeyNames()) {
                 $entry = $key.OpenSubKey($name)
-                if ($null -eq $entry) { throw 'Registryeintrag nicht lesbar / Registry entry unreadable.' }
+                # DE: Während Installationen entfernte Schlüssel überspringen. EN: Skip keys removed during installs.
+                if ($null -eq $entry) { continue }
                 try {
                     $display = [string]$entry.GetValue('DisplayName')
                     if (-not [string]::IsNullOrWhiteSpace($display) -and (-not $filter -or $display.IndexOf($filter, [StringComparison]::OrdinalIgnoreCase) -ge 0)) {

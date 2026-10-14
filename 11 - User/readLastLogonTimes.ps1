@@ -29,6 +29,12 @@ DE/EN: NinjaOne resultFormat; leer/null = Json; Werte/values Json, PlainText.
 DE/EN: -WhatIf liest weiter / still reads; unterdrueckt Feldschreiben / skips field write.
 DE/EN: NinjaOne resultCustomField; leer/null = kein Feld/no field.
 NinjaOne MultiLine; Name/name [A-Za-z][A-Za-z0-9_]{0,99}; maximal/maximum 4000 Zeichen/characters.
+.EXAMPLE
+.\readLastLogonTimes.ps1 -StaleDays 60
+DE: Exit 2 fuer ungeladene Profile, die seit mindestens 60 Tagen nicht genutzt wurden. EN: Exit 2 for unloaded profiles unused for at least 60 days.
+.EXAMPLE
+.\readLastLogonTimes.ps1 -StaleDays 180 -MaxRecords 50 -ResultFormat PlainText -CustomField staleProfiles
+DE: Grenze 180 Tage; Ergebnis als Text in staleProfiles. EN: 180-day limit; result as text to staleProfiles.
 #>
 [CmdletBinding(SupportsShouldProcess)]
 param(

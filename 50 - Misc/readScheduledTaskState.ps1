@@ -1,4 +1,5 @@
 ﻿#Requires -Version 5.1
+
 <#
 .SYNOPSIS
     DE: Meldet begrenzte Status-Metadaten geplanter Aufgaben.
@@ -19,6 +20,14 @@
 .PARAMETER CustomField
     DE: Optionales MultiLine-Geräteattribut; resultCustomField.
     EN: Optional MultiLine device custom field; resultCustomField.
+.EXAMPLE
+    .\readScheduledTaskState.ps1
+    DE: Status der Aufgaben im Stammordner \ (max. 25).
+    EN: State of tasks in the root folder \ (max. 25).
+.EXAMPLE
+    .\readScheduledTaskState.ps1 -TaskPath '\Microsoft\Windows\WindowsUpdate\' -MaxRecords 50 -CustomField scheduledTaskState
+    DE: Aufgaben im Ordner WindowsUpdate; JSON in scheduledTaskState.
+    EN: Tasks in the WindowsUpdate folder; JSON to scheduledTaskState.
 .NOTES
     DE: SYSTEM, 64-Bit-PowerShell. Explizite Parameter vor Umgebungsvariablen.
         Leere Werte verwenden Standards. Exit 0 = Erfolg, 1 = Fehler,

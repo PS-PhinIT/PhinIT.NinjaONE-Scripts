@@ -16,7 +16,9 @@
 * Für einige Module: .NET 4.8 oder höher
 
 # Mitwirken
-* Pull-Requests und Issues sind willkommen!
+* Pull-Requests und Issues sind willkommen! Regeln: [CONTRIBUTING.md](CONTRIBUTING.md)
+* Änderungshistorie: [CHANGELOG.md](CHANGELOG.md)
+* Sicherheitslücken bitte vertraulich melden: [SECURITY.md](SECURITY.md)
 
 # Diagnose-Skripte / Diagnostic scripts
 
@@ -83,37 +85,214 @@ permissions.
 
 ## Themenkatalog / Topic catalogue
 
-Jeder nummerierte Themenordner enthält mindestens fünf eigenständige Skripte.
-Die bestehenden DNS-Hauptskripte bleiben unverändert; ihre eigenen Anleitungen
-und Rückgabecodes gelten weiterhin. / Each numbered topic folder contains at
-least five standalone scripts. Existing main DNS scripts are unchanged; their
-own guides and exit codes still apply.
+Jeder nummerierte Themenordner enthält mindestens 15 eigenständige Skripte.
+Für die DNS-Hauptskripte (`00-`/`01-`) gelten ihre eigenen Anleitungen und
+Rückgabecodes. / Each numbered topic folder contains at least 15 standalone
+scripts. The main DNS scripts (`00-`/`01-`) keep their own guides and exit codes.
 
 | Bereich / Topic | Aufgaben / Tasks |
 | --- | --- |
-| `01 - System` | Systemdaten, Laufzeit, Speicherplatz, benötigte Dienste, Zeitzone / system information, uptime, disk space, required services, time zone |
-| `02 - Updates` | Update-Status, Cache-Wartung, Dienstreparatur und Update-Inventar / update status, cache maintenance, service repair and update inventory |
-| `03 - Software` | Installiertes Inventar, blockierte Software, PowerShell-Richtlinien, Dienste, .NET und Chocolatey-Bereitschaft / installed inventory, blocked software, PowerShell policies, services, .NET and Chocolatey readiness |
-| `04 - Certificates` | Zertifikatsinventar, Ablaufprüfung und öffentliche Zertifikate / certificate inventory, expiry checks and public certificates |
-| `05 - DNS` | Bestehende DNS-Konfiguration/-Änderung plus DNS-Auflösung, Cache und Client-Inventar / existing DNS configuration/change plus resolution, cache and client inventory |
-| `06 - Bitlocker` | Verschlüsselung, Schutzmechanismen, TPM und Recovery-Escrow / encryption, protectors, TPM and recovery escrow |
-| `07 - Security` | Defender, weitere Schutzprodukte, lokale Administratoren, Sperrzeit und Firewall / Defender, other protection products, local administrators, lock timeout and firewall |
-| `10 - Network` | Lokale Verbindungen/Ports, Adapter, Einzelziel-Verbindungstest und Netzwerkdiagnose / local connections/ports, adapters, single-target connection test and network diagnostics |
-| `11 - User` | Profilinventar, Profilnutzung, lokale Benutzer, Gruppen und Mitgliedschaften / profile inventory, profile usage, local users, groups and memberships |
-| `50 - Misc` | Neustart-Indikatoren, leere Ordner, Zeitsynchronisation, geplante Aufgaben und Ereignisse / reboot indicators, empty folders, time synchronization, scheduled tasks and events |
+| `01 - System` | Systemdaten, Laufzeit, Speicherplatz, Dienste, Zeitzone, CPU/RAM/Auslagerung, Datenträgerzustand, BIOS/Secure Boot, Akku, Aktivierung, Gerätefehler / system information, uptime, disk space, services, time zone, CPU/RAM/page file, disk health, BIOS/Secure Boot, battery, activation, device problems |
+| `02 - Updates` | Update-Status, Cache-Wartung, Dienstreparatur, Update-Inventar, ausstehende/fehlgeschlagene Updates, WSUS/WUfB-Richtlinien, Pause, Zielversion, Komponentenspeicher, Microsoft-365-Kanal / update status, cache maintenance, service repair, inventory, pending/failed updates, WSUS/WUfB policies, pause, target version, component store, Microsoft 365 channel |
+| `03 - Software` | Inventar, blockierte/erforderliche Software, Mindestversionen, Autostart, Browser, AppX, Java, VC++, winget, optionale Features, PowerShell-Engines und -Richtlinien / inventory, blocked/required software, minimum versions, startup, browsers, AppX, Java, VC++, winget, optional features, PowerShell engines and policies |
+| `04 - Certificates` | Inventar, Ablauf, RDP-/HTTP.sys-/Remote-TLS-Zertifikate, Ketten, schwache Zertifikate, Autoenrollment, Root-Update, SCHANNEL/.NET-TLS / inventory, expiry, RDP/HTTP.sys/remote TLS certificates, chains, weak certificates, auto-enrollment, root update, SCHANNEL/.NET TLS |
+| `05 - DNS` | DNS-Konfiguration/-Änderung, Auflösung, Cache, Serverantwort, Registrierung/PTR, hosts-Datei, Suffixe, NRPT, DoH, LLMNR/NetBIOS, DC-SRV-Einträge, DNS-Ereignisse / DNS configuration/change, resolution, cache, server response, registration/PTR, hosts file, suffixes, NRPT, DoH, LLMNR/NetBIOS, DC SRV records, DNS events |
+| `06 - Bitlocker` | Verschlüsselung, Schutzmechanismen, TPM, Recovery-Escrow, Compliance, Pause, Richtlinien, Pre-Boot-PIN, Wechseldatenträger, WinRE, Ereignisse / encryption, protectors, TPM, recovery escrow, compliance, suspension, policies, pre-boot PIN, removable drives, WinRE, events |
+| `07 - Security` | Defender (inkl. Ausschlüsse/ASR), Firewall, lokale Admins, UAC, SMB1/-Signierung, Credential Guard, LSA-Schutz, NTLM/WDigest, LAPS, RDP, Kennwort-/Überwachungsrichtlinie, fehlgeschlagene Anmeldungen, integrierte Konten / Defender (incl. exclusions/ASR), firewall, local admins, UAC, SMB1/signing, Credential Guard, LSA protection, NTLM/WDigest, LAPS, RDP, password/audit policy, failed logons, built-in accounts |
+| `10 - Network` | Verbindungen/Ports, Adapter und Linkgeschwindigkeit, Ping/Traceroute/TCP-Test, WLAN, Proxy, VPN, Routing, ARP, IP-Konflikte, Netzwerkprofil, SMB-Freigaben, Internetverbindung / connections/ports, adapters and link speed, ping/traceroute/TCP test, Wi-Fi, proxy, VPN, routing, ARP, IP conflicts, network profile, SMB shares, internet connectivity |
+| `11 - User` | Profile (Größe, veraltet, temporär), lokale Benutzer/Gruppen, Sitzungen, Anmelde-/RDP-Verlauf, inaktive/gesperrte Konten, Kennwortablauf, Entra-Join, Autologon / profiles (size, stale, temporary), local users/groups, sessions, logon/RDP history, inactive/locked accounts, password expiry, Entra join, autologon |
+| `50 - Misc` | Neustart-Indikatoren, leere Ordner, Zeitsync, Aufgaben, Ereignisse, Bluescreens, unerwartete Abschaltungen, App-/Dienstabstürze, WHEA, Drucker, USB-Verlauf, Temp/große Dateien, Energieplan, Zuverlässigkeit, NinjaOne-Agent / reboot indicators, empty folders, time sync, tasks, events, bug checks, unexpected shutdowns, app/service crashes, WHEA, printers, USB history, temp/large files, power plan, reliability, NinjaOne agent |
 
-| Ordner / Folder | Skriptdateien / Script files |
-| --- | --- |
-| `01 - System` | `readSystemInfo.ps1`, `readUptime.ps1`, `checkDiskSpace.ps1`, `checkRequiredServices.ps1`, `checkTimeZone.ps1` |
-| `02 - Updates` | `readWindowsUpdateStatus.ps1`, `cleanupWindowsUpdateCache.ps1`, `repairWindowsUpdate.ps1`, `checkWindowsUpdateServices.ps1`, `readHotfixInventory.ps1` |
-| `03 - Software` | `readInstalledSoftware.ps1`, `checkBlockedSoftware.ps1`, `checkPowerShellPolicy.ps1`, `checkSoftwareServices.ps1`, `readDotNetInventory.ps1`, `checkChocolateyStatus.ps1` |
-| `04 - Certificates` | `checkExpiredCertificates.ps1`, `exportCertificateStore.ps1`, `readCertificateInventory.ps1`, `checkSelfSignedCertificates.ps1`, `checkTrustedRootCertificates.ps1` |
-| `05 - DNS` | `00-readDNSSettingsClient.ps1`, `01-setDNSSettingsClient.ps1`, `resolveDnsName.ps1`, `readDnsCache.ps1`, `readDnsClientConfiguration.ps1` |
-| `06 - Bitlocker` | `readBitLockerStatus.ps1`, `exportRecoveryKeys.ps1`, `auditKeyProtectors.ps1`, `auditVolumeEncryption.ps1`, `checkTpmReadiness.ps1` |
-| `07 - Security` | `checkWindowsDefender.ps1`, `checkAnotherSecurityProduct.ps1`, `detectUnauthorizedLocalAdmins.ps1`, `enforceScreensaverTimeout.ps1`, `auditWindowsFirewall.ps1` |
-| `10 - Network` | `auditTcpConnections.ps1`, `checkOpenPorts.ps1`, `listNetworkAdapters.ps1`, `testTcpEndpoint.ps1`, `auditFirewallProfiles.ps1` |
-| `11 - User` | `listUsersProfiles.ps1`, `readLastLogonTimes.ps1`, `listLocalUsers.ps1`, `listLocalGroups.ps1`, `listLocalGroupMembers.ps1` |
-| `50 - Misc` | `restartPendingCheck.ps1`, `emptyFolders.ps1`, `readTimeSyncStatus.ps1`, `readScheduledTaskState.ps1`, `readEventLogErrors.ps1` |
+| Ordner / Folder | Anzahl / Count | Skriptdateien / Script files |
+| --- | --- | --- |
+| `01 - System` | 15 | `checkDiskSpace.ps1`, `checkPhysicalDiskHealth.ps1`, `checkRequiredServices.ps1`, `checkSecureBootStatus.ps1`, `checkTimeZone.ps1`, `checkWindowsActivation.ps1`, `readBatteryHealth.ps1`, `readBiosFirmware.ps1`, `readCpuUsage.ps1`, `readDeviceProblems.ps1`, `readMemoryUsage.ps1`, `readPageFileStatus.ps1`, `readSystemInfo.ps1`, `readTopProcesses.ps1`, `readUptime.ps1` |
+| `02 - Updates` | 15 | `checkComponentStoreHealth.ps1`, `checkTargetReleaseVersion.ps1`, `checkUpdatePauseState.ps1`, `checkWindowsUpdatePolicy.ps1`, `checkWindowsUpdateServices.ps1`, `checkWsusConfiguration.ps1`, `cleanupWindowsUpdateCache.ps1`, `readDeliveryOptimizationStatus.ps1`, `readHotfixInventory.ps1`, `readLastUpdateInstall.ps1`, `readOfficeUpdateChannel.ps1`, `readPendingUpdates.ps1`, `readUpdateHistoryFailures.ps1`, `readWindowsUpdateStatus.ps1`, `repairWindowsUpdate.ps1` |
+| `03 - Software` | 17 | `checkBlockedSoftware.ps1`, `checkChocolateyStatus.ps1`, `checkPowerShellPolicy.ps1`, `checkRequiredSoftware.ps1`, `checkSoftwareServices.ps1`, `checkSoftwareVersion.ps1`, `checkWindowsOptionalFeatures.ps1`, `checkWingetStatus.ps1`, `readAppxProvisionedPackages.ps1`, `readBrowserVersions.ps1`, `readDotNetInventory.ps1`, `readInstalledSoftware.ps1`, `readJavaInstallations.ps1`, `readPowerShellEngines.ps1`, `readRecentSoftwareChanges.ps1`, `readStartupPrograms.ps1`, `readVcRedistInventory.ps1` |
+| `04 - Certificates` | 17 | `checkAutoEnrollmentPolicy.ps1`, `checkCertificateChain.ps1`, `checkCertificatePresence.ps1`, `checkCodeSigningCertificates.ps1`, `checkDotNetStrongCrypto.ps1`, `checkExpiredCertificates.ps1`, `checkRdpCertificate.ps1`, `checkRemoteTlsCertificate.ps1`, `checkRootAutoUpdate.ps1`, `checkSchannelProtocols.ps1`, `checkSelfSignedCertificates.ps1`, `checkSslBindingCertificates.ps1`, `checkTrustedRootCertificates.ps1`, `checkWeakCertificates.ps1`, `exportCertificateStore.ps1`, `readCertificateInventory.ps1`, `readDisallowedCertificates.ps1` |
+| `05 - DNS` | 16 | `00-readDNSSettingsClient.ps1`, `01-setDNSSettingsClient.ps1`, `checkDnsOverHttps.ps1`, `checkDnsRegistration.ps1`, `checkDnsSuffixSearchList.ps1`, `checkDomainSrvRecords.ps1`, `checkHostsFile.ps1`, `checkLlmnrNetbiosStatus.ps1`, `checkReverseDnsRecord.ps1`, `compareDnsServerResponses.ps1`, `readDnsCache.ps1`, `readDnsClientConfiguration.ps1`, `readDnsClientEvents.ps1`, `readNrptPolicy.ps1`, `resolveDnsName.ps1`, `testDnsServerResponse.ps1` |
+| `06 - Bitlocker` | 15 | `auditKeyProtectors.ps1`, `auditVolumeEncryption.ps1`, `checkBitLockerCompliance.ps1`, `checkBitLockerPolicy.ps1`, `checkBitLockerSuspended.ps1`, `checkDeviceEncryptionSupport.ps1`, `checkPreBootAuthentication.ps1`, `checkRemovableDriveEncryption.ps1`, `checkTpmReadiness.ps1`, `checkUsedSpaceOnlyEncryption.ps1`, `checkWinREStatus.ps1`, `exportRecoveryKeys.ps1`, `readBitLockerEventErrors.ps1`, `readBitLockerStatus.ps1`, `readRecoveryKeyEscrowEvents.ps1` |
+| `07 - Security` | 19 | `auditWindowsFirewall.ps1`, `checkAnotherSecurityProduct.ps1`, `checkAuditPolicy.ps1`, `checkBuiltinAccounts.ps1`, `checkCredentialGuard.ps1`, `checkDefenderAsrRules.ps1`, `checkDefenderExclusions.ps1`, `checkLapsStatus.ps1`, `checkLegacyAuthentication.ps1`, `checkLsaProtection.ps1`, `checkPasswordPolicy.ps1`, `checkRdpSecurity.ps1`, `checkSmbSigning.ps1`, `checkSmbv1Status.ps1`, `checkUacSettings.ps1`, `checkWindowsDefender.ps1`, `detectUnauthorizedLocalAdmins.ps1`, `enforceScreensaverTimeout.ps1`, `readFailedLogons.ps1` |
+| `10 - Network` | 18 | `auditFirewallProfiles.ps1`, `auditTcpConnections.ps1`, `checkAdapterLinkSpeed.ps1`, `checkInternetConnectivity.ps1`, `checkIpAddressConflicts.ps1`, `checkNetworkProfile.ps1`, `checkOpenPorts.ps1`, `checkProxySettings.ps1`, `checkVpnConnections.ps1`, `listNetworkAdapters.ps1`, `readArpTable.ps1`, `readRoutingTable.ps1`, `readSmbShares.ps1`, `readWifiProfiles.ps1`, `readWifiStatus.ps1`, `testPingTargets.ps1`, `testTcpEndpoint.ps1`, `testTraceRoute.ps1` |
+| `11 - User` | 16 | `checkAutoLogon.ps1`, `checkInactiveLocalUsers.ps1`, `checkLockedOutUsers.ps1`, `checkPasswordNeverExpires.ps1`, `checkStaleProfiles.ps1`, `checkTemporaryProfiles.ps1`, `listLocalGroupMembers.ps1`, `listLocalGroups.ps1`, `listLocalUsers.ps1`, `listUsersProfiles.ps1`, `readEntraJoinStatus.ps1`, `readLastLogonTimes.ps1`, `readLoggedOnUsers.ps1`, `readLogonEvents.ps1`, `readRdpSessionHistory.ps1`, `readUserProfileSizes.ps1` |
+| `50 - Misc` | 17 | `checkPowerPlan.ps1`, `checkPrinterStatus.ps1`, `checkTempFolderSize.ps1`, `emptyFolders.ps1`, `readApplicationCrashes.ps1`, `readBugChecks.ps1`, `readEventLogErrors.ps1`, `readLargeFiles.ps1`, `readNinjaAgentStatus.ps1`, `readReliabilityIndex.ps1`, `readScheduledTaskState.ps1`, `readServiceCrashes.ps1`, `readTimeSyncStatus.ps1`, `readUnexpectedShutdowns.ps1`, `readUsbStorageHistory.ps1`, `readWheaErrors.ps1`, `restartPendingCheck.ps1` |
+
+### Erweiterung 2026-10-14 / Extension 2026-10-14
+
+Die folgenden Skripte erweitern jeden Themenordner. Alle sind **lesend**
+(Diagnose/Prüfung, keine Systemänderung), schreiben optional den JSON-Bericht in
+das MultiLine-Feld aus `resultCustomField` und nutzen `0` = OK, `1` = Fehler,
+`2` = Warnbefund. Bedeutung von Exit 2, Grenzwerte und Standardwerte stehen in
+der Hilfe jedes Skripts (`Get-Help .\skript.ps1 -Full`). Tests:
+`Tests/Catalog*.Tests.ps1`.
+/ The following scripts extend every topic folder. All are **read-only**
+(diagnostics/checks, no system changes), optionally write their JSON report to the
+MultiLine field named by `resultCustomField` and use `0` = OK, `1` = error,
+`2` = warning finding. Exit 2 meaning, thresholds and defaults are documented in
+each script's help. Tests: `Tests/Catalog*.Tests.ps1`.
+
+#### `01 - System`
+
+| Skript / Script | Zweck (DE) | Purpose (EN) | NinjaOne-Variablen / variables |
+| --- | --- | --- | --- |
+| `checkPhysicalDiskHealth.ps1` | Prüft den Zustand physischer Datenträger (Storage-API und optional SMART). | Checks physical disk health (Storage API and optional SMART). | `systemDiskMaxRecords` |
+| `checkSecureBootStatus.ps1` | Prüft, ob Secure Boot aktiviert ist. | Checks whether Secure Boot is enabled. | `systemSecureBootAllowUnsupported` |
+| `checkWindowsActivation.ps1` | Prüft den Aktivierungsstatus von Windows, ohne Produktschlüssel auszugeben. | Checks the Windows activation status without exposing product keys. | – |
+| `readBatteryHealth.ps1` | Meldet Akkustatus und Akkugesundheit (Verschleiß) und warnt unter einem Grenzwert. | Reports battery status and health (wear) and warns below a threshold. | `systemBatteryMinHealthPercent` |
+| `readBiosFirmware.ps1` | Meldet BIOS-/Firmware-Hersteller, Version, Datum, Seriennummer und Firmwaretyp. | Reports BIOS/firmware vendor, version, date, serial number and firmware type. | `systemBiosMaxAgeDays` |
+| `readCpuUsage.ps1` | Misst die CPU-Auslastung über mehrere Stichproben und warnt über einem Grenzwert. | Samples CPU load over several samples and warns above a threshold. | `systemCpuThresholdPercent`, `systemCpuSampleCount`, `systemCpuSampleIntervalSeconds` |
+| `readDeviceProblems.ps1` | Listet Geräte mit Problemcode im Geräte-Manager (ConfigManagerErrorCode). | Lists devices with a Device Manager problem code (ConfigManagerErrorCode). | `systemDeviceMaxRecords`, `systemDeviceIgnoreCodes` |
+| `readMemoryUsage.ps1` | Meldet die Arbeitsspeicher- und Commit-Auslastung und warnt über Grenzwerten. | Reports physical memory and commit charge usage and warns above thresholds. | `systemMemoryThresholdPercent`, `systemMemoryCommitThresholdPercent` |
+| `readPageFileStatus.ps1` | Meldet Konfiguration und Auslastung der Auslagerungsdatei(en). | Reports page file configuration and usage. | `systemPageFileThresholdPercent` |
+| `readTopProcesses.ps1` | Listet die Top-N-Prozesse nach CPU-Zeit oder Arbeitsspeicher (informativ). | Lists the top N processes by CPU time or working set (informational). | `systemTopProcessCount`, `systemTopProcessSortBy` |
+
+#### `02 - Updates`
+
+| Skript / Script | Zweck (DE) | Purpose (EN) | NinjaOne-Variablen / variables |
+| --- | --- | --- | --- |
+| `checkComponentStoreHealth.ps1` | Prüft den Komponentenspeicher (WinSxS) schnell und schreibgeschützt mit DISM /CheckHealth. | Checks the component store (WinSxS) quickly and read-only with DISM /CheckHealth. | – |
+| `checkTargetReleaseVersion.ps1` | Vergleicht installierte Windows-Version mit der TargetReleaseVersion-Richtlinie. | Compares the installed Windows version with the TargetReleaseVersion policy. | `updateTargetExpectedVersion`, `updateTargetExpectedProduct` |
+| `checkUpdatePauseState.ps1` | Prüft, ob Windows Updates lokal, per Gruppenrichtlinie oder MDM pausiert sind. | Checks whether Windows updates are paused locally, by Group Policy or by MDM. | – |
+| `checkWindowsUpdatePolicy.ps1` | Prüft Richtlinien für automatische Updates und Windows-Update-for-Business-Rückstellungen. | Checks automatic update policies and Windows Update for Business deferrals. | `updatePolicyMaxQualityDeferralDays` |
+| `checkWsusConfiguration.ps1` | Prüft die WSUS-Richtlinienkonfiguration (WUServer, UseWUServer, Zielgruppe). | Checks the WSUS policy configuration (WUServer, UseWUServer, target group). | `updateWsusExpectedServer`, `updateWsusExpectedTargetGroup` |
+| `readDeliveryOptimizationStatus.ps1` | Liest Status und Konfiguration der Übermittlungsoptimierung (Delivery Optimization). | Reads Delivery Optimization status and configuration. | – |
+| `readLastUpdateInstall.ps1` | Ermittelt die Tage seit der letzten erfolgreichen Updateinstallation. | Determines the days since the last successful update installation. | `updateLastInstallMaxDays`, `updateLastInstallIncludeDefinitions` |
+| `readOfficeUpdateChannel.ps1` | Liest Updatekanal und Updatestatus von Microsoft 365 Apps (Klick-und-Los). | Reads the update channel and update state of Microsoft 365 Apps (Click-to-Run). | `updateOfficeExpectedChannel` |
+| `readPendingUpdates.ps1` | Listet ausstehende Softwareupdates (nur Suche, kein Download/keine Installation). | Lists pending software updates (search only, no download/no installation). | `updatePendingWarnOn`, `updatePendingOnlineSearch`, `updatePendingMaxRecords` |
+| `readUpdateHistoryFailures.ps1` | Meldet fehlgeschlagene/abgebrochene Einträge im Windows-Update-Verlauf der letzten N Tage. | Reports failed/aborted Windows Update history entries of the last N days. | `updateFailureDays`, `updateFailureMaxRecords` |
+
+#### `03 - Software`
+
+| Skript / Script | Zweck (DE) | Purpose (EN) | NinjaOne-Variablen / variables |
+| --- | --- | --- | --- |
+| `checkRequiredSoftware.ps1` | Prüft, ob vorgegebene Software maschinenweit installiert ist (Pflichtliste), ohne etwas zu installieren. | Checks that required software is installed machine-wide (allow/required list) without installing anything. | `softwareRequiredNames`, `softwareRequiredMatchMode` |
+| `checkSoftwareVersion.ps1` | Prüft, ob eine installierte Software mindestens eine vorgegebene Version hat. | Checks that an installed software product meets a minimum version. | `softwareVersionName`, `softwareVersionMinimum`, `softwareVersionMatchMode`, `softwareVersionMissingIsWarning` |
+| `checkWindowsOptionalFeatures.ps1` | Prüft, dass unsichere optionale Windows-Features deaktiviert und geforderte Features aktiviert sind. | Checks that insecure Windows optional features are disabled and required features are enabled. | `softwareFeaturesMustBeDisabled`, `softwareFeaturesMustBeEnabled` |
+| `checkWingetStatus.ps1` | Prüft, ob winget.exe (App Installer) für SYSTEM auffindbar ist, ohne etwas zu installieren. | Checks whether winget.exe (App Installer) can be located for SYSTEM without installing anything. | `softwareWingetRequired`, `softwareWingetMinimumVersion` |
+| `readAppxProvisionedPackages.ps1` | Inventarisiert provisionierte AppX-Pakete des Images; optional Warnung bei unerwünschten Paketen. | Inventories provisioned AppX packages of the image; optionally warns about unwanted packages. | `softwareAppxUnwantedNames`, `softwareAppxMaxRecords` |
+| `readBrowserVersions.ps1` | Liest die Dateiversionen von Chrome, Edge, Firefox und Brave; optional Mindestversionen je Browser. | Reads file versions of Chrome, Edge, Firefox and Brave; optional minimum versions per browser. | `softwareBrowserMinChrome`, `softwareBrowserMinEdge`, `softwareBrowserMinFirefox`, `softwareBrowserMinBrave` |
+| `readJavaInstallations.ps1` | Inventarisiert Java-Laufzeiten/JDKs (Oracle, OpenJDK, Adoptium, Zulu, Microsoft u. a.) mit Hersteller und Version. | Inventories Java runtimes/JDKs (Oracle, OpenJDK, Adoptium, Zulu, Microsoft etc.) with vendor and version. | `softwareJavaWarnIfPresent`, `softwareJavaMinimumVersion` |
+| `readPowerShellEngines.ps1` | Meldet installierte PowerShell-Engines (2.0, 5.1, 7.x) und warnt, wenn PowerShell 2.0 aktiviert ist. | Reports installed PowerShell engines (2.0, 5.1, 7.x) and warns if PowerShell 2.0 is enabled. | – |
+| `readRecentSoftwareChanges.ps1` | Listet MSI-Installationen und -Deinstallationen der letzten N Tage aus dem Anwendungsprotokoll. | Lists MSI installs and uninstalls of the last N days from the Application log. | `softwareChangesDays`, `softwareChangesMaxEvents`, `softwareChangesWarnOnChange` |
+| `readStartupPrograms.ps1` | Inventarisiert Autostart-Einträge (Win32_StartupCommand und HKLM Run/RunOnce), optional mit Allowlist. | Inventories startup entries (Win32_StartupCommand and HKLM Run/RunOnce), optionally against an allowlist. | `softwareStartupAllowedNames`, `softwareStartupMaxRecords`, `softwareStartupIncludeCommands` |
+| `readVcRedistInventory.ps1` | Inventarisiert Visual C++ Redistributables (Jahr, Architektur, Version) und meldet nicht mehr unterstützte. | Inventories Visual C++ Redistributables (year, architecture, version) and reports out-of-support ones. | `softwareVcRedistWarnUnsupported`, `softwareVcRedistUnsupportedYears` |
+
+#### `04 - Certificates`
+
+| Skript / Script | Zweck (DE) | Purpose (EN) | NinjaOne-Variablen / variables |
+| --- | --- | --- | --- |
+| `checkAutoEnrollmentPolicy.ps1` | Liest und dekodiert die Computer-Richtlinie für Zertifikat-Autoregistrierung (AEPolicy). | Reads and decodes the computer certificate autoenrollment policy (AEPolicy). | `certAutoEnrollRequireEnabled` |
+| `checkCertificateChain.ps1` | Baut Zertifikatsketten für Maschinenzertifikate mit privatem Schlüssel und meldet Kettenfehler. | Builds certificate chains for machine certificates with a private key and reports chain errors. | `certChainRevocationMode`, `certChainMaxCertificates` |
+| `checkCertificatePresence.ps1` | Prüft, ob bestimmte Zertifikate (Thumbprint und/oder exakter Betreff) in einem Maschinenspeicher vorhanden und gültig sind. | Checks whether specific certificates (thumbprint and/or exact subject) exist and are valid in a machine store. | `certPresenceStoreName`, `certPresenceThumbprints`, `certPresenceSubject` |
+| `checkCodeSigningCertificates.ps1` | Prüft Codesignatur-Zertifikate (EKU 1.3.6.1.5.5.7.3.3) in LocalMachine\My und TrustedPublisher auf Ablauf. | Checks code-signing certificates (EKU 1.3.6.1.5.5.7.3.3) in LocalMachine\My and TrustedPublisher for expiry. | `certCodeSigningWarningDays`, `certCodeSigningMaxRecords` |
+| `checkDotNetStrongCrypto.ps1` | Prüft SchUseStrongCrypto und SystemDefaultTlsVersions für .NET Framework (64- und 32-Bit). | Checks SchUseStrongCrypto and SystemDefaultTlsVersions for .NET Framework (64- and 32-bit). | `certDotNetIncludeV2` |
+| `checkRdpCertificate.ps1` | Prüft das Zertifikat des RDP-Listeners RDP-Tcp (Ablauf, selbst signiert). | Checks the certificate of the RDP-Tcp listener (expiry, self-signed). | `certRdpWarningDays`, `certRdpFailOnSelfSigned` |
+| `checkRemoteTlsCertificate.ps1` | Prüft das TLS-Zertifikat genau eines entfernten Endpunkts (Host:Port). | Checks the TLS certificate of exactly one remote endpoint (host:port). | `certTlsTargetHost`, `certTlsTargetPort`, `certTlsTimeoutMs`, `certTlsWarningDays` |
+| `checkRootAutoUpdate.ps1` | Prüft automatische Aktualisierung von Stamm- und nicht vertrauenswürdigen Zertifikaten. | Checks automatic updates of root and untrusted (disallowed) certificates. | `certRootMaxSyncAgeDays` |
+| `checkSchannelProtocols.ps1` | Meldet die SCHANNEL-Protokollkonfiguration (SSL 2.0 bis TLS 1.3, Server/Client). | Reports the SCHANNEL protocol configuration (SSL 2.0 to TLS 1.3, server/client). | `certSchannelStrictMode` |
+| `checkSslBindingCertificates.ps1` | Prüft Zertifikate der HTTP.sys-SSL-Bindungen (netsh http show sslcert). | Checks certificates of HTTP.sys SSL bindings (netsh http show sslcert). | `certSslBindingWarningDays`, `certSslBindingMaxRecords` |
+| `checkWeakCertificates.ps1` | Findet Zertifikate mit schwacher Signatur (MD2/MD4/MD5/SHA1) oder zu kurzen Schlüsseln. | Finds certificates with weak signatures (MD2/MD4/MD5/SHA1) or short keys. | `certWeakAdditionalStores`, `certWeakMaxRecords` |
+| `readDisallowedCertificates.ps1` | Inventarisiert LocalMachine\Disallowed (nicht vertrauenswürdige Zertifikate), optional mit Pflichtliste. | Inventories LocalMachine\Disallowed (untrusted certificates), optionally with a required list. | `certDisallowedRequiredThumbprints`, `certDisallowedMaxRecords` |
+
+#### `05 - DNS`
+
+| Skript / Script | Zweck (DE) | Purpose (EN) | NinjaOne-Variablen / variables |
+| --- | --- | --- | --- |
+| `checkDnsOverHttps.ps1` | Meldet DNS-over-HTTPS-Konfiguration und prüft optional, ob DoH verlangt wird. | Reports DNS-over-HTTPS configuration and optionally checks that DoH is required. | `dnsRequireDoh` |
+| `checkDnsRegistration.ps1` | Prüft, ob der eigene DNS-Eintrag (A/AAAA) zu den lokalen IP-Adressen passt. | Checks whether the own DNS record (A/AAAA) matches the local IP addresses. | `dnsRegistrationFqdn`, `dnsRegistrationServer` |
+| `checkDnsSuffixSearchList.ps1` | Vergleicht DNS-Suffixsuchliste und primäres DNS-Suffix mit Sollwerten. | Compares the DNS suffix search list and primary DNS suffix with expected values. | `dnsExpectedSuffixSearchList`, `dnsSuffixOrderMatters`, `dnsExpectedPrimarySuffix` |
+| `checkDomainSrvRecords.ps1` | Prüft die DNS-SRV-Einträge der Domänencontroller (LDAP/Kerberos). | Checks the domain controller DNS SRV records (LDAP/Kerberos). | `dnsSrvServer` |
+| `checkHostsFile.ps1` | Prüft aktive Einträge der hosts-Datei gegen eine optionale Positivliste. | Checks active hosts file entries against an optional allowlist. | `dnsHostsAllowList`, `dnsHostsWarnOnAnyEntry`, `dnsHostsMaxRecords` |
+| `checkLlmnrNetbiosStatus.ps1` | Härtungsprüfung für LLMNR, NetBIOS über TCP/IP und mDNS. | Hardening check for LLMNR, NetBIOS over TCP/IP and mDNS. | `dnsRequireMdnsDisabled` |
+| `checkReverseDnsRecord.ps1` | Prüft PTR-Einträge der lokalen IPv4-Adressen gegen Hostname/FQDN. | Checks PTR records of local IPv4 addresses against host name/FQDN. | `dnsReverseExpectedName`, `dnsReverseServer` |
+| `compareDnsServerResponses.ps1` | Vergleicht die A/AAAA-Antworten mehrerer DNS-Server für einen Namen. | Compares A/AAAA answers of several DNS servers for one name. | `dnsCompareHostName`, `dnsCompareServers`, `dnsCompareRecordType` |
+| `readDnsClientEvents.ps1` | Zählt DNS-Client-Ereignisse (z. B. 1014 Timeout) gruppiert nach Name. | Counts DNS client events (e.g. 1014 timeout) grouped by name. | `dnsEventHours`, `dnsEventThreshold`, `dnsEventIds`, `dnsEventMaxEvents`, `dnsEventMaxRecords` |
+| `readNrptPolicy.ps1` | Inventarisiert NRPT-Richtlinie und -Regeln des DNS-Clients (begrenzt). | Inventories the DNS client NRPT policy and rules (bounded). | `dnsNrptMaxRecords` |
+| `testDnsServerResponse.ps1` | Prüft Antwort und Latenz jedes DNS-Servers mit einem Testnamen. | Tests response and latency of each DNS server with a test name. | `dnsTestName`, `dnsTestServers`, `dnsLatencyThresholdMs` |
+
+#### `06 - Bitlocker`
+
+| Skript / Script | Zweck (DE) | Purpose (EN) | NinjaOne-Variablen / variables |
+| --- | --- | --- | --- |
+| `checkBitLockerCompliance.ps1` | Prüft, ob Betriebssystem- und feste Datenvolumes vollständig mit BitLocker geschützt sind. | Checks whether operating system and fixed data volumes are fully protected by BitLocker. | `bitlockerAllowedEncryptionMethods`, `bitlockerIncludeFixedDataDrives` |
+| `checkBitLockerPolicy.ps1` | Liest die BitLocker-Gruppenrichtlinienwerte (FVE) und dekodiert sie in Namen. | Reads BitLocker Group Policy (FVE) values and decodes them to names. | `bitlockerExpectedMinimumMethod` |
+| `checkBitLockerSuspended.ps1` | Erkennt verschlüsselte Volumes mit angehaltenem (suspendiertem) BitLocker-Schutz. | Detects encrypted volumes whose BitLocker protection is suspended. | – |
+| `checkDeviceEncryptionSupport.ps1` | Prüft die Voraussetzungen für die automatische Geräteverschlüsselung (Device Encryption). | Checks prerequisites for automatic device encryption. | `bitlockerRequireDeviceEncryptionSupport` |
+| `checkPreBootAuthentication.ps1` | Prüft die Pre-Boot-Authentifizierung (TPM/TPM+PIN) des Betriebssystemvolumes. | Checks pre-boot authentication (TPM/TPM+PIN) of the operating system volume. | `bitlockerRequirePin` |
+| `checkRemovableDriveEncryption.ps1` | Prüft angeschlossene Wechseldatenträger auf BitLocker-Verschlüsselung (BitLocker To Go). | Checks attached removable drives for BitLocker encryption (BitLocker To Go). | `bitlockerRequireRemovableEncryption` |
+| `checkUsedSpaceOnlyEncryption.ps1` | Ermittelt je Volume, ob BitLocker nur den belegten Speicher oder den ganzen Datenträger verschlüsselt hat. | Determines per volume whether BitLocker encrypted used space only or the full disk. | `bitlockerRequireFullDiskEncryption` |
+| `checkWinREStatus.ps1` | Prüft, ob die Windows-Wiederherstellungsumgebung (WinRE) aktiviert ist, und meldet den Speicherort. | Checks whether the Windows Recovery Environment (WinRE) is enabled and reports its location. | – |
+| `readBitLockerEventErrors.ps1` | Fasst BitLocker-Fehler- und Warnereignisse der letzten Tage nach Ereignis-ID zusammen. | Summarizes BitLocker error and warning events of the last days grouped by event ID. | `bitlockerEventDays`, `bitlockerEventMaxEvents`, `bitlockerEventMaxRecords` |
+| `readRecoveryKeyEscrowEvents.ps1` | Wertet BitLocker-Escrow-Ereignisse (Sicherung in Entra ID / AD DS) für das OS-Volume aus. | Evaluates BitLocker escrow events (backup to Entra ID / AD DS) for the OS volume. | `bitlockerEscrowDays`, `bitlockerEscrowMaxEvents`, `bitlockerEscrowTarget`, `bitlockerEscrowRequireEvent` |
+
+#### `07 - Security`
+
+| Skript / Script | Zweck (DE) | Purpose (EN) | NinjaOne-Variablen / variables |
+| --- | --- | --- | --- |
+| `checkAuditPolicy.ps1` | Prueft die erweiterte Ueberwachungsrichtlinie gegen eine Liste Pflicht-Unterkategorien (GUID-basiert). | Checks the advanced audit policy against a list of required subcategories (GUID based). | `securityAuditRequiredSubcategories` |
+| `checkBuiltinAccounts.ps1` | Prueft eingebaute lokale Konten (Administrator -500, Gast -501, DefaultAccount -503) per SID. | Checks built-in local accounts (Administrator -500, Guest -501, DefaultAccount -503) by SID. | `securityAllowBuiltinAdminEnabled`, `securityRequireBuiltinAdminRenamed` |
+| `checkCredentialGuard.ps1` | Prueft, ob Credential Guard und optional HVCI (Speicherintegritaet) laufen. | Checks whether Credential Guard and optionally HVCI (memory integrity) are running. | `securityRequireCredentialGuard`, `securityRequireHvci` |
+| `checkDefenderAsrRules.ps1` | Meldet Microsoft-Defender-ASR-Regeln mit Namen und Modus und prueft optionale Pflichtregeln. | Reports Microsoft Defender ASR rules with name and mode and checks optional required rules. | `securityAsrRequiredRules`, `securityAsrAllowAudit` |
+| `checkDefenderExclusions.ps1` | Inventarisiert Microsoft-Defender-Ausschluesse und vergleicht sie mit einer Allowlist. | Inventories Microsoft Defender exclusions and compares them with an allowlist. | `securityDefenderExclusionAllowlist`, `securityDefenderWarnOnAnyExclusion`, `securityDefenderWarnOnHiddenExclusions`, `securityDefenderExclusionMaxRecords` |
+| `checkLapsStatus.ps1` | Prueft Windows-LAPS-/Legacy-LAPS-Konfiguration und Rotationsereignisse, ohne Kennwoerter zu lesen. | Checks Windows LAPS / legacy LAPS configuration and rotation events without reading passwords. | `securityLapsMaxSuccessAgeDays` |
+| `checkLegacyAuthentication.ps1` | Prueft Legacy-Authentifizierung: LM/NTLM-Stufe, LM-Hashes, WDigest und Anonymous-Einschraenkungen. | Audits legacy authentication: LM/NTLM level, LM hashes, WDigest and anonymous restrictions. | `securityLmCompatibilityMinimum` |
+| `checkLsaProtection.ps1` | Prueft den LSA-Schutz (LSASS als geschuetzter Prozess, RunAsPPL). | Checks LSA protection (LSASS as a protected process, RunAsPPL). | `securityLsaCheckEvent`, `securityLsaRequireEvent` |
+| `checkPasswordPolicy.ps1` | Prueft lokale Kennwort- und Sperrrichtlinie sprachunabhaengig per secedit-Export. | Checks local password and lockout policy locale-independently via secedit export. | `securityPasswordMinLength`, `securityPasswordRequireComplexity`, `securityPasswordMinHistory`, `securityPasswordMaxAgeDays`, `securityLockoutMaxThreshold` |
+| `checkRdpSecurity.ps1` | Prueft die RDP-Sicherheitskonfiguration (NLA, SecurityLayer, Verschluesselung, Port) nur lesend. | Checks the RDP security configuration (NLA, security layer, encryption, port) read-only. | `securityRdpAllow` |
+| `checkSmbSigning.ps1` | Prueft, ob SMB-Signierung fuer Server und/oder Client erzwungen wird. | Checks whether SMB signing is required for the server and/or client. | `securitySmbSigningRequiredSide`, `securitySmbRequireEncryption` |
+| `checkSmbv1Status.ps1` | Prueft, ob SMBv1 (Server, Client-Treiber oder optionales Feature) aktiv ist. | Checks whether SMBv1 (server, client driver or optional feature) is enabled. | `securitySmb1IncludeFeature` |
+| `checkUacSettings.ps1` | Prueft die Einstellungen der Benutzerkontensteuerung (UAC), ohne etwas zu aendern. | Audits User Account Control (UAC) settings without changing anything. | – |
+| `readFailedLogons.ps1` | Zaehlt fehlgeschlagene Anmeldungen (4625) und Kontosperrungen (4740) begrenzt und gruppiert. | Counts failed logons (4625) and account lockouts (4740), bounded and grouped. | `securityFailedLogonHours`, `securityFailedLogonThreshold`, `securityFailedLogonMaxEvents`, `securityFailedLogonMaxRecords` |
+
+#### `10 - Network`
+
+| Skript / Script | Zweck (DE) | Purpose (EN) | NinjaOne-Variablen / variables |
+| --- | --- | --- | --- |
+| `checkAdapterLinkSpeed.ps1` | Prüft die Verbindungsgeschwindigkeit physischer, verbundener Netzwerkadapter. | Checks the link speed of physical, connected network adapters. | `networkMinLinkSpeedMbps`, `networkLinkSpeedIncludeWireless` |
+| `checkInternetConnectivity.ps1` | Internetverbindung im NCSI-Stil pruefen. EN: Check internet connectivity NCSI-style. | Check internet connectivity NCSI-style. | `networkProbeUrl`, `networkProbeExpectedContent`, `networkProbeDnsHost`, `networkProbeTimeoutMs` |
+| `checkIpAddressConflicts.ps1` | Erkennt IP-Adresskonflikte, APIPA-Adressen und ungültige Adresszustände. | Detects IP address conflicts, APIPA addresses and invalid address states. | `networkConflictDays`, `networkConflictMaxEvents` |
+| `checkNetworkProfile.ps1` | Prüft die Netzwerkkategorie (Firewallprofil) aktiver Verbindungen. | Checks the network category (firewall profile) of active connections. | `networkExpectedCategory` |
+| `checkProxySettings.ps1` | Maschinenweite Proxy-Einstellungen pruefen. EN: Check machine-wide proxy settings. | Check machine-wide proxy settings. | `networkExpectedProxy` |
+| `checkVpnConnections.ps1` | VPN-Verbindungen fuer alle Benutzer inventarisieren. EN: Inventory all-user VPN connections. | Inventory all-user VPN connections. | `networkRequiredVpnName`, `networkVpnMaxRecords` |
+| `readArpTable.ps1` | Liest die IPv4-ARP-Tabelle begrenzt aus und erkennt mögliches ARP-Spoofing. | Reads a bounded IPv4 ARP table and detects possible ARP spoofing. | `networkArpExcludeNoise`, `networkArpMaxRecords` |
+| `readRoutingTable.ps1` | Liest die Routingtabelle begrenzt aus und prüft IPv4-Standardrouten. | Reads a bounded routing table inventory and checks IPv4 default routes. | `networkRouteAddressFamily`, `networkRouteMaxRecords` |
+| `readSmbShares.ps1` | Inventarisiert SMB-Freigaben und meldet zu weit gefasste Freigabeberechtigungen. | Inventories SMB shares and reports overly broad share permissions. | `networkSmbExcludeSpecialShares`, `networkSmbMaxRecords` |
+| `readWifiProfiles.ps1` | Gespeicherte WLAN-Profile und deren Sicherheit melden. EN: Report saved Wi-Fi profiles and their security. | Report saved Wi-Fi profiles and their security. | `networkWifiMaxProfiles` |
+| `readWifiStatus.ps1` | WLAN-Verbindungsstatus lesen. EN: Read Wi-Fi connection status. | Read Wi-Fi connection status. | `networkMinSignalPercent` |
+| `testPingTargets.ps1` | ICMP-Erreichbarkeit von 1..10 Zielen pruefen. EN: Check ICMP reachability of 1..10 targets. | Check ICMP reachability of 1..10 targets. | `networkPingTargets`, `networkPingCount`, `networkPingTimeoutMs`, `networkMaxLossPercent`, `networkMaxLatencyMs` |
+| `testTraceRoute.ps1` | Traceroute zu einem Ziel per ICMP und TTL. EN: Trace route to one target via ICMP and TTL. | Trace route to one target via ICMP and TTL. | `networkTraceTarget`, `networkTraceMaxHops`, `networkTraceTimeoutMs` |
+
+#### `11 - User`
+
+| Skript / Script | Zweck (DE) | Purpose (EN) | NinjaOne-Variablen / variables |
+| --- | --- | --- | --- |
+| `checkAutoLogon.ps1` | Automatische Windows-Anmeldung (AutoAdminLogon) pruefen. EN: Check automatic Windows logon (AutoAdminLogon). | Check automatic Windows logon (AutoAdminLogon). | – |
+| `checkInactiveLocalUsers.ps1` | Inaktive aktivierte lokale Benutzer finden. EN: Find inactive enabled local users. | Find inactive enabled local users. | `userInactiveDays`, `userExcludeBuiltIn`, `userMaxRecords` |
+| `checkLockedOutUsers.ps1` | Gesperrte lokale Konten und Sperrereignisse melden. EN: Report locked-out local accounts and lockout events. | Report locked-out local accounts and lockout events. | `userLockoutEventHours`, `userMaxRecords` |
+| `checkPasswordNeverExpires.ps1` | Lokale Konten mit nie ablaufendem/nicht erforderlichem Kennwort finden. EN: Find local accounts with non-expiring or not-required passwords. | Find local accounts with non-expiring or not-required passwords. | `userPasswordCheckMode`, `userPasswordAllowlist`, `userMaxRecords` |
+| `checkStaleProfiles.ps1` | Veraltete, nicht geladene Benutzerprofile melden (ohne Loeschung). EN: Report stale unloaded user profiles (no deletion). | Report stale unloaded user profiles (no deletion). | `userStaleProfileDays`, `userStaleIncludeUnknown`, `userMaxRecords` |
+| `checkTemporaryProfiles.ps1` | Temporaere und beschaedigte Benutzerprofile erkennen. EN: Detect temporary and corrupted user profiles. | Detect temporary and corrupted user profiles. | `userTempProfileEventDays`, `userMaxRecords` |
+| `readEntraJoinStatus.ps1` | Entra-ID-/Domaenen-Beitrittsstatus des Geraets lesen. EN: Read the device Entra ID/domain join state. | Read the device Entra ID/domain join state. | `userExpectedJoinType` |
+| `readLoggedOnUsers.ps1` | Aktuell angemeldete Benutzersitzungen lesen. EN: Read currently logged-on user sessions. | Read currently logged-on user sessions. | `userMaxRecords` |
+| `readLogonEvents.ps1` | Interaktive Anmeldungen (Security 4624) je Benutzer zusammenfassen. EN: Summarize interactive logons (Security 4624) per user. | Summarize interactive logons (Security 4624) per user. | `userLogonTypes`, `userLogonEventDays`, `userLogonMaxEvents`, `userMaxRecords` |
+| `readRdpSessionHistory.ps1` | RDP-/Sitzungsverlauf aus dem LocalSessionManager-Protokoll lesen. EN: Read RDP/session history from the LocalSessionManager log. | Read RDP/session history from the LocalSessionManager log. | `userRdpHistoryDays`, `userRdpMaxEvents`, `userMaxRecords` |
+| `readUserProfileSizes.ps1` | Groesse der Benutzerprofilordner zeitbegrenzt messen. EN: Measure user profile folder sizes within a time budget. | Measure user profile folder sizes within a time budget. | `userProfileSizeBudgetSeconds`, `userProfileSizeThresholdGB`, `userMaxRecords` |
+
+#### `50 - Misc`
+
+| Skript / Script | Zweck (DE) | Purpose (EN) | NinjaOne-Variablen / variables |
+| --- | --- | --- | --- |
+| `checkPowerPlan.ps1` | Liest den aktiven Energiesparplan und vergleicht ihn optional mit einem Sollwert. | Reads the active power plan and optionally compares it with an expected plan. | `powerExpectedPlan` |
+| `checkPrinterStatus.ps1` | Prüft Druckwarteschlangendienst, Druckerfehler und hängende Druckaufträge. | Checks the print spooler service, printer errors and stuck print jobs. | `printerStuckJobMinutes`, `printerWarnOffline`, `printerMaxRecords` |
+| `checkTempFolderSize.ps1` | Misst die Größe temporärer Ordner (System- und optional Benutzer-Temp), ohne zu löschen. | Measures the size of temporary folders (system and optionally user temp) without deleting. | `tempThresholdMB`, `tempIncludeUserProfiles`, `tempTimeBudgetSeconds`, `tempMaxRecords` |
+| `readApplicationCrashes.ps1` | Meldet Anwendungsabstürze und -hänger, gruppiert nach Anwendung. | Reports application crashes and hangs grouped by application. | `appCrashLookbackDays`, `appCrashThreshold`, `appCrashTopApps` |
+| `readBugChecks.ps1` | Meldet Bluescreens (BugChecks) und Minidump-Dateien der letzten Tage. | Reports blue screens (bug checks) and minidump files from recent days. | `bugCheckLookbackDays`, `bugCheckMaxRecords` |
+| `readLargeFiles.ps1` | Meldet die größten Dateien unter einem lokalen Pfad (nur Bericht, kein Löschen). | Reports the largest files under a local path (report only, no deletion). | `largeFilesRootPath`, `largeFilesTop`, `largeFilesTimeBudgetSeconds`, `largeFilesMaxFiles` |
+| `readNinjaAgentStatus.ps1` | Meldet Status, Version, Installationspfad und Laufzeit der NinjaOne-Agent-Dienste. | Reports state, version, install path and uptime of the NinjaOne agent services. | – |
+| `readReliabilityIndex.ps1` | Liest den Windows-Zuverlässigkeitsindex (1..10) und seinen Verlauf. | Reads the Windows reliability (stability) index (1..10) and its trend. | `reliabilityMinimumIndex`, `reliabilityLookbackDays` |
+| `readServiceCrashes.ps1` | Meldet abgestürzte und fehlerhafte Windows-Dienste, gruppiert nach Dienst. | Reports crashed and failing Windows services grouped by service. | `serviceCrashLookbackDays`, `serviceCrashMaxRecords` |
+| `readUnexpectedShutdowns.ps1` | Meldet unerwartete Herunterfahr-Vorgänge (Kernel-Power 41, EventLog 6008). | Reports unexpected shutdowns (Kernel-Power 41, EventLog 6008). | `shutdownLookbackDays`, `shutdownThreshold`, `shutdownMaxRecords` |
+| `readUsbStorageHistory.ps1` | Meldet bekannte USB-Massenspeicher (USBSTOR) und die USBSTOR-Sperrrichtlinie. | Reports known USB mass storage devices (USBSTOR) and the USBSTOR block policy. | `usbIncludeSerial`, `usbRequireBlocked`, `usbMaxRecords` |
+| `readWheaErrors.ps1` | Meldet WHEA-Hardwarefehler (korrigiert/schwerwiegend) aus dem System-Log. | Reports WHEA hardware errors (corrected/fatal) from the System log. | `wheaLookbackDays`, `wheaCorrectedThreshold`, `wheaMaxRecords` |
 
 ### Gemeinsame NinjaOne-Konfiguration / Common NinjaOne configuration
 
@@ -229,9 +408,11 @@ after review. Network/user inventories support `-WhatIf` for field publication;
 read-only queries and the single TCP connection test still execute.
 
 Zusätzliche Systemtests:
-`Invoke-Pester -Path ./Tests/SystemChecks.Tests.ps1`.
+`Invoke-Pester -Path ./Tests/SystemChecks.Tests.ps1`; DNS-Skripte:
+`Invoke-Pester -Path ./Tests/DnsScripts.Tests.ps1`; alle Tests: `Invoke-Pester -Path ./Tests`.
 Linux-Parsing/Mock-Tests ersetzen keinen Windows-PowerShell-5.1-/NinjaOne-Test.
-/ Additional system tests: `Invoke-Pester -Path ./Tests/SystemChecks.Tests.ps1`.
+/ Additional system tests: `Invoke-Pester -Path ./Tests/SystemChecks.Tests.ps1`;
+DNS scripts: `Invoke-Pester -Path ./Tests/DnsScripts.Tests.ps1`; all tests: `Invoke-Pester -Path ./Tests`.
 Linux parsing/mock tests do not replace Windows PowerShell 5.1/NinjaOne testing.
 
 ## Referenzen / References
@@ -266,7 +447,7 @@ No third-party scripts are copied; NinjaRMM/ninjaone_scripts in particular has
 its own usage and redistribution restrictions.
 
 # Lizenz
-* Dieses Repository steht unter der MIT-Lizenz.
+* Dieses Repository steht unter der MIT-Lizenz ([LICENSE](LICENSE)).
 * Sie dürfen die Skripte frei verwenden, ändern und in Ihren RMM-Umgebungen verteilen. 
 
 ---
