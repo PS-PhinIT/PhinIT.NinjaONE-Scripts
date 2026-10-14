@@ -10,6 +10,44 @@ Git-Historie und den Pull Requests rekonstruiert.
 / The repository has no release tags. Every entry is therefore dated (newest
 first); older entries were reconstructed from the Git history and pull requests.
 
+## 2026-10-14 – Erweiterung der Skriptbibliothek um 114 Skripte / Script library extended by 114 scripts
+
+### Hinzugefügt / Added
+Je Themenordner 10–14 neue, rein lesende NinjaOne-Diagnose-/Prüfskripte
+(Windows PowerShell 5.1, SYSTEM, 64-Bit) mit zweisprachiger Hilfe, JSON-Bericht,
+optionalem Export über `resultCustomField` und Rückgabecodes 0/1/2.
+/ 10–14 new read-only NinjaOne diagnostic/check scripts per topic folder with
+bilingual help, JSON report, optional `resultCustomField` export and exit codes 0/1/2.
+
+- `01 - System` (+10): `checkPhysicalDiskHealth.ps1`, `checkSecureBootStatus.ps1`, `checkWindowsActivation.ps1`, `readBatteryHealth.ps1`, `readBiosFirmware.ps1`, `readCpuUsage.ps1`, `readDeviceProblems.ps1`, `readMemoryUsage.ps1`, `readPageFileStatus.ps1`, `readTopProcesses.ps1`
+- `02 - Updates` (+10): `checkComponentStoreHealth.ps1`, `checkTargetReleaseVersion.ps1`, `checkUpdatePauseState.ps1`, `checkWindowsUpdatePolicy.ps1`, `checkWsusConfiguration.ps1`, `readDeliveryOptimizationStatus.ps1`, `readLastUpdateInstall.ps1`, `readOfficeUpdateChannel.ps1`, `readPendingUpdates.ps1`, `readUpdateHistoryFailures.ps1`
+- `03 - Software` (+11): `checkRequiredSoftware.ps1`, `checkSoftwareVersion.ps1`, `checkWindowsOptionalFeatures.ps1`, `checkWingetStatus.ps1`, `readAppxProvisionedPackages.ps1`, `readBrowserVersions.ps1`, `readJavaInstallations.ps1`, `readPowerShellEngines.ps1`, `readRecentSoftwareChanges.ps1`, `readStartupPrograms.ps1`, `readVcRedistInventory.ps1`
+- `04 - Certificates` (+12): `checkAutoEnrollmentPolicy.ps1`, `checkCertificateChain.ps1`, `checkCertificatePresence.ps1`, `checkCodeSigningCertificates.ps1`, `checkDotNetStrongCrypto.ps1`, `checkRdpCertificate.ps1`, `checkRemoteTlsCertificate.ps1`, `checkRootAutoUpdate.ps1`, `checkSchannelProtocols.ps1`, `checkSslBindingCertificates.ps1`, `checkWeakCertificates.ps1`, `readDisallowedCertificates.ps1`
+- `05 - DNS` (+11): `checkDnsOverHttps.ps1`, `checkDnsRegistration.ps1`, `checkDnsSuffixSearchList.ps1`, `checkDomainSrvRecords.ps1`, `checkHostsFile.ps1`, `checkLlmnrNetbiosStatus.ps1`, `checkReverseDnsRecord.ps1`, `compareDnsServerResponses.ps1`, `readDnsClientEvents.ps1`, `readNrptPolicy.ps1`, `testDnsServerResponse.ps1`
+- `06 - Bitlocker` (+10): `checkBitLockerCompliance.ps1`, `checkBitLockerPolicy.ps1`, `checkBitLockerSuspended.ps1`, `checkDeviceEncryptionSupport.ps1`, `checkPreBootAuthentication.ps1`, `checkRemovableDriveEncryption.ps1`, `checkUsedSpaceOnlyEncryption.ps1`, `checkWinREStatus.ps1`, `readBitLockerEventErrors.ps1`, `readRecoveryKeyEscrowEvents.ps1`
+- `07 - Security` (+14): `checkAuditPolicy.ps1`, `checkBuiltinAccounts.ps1`, `checkCredentialGuard.ps1`, `checkDefenderAsrRules.ps1`, `checkDefenderExclusions.ps1`, `checkLapsStatus.ps1`, `checkLegacyAuthentication.ps1`, `checkLsaProtection.ps1`, `checkPasswordPolicy.ps1`, `checkRdpSecurity.ps1`, `checkSmbSigning.ps1`, `checkSmbv1Status.ps1`, `checkUacSettings.ps1`, `readFailedLogons.ps1`
+- `10 - Network` (+13): `checkAdapterLinkSpeed.ps1`, `checkInternetConnectivity.ps1`, `checkIpAddressConflicts.ps1`, `checkNetworkProfile.ps1`, `checkProxySettings.ps1`, `checkVpnConnections.ps1`, `readArpTable.ps1`, `readRoutingTable.ps1`, `readSmbShares.ps1`, `readWifiProfiles.ps1`, `readWifiStatus.ps1`, `testPingTargets.ps1`, `testTraceRoute.ps1`
+- `11 - User` (+11): `checkAutoLogon.ps1`, `checkInactiveLocalUsers.ps1`, `checkLockedOutUsers.ps1`, `checkPasswordNeverExpires.ps1`, `checkStaleProfiles.ps1`, `checkTemporaryProfiles.ps1`, `readEntraJoinStatus.ps1`, `readLoggedOnUsers.ps1`, `readLogonEvents.ps1`, `readRdpSessionHistory.ps1`, `readUserProfileSizes.ps1`
+- `50 - Misc` (+12): `checkPowerPlan.ps1`, `checkPrinterStatus.ps1`, `checkTempFolderSize.ps1`, `readApplicationCrashes.ps1`, `readBugChecks.ps1`, `readLargeFiles.ps1`, `readNinjaAgentStatus.ps1`, `readReliabilityIndex.ps1`, `readServiceCrashes.ps1`, `readUnexpectedShutdowns.ps1`, `readUsbStorageHistory.ps1`, `readWheaErrors.ps1`
+
+### Sicherheit / Security
+- Keine der neuen Skripte ändert das System; Geheimnisse (Kennwörter,
+  WLAN-Schlüssel, Recovery-Passwörter, Produktschlüssel, private Schlüssel)
+  werden nie ausgegeben – z. B. meldet `checkAutoLogon.ps1` nur das
+  Vorhandensein von `DefaultPassword`, `readWifiProfiles.ps1` nutzt nie
+  `key=clear`, `readStartupPrograms.ps1` gibt Befehlszeilen nur auf Wunsch aus.
+  / None of the new scripts change the system; secrets are never output.
+
+### Tests
+- Neu: `Tests/CatalogSystem`, `CatalogUpdates`, `CatalogSoftware`,
+  `CatalogCertificates`, `CatalogDns`, `CatalogBitlocker`, `CatalogSecurityA`,
+  `CatalogSecurityB`, `CatalogNetworkA`, `CatalogNetworkB`, `CatalogUser`,
+  `CatalogMisc` (`*.Tests.ps1`, Pester 5, Windows-Cmdlets simuliert).
+
+### Dokumentation / Documentation
+- README: Themen- und Dateikatalog aktualisiert, Übersicht der neuen Skripte
+  mit NinjaOne-Variablen.
+
 ## 2026-10-14 – Audit: Sicherheit, Performance, Funktionen, Verweise / Security, performance, functions, references
 
 ### Sicherheit / Security
