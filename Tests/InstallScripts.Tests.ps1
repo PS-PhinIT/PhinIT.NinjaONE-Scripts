@@ -164,6 +164,15 @@ Describe 'Installation scripts / Installations-Skripte' {
                 $ArgumentList -match '--accept-package-agreements' -and $ArgumentList -match '--disable-interactivity' -and $ArgumentList -match '--scope machine$'
             }
         }
+        It 'SilentSwitches.md documents every script / SilentSwitches.md dokumentiert jedes Skript' {
+            $markdownPath = Join-Path $folder 'SilentSwitches.md'
+            [IO.File]::Exists($markdownPath) | Should -BeTrue
+            $markdown = [IO.File]::ReadAllText($markdownPath)
+            foreach ($file in [IO.Directory]::GetFiles($folder, '*.ps1')) {
+                $markdown | Should -Match ([regex]::Escape('(' + [IO.Path]::GetFileName($file) + ')'))
+            }
+        }
+
         It 'All scripts share the identical engine / Alle Skripte nutzen dieselbe Logik' {
             # DE: Änderungen an der Logik müssen in allen Skripten gleich erfolgen. EN: Engine changes must be applied to all scripts alike.
             $files = @([IO.Directory]::GetFiles($folder, '*.ps1'))
