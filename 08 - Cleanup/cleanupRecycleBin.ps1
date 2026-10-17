@@ -86,6 +86,18 @@ function Test-IsReparsePoint {
     param([IO.FileSystemInfo]$Item)
     return [bool]($Item.Attributes -band [IO.FileAttributes]::ReparsePoint)
 }
+function Test-SafeChain {
+    param([string]$Path, [string]$Anchor)
+    # DE: Pfad bis zum Anker frisch prüfen (keine Reparsepunkte). EN: Freshly verify the path up to the anchor (no reparse points).
+    $anchorPath = $Anchor.TrimEnd('\', '/')
+    $current = [IO.DirectoryInfo]::new($Path)
+    while ($null -ne $current) {
+        if ([string]::Equals($current.FullName.TrimEnd('\', '/'), $anchorPath, [StringComparison]::OrdinalIgnoreCase)) { return $true }
+        if (-not $current.Exists -or (Test-IsReparsePoint $current)) { return $false }
+        $current = $current.Parent
+    }
+    return $false
+}
 function Get-SafeRoot {
     param([string]$Base, [string[]]$Segment)
     $path = $Base
@@ -115,7 +127,7 @@ function Get-ItemSize {
     return $total
 }
 function Invoke-SafeTreeDelete {
-    param([IO.FileSystemInfo]$Item)
+    param([IO.FileSystemInfo]$Item, [string]$Anchor)
     # DE: Reparsepunkte nur als Link entfernen, nie verfolgen. EN: Remove reparse points as links only, never follow them.
     if (Test-IsReparsePoint $Item) {
         if ($Item -is [IO.DirectoryInfo]) { [IO.Directory]::Delete($Item.FullName, $false) } else { [IO.File]::Delete($Item.FullName) }
@@ -127,13 +139,17 @@ function Invoke-SafeTreeDelete {
     $stack.Push($Item)
     while ($stack.Count -gt 0) {
         $current = $stack.Pop()
+        if (-not (Test-SafeChain -Path $current.FullName -Anchor $Anchor)) { throw 'Unsicherer Papierkorbpfad / Unsafe recycle bin path.' }
         $folders.Add($current)
         foreach ($child in @($current.GetFileSystemInfos())) {
             if (Test-IsReparsePoint $child) {
                 if ($child -is [IO.DirectoryInfo]) { [IO.Directory]::Delete($child.FullName, $false) } else { [IO.File]::Delete($child.FullName) }
             }
             elseif ($child -is [IO.DirectoryInfo]) { $stack.Push($child) }
-            else { Remove-Item -LiteralPath $child.FullName -Force -ErrorAction Stop }
+            else {
+                if (-not (Test-SafeChain -Path $current.FullName -Anchor $Anchor)) { throw 'Unsicherer Papierkorbpfad / Unsafe recycle bin path.' }
+                Remove-Item -LiteralPath $child.FullName -Force -ErrorAction Stop
+            }
         }
     }
     for ($index = $folders.Count - 1; $index -ge 0; $index--) {
@@ -204,7 +220,7 @@ try {
                 if (-not $binInfo.Exists -or (Test-IsReparsePoint $binInfo)) { throw 'Unsicherer Papierkorbpfad / Unsafe recycle bin path.' }
                 if ($null -ne $candidate.Content) {
                     $candidate.Content.Refresh()
-                    if ($candidate.Content.Exists) { Invoke-SafeTreeDelete -Item $candidate.Content }
+                    if ($candidate.Content.Exists) { Invoke-SafeTreeDelete -Item $candidate.Content -Anchor $bin.Path }
                 }
                 $candidate.Meta.Refresh()
                 if ($candidate.Meta.Exists) { Remove-Item -LiteralPath $candidate.Meta.FullName -Force -ErrorAction Stop }

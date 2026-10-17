@@ -95,6 +95,18 @@ function Test-IsReparsePoint {
     param([IO.FileSystemInfo]$Item)
     return [bool]($Item.Attributes -band [IO.FileAttributes]::ReparsePoint)
 }
+function Test-SafeChain {
+    param([string]$Path, [string]$Anchor)
+    # DE: Pfad bis zum Anker frisch prüfen (keine Reparsepunkte). EN: Freshly verify the path up to the anchor (no reparse points).
+    $anchorPath = $Anchor.TrimEnd('\', '/')
+    $current = [IO.DirectoryInfo]::new($Path)
+    while ($null -ne $current) {
+        if ([string]::Equals($current.FullName.TrimEnd('\', '/'), $anchorPath, [StringComparison]::OrdinalIgnoreCase)) { return $true }
+        if (-not $current.Exists -or (Test-IsReparsePoint $current)) { return $false }
+        $current = $current.Parent
+    }
+    return $false
+}
 function Get-SafeRoot {
     param([string]$Base, [string[]]$Segment)
     $path = $Base
@@ -163,13 +175,14 @@ function Get-CacheStatistic {
     [pscustomobject]@{ Files = $files; Bytes = $bytes }
 }
 function Invoke-SafeTreeDelete {
-    param([IO.DirectoryInfo]$Folder)
+    param([IO.DirectoryInfo]$Folder, [string]$Anchor)
     $stats = [pscustomobject]@{ Files = 0; Bytes = [long]0; Failed = 0 }
     $folders = New-Object System.Collections.Generic.List[object]
     $stack = New-Object System.Collections.Generic.Stack[object]
     $stack.Push($Folder)
     while ($stack.Count -gt 0) {
         $current = $stack.Pop()
+        if (-not (Test-SafeChain -Path $current.FullName -Anchor $Anchor)) { $stats.Failed++; continue }
         $folders.Add($current)
         try { $children = @($current.GetFileSystemInfos()) } catch { $stats.Failed++; continue }
         foreach ($child in $children) {
@@ -181,6 +194,7 @@ function Invoke-SafeTreeDelete {
                 elseif ($child -is [IO.DirectoryInfo]) { $stack.Push($child) }
                 else {
                     $length = $child.Length
+                    if (-not (Test-SafeChain -Path $current.FullName -Anchor $Anchor)) { throw 'Unsicherer Pfad / Unsafe path.' }
                     Remove-Item -LiteralPath $child.FullName -Force -ErrorAction Stop
                     $stats.Files++
                     $stats.Bytes += $length
@@ -271,7 +285,7 @@ try {
             if (-not $allowed -or $files -eq 0) { continue }
             if (-not $PSCmdlet.ShouldProcess(('{0} ({1})' -f $browser, $userProfile.Path), 'Browser-Cache leeren / Clear browser cache')) { continue }
             foreach ($cache in $caches) {
-                $result = Invoke-SafeTreeDelete -Folder $cache
+                $result = Invoke-SafeTreeDelete -Folder $cache -Anchor $userProfile.Path
                 $record.DeletedFiles += $result.Files
                 $record.DeletedBytes += $result.Bytes
                 $record.Failed += $result.Failed
