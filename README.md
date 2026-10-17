@@ -85,10 +85,14 @@ permissions.
 
 ## Themenkatalog / Topic catalogue
 
-Jeder nummerierte Themenordner enthält mindestens 15 eigenständige Skripte.
-Für die DNS-Hauptskripte (`00-`/`01-`) gelten ihre eigenen Anleitungen und
-Rückgabecodes. / Each numbered topic folder contains at least 15 standalone
-scripts. The main DNS scripts (`00-`/`01-`) keep their own guides and exit codes.
+Die Diagnose-Themenordner enthalten jeweils mindestens 15 eigenständige
+Skripte; `08 - Cleanup` (Bereinigung), `09 - Configuration` (Einstellungen) und
+`Installations-Scripte` (Silent-Installationen) ändern das System nur nach
+ausdrücklichem Opt-in. Für die DNS-Hauptskripte (`00-`/`01-`) gelten ihre eigenen
+Anleitungen und Rückgabecodes. / The diagnostic topic folders each contain at
+least 15 standalone scripts; `08 - Cleanup`, `09 - Configuration` and
+`Installations-Scripte` only change the system after explicit opt-in. The main
+DNS scripts (`00-`/`01-`) keep their own guides and exit codes.
 
 | Bereich / Topic | Aufgaben / Tasks |
 | --- | --- |
@@ -99,6 +103,8 @@ scripts. The main DNS scripts (`00-`/`01-`) keep their own guides and exit codes
 | `05 - DNS` | DNS-Konfiguration/-Änderung, Auflösung, Cache, Serverantwort, Registrierung/PTR, hosts-Datei, Suffixe, NRPT, DoH, LLMNR/NetBIOS, DC-SRV-Einträge, DNS-Ereignisse / DNS configuration/change, resolution, cache, server response, registration/PTR, hosts file, suffixes, NRPT, DoH, LLMNR/NetBIOS, DC SRV records, DNS events |
 | `06 - Bitlocker` | Verschlüsselung, Schutzmechanismen, TPM, Recovery-Escrow, Compliance, Pause, Richtlinien, Pre-Boot-PIN, Wechseldatenträger, WinRE, Ereignisse / encryption, protectors, TPM, recovery escrow, compliance, suspension, policies, pre-boot PIN, removable drives, WinRE, events |
 | `07 - Security` | Defender (inkl. Ausschlüsse/ASR), Firewall, lokale Admins, UAC, SMB1/-Signierung, Credential Guard, LSA-Schutz, NTLM/WDigest, LAPS, RDP, Kennwort-/Überwachungsrichtlinie, fehlgeschlagene Anmeldungen, integrierte Konten / Defender (incl. exclusions/ASR), firewall, local admins, UAC, SMB1/signing, Credential Guard, LSA protection, NTLM/WDigest, LAPS, RDP, password/audit policy, failed logons, built-in accounts |
+| `08 - Cleanup` | Temp-Dateien, Papierkorb, Fehlerberichte (WER), Übermittlungsoptimierungs-Cache, Komponentenspeicher (WinSxS), Browser-Cache, veraltete Benutzerprofile, Software-Deinstallation, AppX-Bloatware / temp files, recycle bin, error reports (WER), Delivery Optimization cache, component store (WinSxS), browser cache, stale user profiles, software uninstall, AppX bloatware |
+| `09 - Configuration` | Energiesparplan, Zeitzone, Schnellstart, Remotedesktop, Dienst-Starttyp, Registrywerte, USB-Speicher-Richtlinie, Consumer-Funktionen, Edge-Richtlinien, Microsoft-365-Updatekanal / power plan, time zone, Fast Startup, Remote Desktop, service startup type, registry values, USB storage policy, consumer features, Edge policies, Microsoft 365 update channel |
 | `10 - Network` | Verbindungen/Ports, Adapter und Linkgeschwindigkeit, Ping/Traceroute/TCP-Test, WLAN, Proxy, VPN, Routing, ARP, IP-Konflikte, Netzwerkprofil, SMB-Freigaben, Internetverbindung / connections/ports, adapters and link speed, ping/traceroute/TCP test, Wi-Fi, proxy, VPN, routing, ARP, IP conflicts, network profile, SMB shares, internet connectivity |
 | `11 - User` | Profile (Größe, veraltet, temporär), lokale Benutzer/Gruppen, Sitzungen, Anmelde-/RDP-Verlauf, inaktive/gesperrte Konten, Kennwortablauf, Entra-Join, Autologon / profiles (size, stale, temporary), local users/groups, sessions, logon/RDP history, inactive/locked accounts, password expiry, Entra join, autologon |
 | `50 - Misc` | Neustart-Indikatoren, leere Ordner, Zeitsync, Aufgaben, Ereignisse, Bluescreens, unerwartete Abschaltungen, App-/Dienstabstürze, WHEA, Drucker, USB-Verlauf, Temp/große Dateien, Energieplan, Zuverlässigkeit, NinjaOne-Agent / reboot indicators, empty folders, time sync, tasks, events, bug checks, unexpected shutdowns, app/service crashes, WHEA, printers, USB history, temp/large files, power plan, reliability, NinjaOne agent |
@@ -112,9 +118,12 @@ scripts. The main DNS scripts (`00-`/`01-`) keep their own guides and exit codes
 | `05 - DNS` | 16 | `00-readDNSSettingsClient.ps1`, `01-setDNSSettingsClient.ps1`, `checkDnsOverHttps.ps1`, `checkDnsRegistration.ps1`, `checkDnsSuffixSearchList.ps1`, `checkDomainSrvRecords.ps1`, `checkHostsFile.ps1`, `checkLlmnrNetbiosStatus.ps1`, `checkReverseDnsRecord.ps1`, `compareDnsServerResponses.ps1`, `readDnsCache.ps1`, `readDnsClientConfiguration.ps1`, `readDnsClientEvents.ps1`, `readNrptPolicy.ps1`, `resolveDnsName.ps1`, `testDnsServerResponse.ps1` |
 | `06 - Bitlocker` | 15 | `auditKeyProtectors.ps1`, `auditVolumeEncryption.ps1`, `checkBitLockerCompliance.ps1`, `checkBitLockerPolicy.ps1`, `checkBitLockerSuspended.ps1`, `checkDeviceEncryptionSupport.ps1`, `checkPreBootAuthentication.ps1`, `checkRemovableDriveEncryption.ps1`, `checkTpmReadiness.ps1`, `checkUsedSpaceOnlyEncryption.ps1`, `checkWinREStatus.ps1`, `exportRecoveryKeys.ps1`, `readBitLockerEventErrors.ps1`, `readBitLockerStatus.ps1`, `readRecoveryKeyEscrowEvents.ps1` |
 | `07 - Security` | 19 | `auditWindowsFirewall.ps1`, `checkAnotherSecurityProduct.ps1`, `checkAuditPolicy.ps1`, `checkBuiltinAccounts.ps1`, `checkCredentialGuard.ps1`, `checkDefenderAsrRules.ps1`, `checkDefenderExclusions.ps1`, `checkLapsStatus.ps1`, `checkLegacyAuthentication.ps1`, `checkLsaProtection.ps1`, `checkPasswordPolicy.ps1`, `checkRdpSecurity.ps1`, `checkSmbSigning.ps1`, `checkSmbv1Status.ps1`, `checkUacSettings.ps1`, `checkWindowsDefender.ps1`, `detectUnauthorizedLocalAdmins.ps1`, `enforceScreensaverTimeout.ps1`, `readFailedLogons.ps1` |
+| `08 - Cleanup` | 9 | `cleanupBrowserCache.ps1`, `cleanupComponentStore.ps1`, `cleanupDeliveryOptimizationCache.ps1`, `cleanupRecycleBin.ps1`, `cleanupTempFiles.ps1`, `cleanupWindowsErrorReports.ps1`, `removeAppxBloatware.ps1`, `removeStaleUserProfiles.ps1`, `uninstallSoftware.ps1` |
+| `09 - Configuration` | 10 | `setConsumerFeatures.ps1`, `setEdgePolicies.ps1`, `setFastStartup.ps1`, `setOfficeUpdateChannel.ps1`, `setPowerPlan.ps1`, `setRegistryValue.ps1`, `setRemoteDesktop.ps1`, `setServiceStartupType.ps1`, `setTimeZone.ps1`, `setUsbStoragePolicy.ps1` |
 | `10 - Network` | 18 | `auditFirewallProfiles.ps1`, `auditTcpConnections.ps1`, `checkAdapterLinkSpeed.ps1`, `checkInternetConnectivity.ps1`, `checkIpAddressConflicts.ps1`, `checkNetworkProfile.ps1`, `checkOpenPorts.ps1`, `checkProxySettings.ps1`, `checkVpnConnections.ps1`, `listNetworkAdapters.ps1`, `readArpTable.ps1`, `readRoutingTable.ps1`, `readSmbShares.ps1`, `readWifiProfiles.ps1`, `readWifiStatus.ps1`, `testPingTargets.ps1`, `testTcpEndpoint.ps1`, `testTraceRoute.ps1` |
 | `11 - User` | 16 | `checkAutoLogon.ps1`, `checkInactiveLocalUsers.ps1`, `checkLockedOutUsers.ps1`, `checkPasswordNeverExpires.ps1`, `checkStaleProfiles.ps1`, `checkTemporaryProfiles.ps1`, `listLocalGroupMembers.ps1`, `listLocalGroups.ps1`, `listLocalUsers.ps1`, `listUsersProfiles.ps1`, `readEntraJoinStatus.ps1`, `readLastLogonTimes.ps1`, `readLoggedOnUsers.ps1`, `readLogonEvents.ps1`, `readRdpSessionHistory.ps1`, `readUserProfileSizes.ps1` |
 | `50 - Misc` | 17 | `checkPowerPlan.ps1`, `checkPrinterStatus.ps1`, `checkTempFolderSize.ps1`, `emptyFolders.ps1`, `readApplicationCrashes.ps1`, `readBugChecks.ps1`, `readEventLogErrors.ps1`, `readLargeFiles.ps1`, `readNinjaAgentStatus.ps1`, `readReliabilityIndex.ps1`, `readScheduledTaskState.ps1`, `readServiceCrashes.ps1`, `readTimeSyncStatus.ps1`, `readUnexpectedShutdowns.ps1`, `readUsbStorageHistory.ps1`, `readWheaErrors.ps1`, `restartPendingCheck.ps1` |
+| `Installations-Scripte` | 25 | `install7Zip.ps1`, `installAdobeAcrobatReader.ps1`, `installAnyDesk.ps1`, `installCitrixWorkspace.ps1`, `installDotNetDesktopRuntime10.ps1`, `installGit.ps1`, `installGoogleChrome.ps1`, `installGreenshot.ps1`, `installKeePassXC.ps1`, `installLibreOffice.ps1`, `installMozillaFirefox.ps1`, `installMozillaThunderbird.ps1`, `installNotepadPlusPlus.ps1`, `installPdf24Creator.ps1`, `installPowerShell7.ps1`, `installPuTTY.ps1`, `installTeamViewer.ps1`, `installTemurinJre21.ps1`, `installTreeSizeFree.ps1`, `installVcRedistX64.ps1`, `installVisualStudioCode.ps1`, `installVlcMediaPlayer.ps1`, `installWinSCP.ps1`, `installWireGuard.ps1`, `installZoomWorkplace.ps1` |
 
 ### Erweiterung 2026-10-14 / Extension 2026-10-14
 
@@ -294,6 +303,57 @@ each script's help. Tests: `Tests/Catalog*.Tests.ps1`.
 | `readUsbStorageHistory.ps1` | Meldet bekannte USB-Massenspeicher (USBSTOR) und die USBSTOR-Sperrrichtlinie. | Reports known USB mass storage devices (USBSTOR) and the USBSTOR block policy. | `usbIncludeSerial`, `usbRequireBlocked`, `usbMaxRecords` |
 | `readWheaErrors.ps1` | Meldet WHEA-Hardwarefehler (korrigiert/schwerwiegend) aus dem System-Log. | Reports WHEA hardware errors (corrected/fatal) from the System log. | `wheaLookbackDays`, `wheaCorrectedThreshold`, `wheaMaxRecords` |
 
+### `08 - Cleanup` – Bereinigung / Cleanup
+
+Alle Skripte arbeiten **ohne Opt-in nur prüfend** (Bericht, was entfernt würde)
+und löschen bzw. deinstallieren erst mit der jeweiligen `…Allow`-Variable =
+`true`. Sie unterstützen `-WhatIf`/`-Confirm`, schreiben einen JSON-Bericht
+(optional in `resultCustomField`) und nutzen `0` = OK/bereinigt, `1` = Fehler,
+`2` = Bereinigung nötig, aber nicht erlaubt bzw. Teilfehler (Details in der
+Skripthilfe). Tests: `Tests/CatalogCleanup.Tests.ps1`.
+/ Without opt-in all scripts only **audit** (report what would be removed) and
+only delete/uninstall when their `…Allow` variable is `true`. They support
+`-WhatIf`/`-Confirm`, write a JSON report (optionally to `resultCustomField`) and
+use `0` = OK/cleaned, `1` = error, `2` = cleanup needed but not allowed or partial
+failure (see script help).
+
+| Skript / Script | Zweck (DE) | Purpose (EN) | NinjaOne-Variablen / variables |
+| --- | --- | --- | --- |
+| `cleanupBrowserCache.ps1` | Leert nur die Cacheordner von Chrome/Edge/Firefox (keine Verläufe, Kennwörter oder Cookies). | Clears only Chrome/Edge/Firefox cache folders (no history, passwords or cookies). | `cleanupBrowserCacheAllow`, `cleanupBrowserCacheBrowsers`, `cleanupBrowserCacheSkipRunning` |
+| `cleanupComponentStore.ps1` | Analysiert und bereinigt den Komponentenspeicher (WinSxS) per DISM, optional `/ResetBase`. | Analyses and cleans the component store (WinSxS) via DISM, optionally `/ResetBase`. | `cleanupComponentStoreAllow`, `cleanupComponentStoreResetBase` |
+| `cleanupDeliveryOptimizationCache.ps1` | Meldet und leert den Cache der Übermittlungsoptimierung. | Reports and clears the Delivery Optimization cache. | `cleanupDoAllow`, `cleanupDoMinimumCacheMB` |
+| `cleanupRecycleBin.ps1` | Entfernt alte Papierkorb-Elemente aller Benutzer auf festen Laufwerken. | Removes old recycle bin items of all users on fixed drives. | `cleanupRecycleBinAllow`, `cleanupRecycleBinMinimumAgeDays` |
+| `cleanupTempFiles.ps1` | Löscht alte Dateien in `C:\Windows\Temp` und optional in Benutzer-Temp-Ordnern, optional leere Ordner. | Deletes old files in `C:\Windows\Temp` and optionally user temp folders, optionally empty folders. | `cleanupTempAllow`, `cleanupTempMinimumAgeDays`, `cleanupTempIncludeUserProfiles`, `cleanupTempRemoveEmptyFolders`, `cleanupTempTimeBudgetSeconds` |
+| `cleanupWindowsErrorReports.ps1` | Löscht alte Windows-Fehlerberichte (WER), optional Absturzabbilder. | Deletes old Windows Error Reporting reports, optionally crash dumps. | `cleanupWerAllow`, `cleanupWerMinimumAgeDays`, `cleanupWerIncludeCrashDumps` |
+| `removeAppxBloatware.ps1` | Entfernt und deprovisioniert unerwünschte AppX-Apps nach Namensliste. | Removes and deprovisions unwanted AppX apps by name list. | `appxRemoveAllow`, `appxRemoveNames`, `appxRemoveDeprovision` |
+| `removeStaleUserProfiles.ps1` | Entfernt lange ungenutzte lokale Benutzerprofile (mit Ausschlussliste und Höchstzahl). | Removes long-unused local user profiles (with exclusion list and maximum count). | `cleanupProfilesAllow`, `cleanupProfilesMinimumAgeDays`, `cleanupProfilesExclude`, `cleanupProfilesMaxRemovals`, `cleanupProfilesIncludeUnknownAge` |
+| `uninstallSoftware.ps1` | Deinstalliert Programme still per Anzeigename (MSI-Produktcode oder `QuietUninstallString`/EXE-Schalter). | Silently uninstalls programs by display name (MSI product code or `QuietUninstallString`/EXE switches). | `uninstallSoftwareName`, `uninstallMatchMode`, `uninstallAllow`, `uninstallMaxMatches`, `uninstallExeArguments`, `uninstallTimeoutMinutes` |
+
+### `09 - Configuration` – Einstellungen / Settings
+
+Die Skripte vergleichen den Ist- mit dem Sollzustand und ändern ihn erst mit
+der jeweiligen `…Allow`-Variable = `true` (`-WhatIf`/`-Confirm` werden
+unterstützt). Rückgabecodes: `0` = konform bzw. geändert, `1` = Fehler,
+`2` = Abweichung ohne Opt-in oder per `-Confirm` abgelehnt. Tests:
+`Tests/CatalogConfiguration.Tests.ps1`.
+/ The scripts compare the current with the desired state and only change it when
+their `…Allow` variable is `true` (`-WhatIf`/`-Confirm` supported). Exit codes:
+`0` = compliant or changed, `1` = error, `2` = deviation without opt-in or declined via
+`-Confirm`.
+
+| Skript / Script | Zweck (DE) | Purpose (EN) | NinjaOne-Variablen / variables |
+| --- | --- | --- | --- |
+| `setConsumerFeatures.ps1` | Deaktiviert Windows-Consumer-Funktionen (automatische App-Installationen, Vorschläge) per Richtlinie. | Disables Windows consumer features (automatic app installs, suggestions) via policy. | `configConsumerFeaturesDisabled`, `configConsumerFeaturesAllow` |
+| `setEdgePolicies.ps1` | Setzt ausgewählte Microsoft-Edge-Computerrichtlinien. | Sets selected Microsoft Edge machine policies. | `configEdgeHideFirstRunExperience`, `configEdgeStartupBoostEnabled`, `configEdgeBackgroundModeEnabled`, `configEdgeShowRecommendationsEnabled`, `configEdgeHomepageLocation`, `configEdgePasswordManagerEnabled`, `configEdgeAllow` |
+| `setFastStartup.ps1` | Aktiviert oder deaktiviert den Schnellstart (`HiberbootEnabled`). | Enables or disables Fast Startup (`HiberbootEnabled`). | `configFastStartupEnabled`, `configFastStartupAllow` |
+| `setOfficeUpdateChannel.ps1` | Setzt die Richtlinie für den Microsoft-365-Updatekanal, optional Update anstoßen. | Sets the Microsoft 365 update channel policy, optionally triggers an update. | `configOfficeChannel`, `configOfficeTriggerUpdate`, `configOfficeAllow` |
+| `setPowerPlan.ps1` | Setzt Energiesparplan sowie Bildschirm- und Standby-Zeitlimits (Netz/Akku). | Sets power plan and monitor/standby timeouts (AC/DC). | `configPowerPlan`, `configPowerMonitorTimeoutAcMinutes`, `configPowerMonitorTimeoutDcMinutes`, `configPowerStandbyTimeoutAcMinutes`, `configPowerStandbyTimeoutDcMinutes`, `configPowerAllow` |
+| `setRegistryValue.ps1` | Setzt oder entfernt einen Registrywert unter `HKLM:\SOFTWARE\` bzw. `HKLM:\SYSTEM\CurrentControlSet\` (geschützte Pfade gesperrt). | Sets or removes a registry value under `HKLM:\SOFTWARE\` or `HKLM:\SYSTEM\CurrentControlSet\` (protected paths blocked). | `configRegistryPath`, `configRegistryName`, `configRegistryType`, `configRegistryValue`, `configRegistryAction`, `configRegistryAllow` |
+| `setRemoteDesktop.ps1` | Aktiviert/deaktiviert Remotedesktop inkl. NLA und Firewallregeln. | Enables/disables Remote Desktop incl. NLA and firewall rules. | `configRdpEnabled`, `configRdpRequireNla`, `configRdpConfigureFirewall`, `configRdpAllow` |
+| `setServiceStartupType.ps1` | Setzt Starttyp und optional Aktion (Start/Stopp/Neustart) eines Dienstes; kritische Dienste sind gesperrt. | Sets a service's startup type and optional action (start/stop/restart); critical services are blocked. | `configServiceName`, `configServiceStartupType`, `configServiceAction`, `configServiceAllow` |
+| `setTimeZone.ps1` | Setzt die Windows-Zeitzone, optional mit Zeitsynchronisierung. | Sets the Windows time zone, optionally with time resync. | `configTimeZoneId`, `configTimeZoneResyncTime`, `configTimeZoneAllow` |
+| `setUsbStoragePolicy.ps1` | Sperrt USB-Massenspeicher oder setzt einen Schreibschutz. | Blocks USB mass storage or sets write protection. | `configUsbStorageBlocked`, `configUsbStorageDenyWriteOnly`, `configUsbStorageAllow` |
+
 ### Installations-Scripte / Installation scripts
 
 Der Ordner `Installations-Scripte` enthält **ein Skript je Tool** für die
@@ -381,6 +441,9 @@ Weitere zentrale Eingaben / Other key inputs:
 | Blockierte Software / blocked software | `blockedSoftwareNames` |
 | Chocolatey-Standardinstallation erforderlich / require standard installation | `chocolateyStatusRequireInstalled` |
 | Leere Ordner / empty folders | `emptyFoldersRootPath`, `emptyFoldersMaxFolders`, `emptyFoldersMaxRecords` |
+| Bereinigung / cleanup (`08 - Cleanup`) | `cleanupTempAllow`, `cleanupRecycleBinAllow`, `cleanupWerAllow`, `cleanupDoAllow`, `cleanupComponentStoreAllow`, `cleanupBrowserCacheAllow`, `cleanupProfilesAllow`, `uninstallAllow`, `appxRemoveAllow` (`true` ausdrücklich / explicitly) |
+| Einstellungen / settings (`09 - Configuration`) | `config…Allow` je Skript / per script (`true` ausdrücklich / explicitly) |
+| Installation (`Installations-Scripte`) | `installAllow`, `installSource`, `installerPath`, `installerSha256`, `installerArguments`, `installUpgrade`, `installTimeoutMinutes` |
 
 Die detaillierte Parameterhilfe bleibt maßgeblich für Syntax, Grenzwerte und
 Standardwerte. / Detailed parameter help remains authoritative for syntax,
@@ -469,9 +532,25 @@ confirmation parameters in addition to explicit opt-in: supply `-Confirm:$false`
 after review. Network/user inventories support `-WhatIf` for field publication;
 read-only queries and the single TCP connection test still execute.
 
+Bereinigungs-, Einstellungs- und Installationsskripte zuerst ohne Opt-in
+(Audit) bzw. mit `-WhatIf` ausführen und den Bericht prüfen.
+`removeStaleUserProfiles.ps1` und `uninstallSoftware.ps1` löschen Daten bzw.
+Programme unwiderruflich – Ausschlussliste, Höchstzahl und Namensabgleich
+(`Exact`) bewusst setzen. Installationsskripte laden Software nur über winget
+oder aus einer vom Administrator angegebenen lokalen/UNC-Quelle (siehe
+[SECURITY.md](SECURITY.md)) und lösen keinen Neustart aus.
+/ Run cleanup, configuration and installation scripts first without opt-in
+(audit) or with `-WhatIf` and review the report. `removeStaleUserProfiles.ps1`
+and `uninstallSoftware.ps1` remove data/programs irreversibly – set exclusion
+list, maximum count and name matching (`Exact`) deliberately. Installation
+scripts only obtain software via winget or an admin-supplied local/UNC source and
+never trigger a reboot.
+
 Zusätzliche Systemtests:
 `Invoke-Pester -Path ./Tests/SystemChecks.Tests.ps1`; DNS-Skripte:
-`Invoke-Pester -Path ./Tests/DnsScripts.Tests.ps1`; alle Tests: `Invoke-Pester -Path ./Tests`.
+`Invoke-Pester -Path ./Tests/DnsScripts.Tests.ps1`; Bereinigung/Einstellungen/Installation:
+`Tests/CatalogCleanup.Tests.ps1`, `Tests/CatalogConfiguration.Tests.ps1`,
+`Tests/InstallScripts.Tests.ps1`; alle Tests: `Invoke-Pester -Path ./Tests`.
 Linux-Parsing/Mock-Tests ersetzen keinen Windows-PowerShell-5.1-/NinjaOne-Test.
 / Additional system tests: `Invoke-Pester -Path ./Tests/SystemChecks.Tests.ps1`;
 DNS scripts: `Invoke-Pester -Path ./Tests/DnsScripts.Tests.ps1`; all tests: `Invoke-Pester -Path ./Tests`.
