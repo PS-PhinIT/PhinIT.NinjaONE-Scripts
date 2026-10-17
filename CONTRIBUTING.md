@@ -10,8 +10,23 @@ Pull Requests und Issues sind willkommen! / Pull requests and issues are welcome
   PowerShell 7-only syntax.
 - **Ablage:** eigenständige Skripte im passenden Themenordner
   (`01 - System` … `50 - Misc`); Dateinamen in camelCase mit Verb
-  (`read…`, `check…`, `audit…`, `list…`).
-  / One standalone script per file in the matching topic folder.
+  (`read…`, `check…`, `audit…`, `list…`). Bereinigung in `08 - Cleanup`
+  (`cleanup…`, `remove…`, `uninstall…`), Einstellungen in `09 - Configuration`
+  (`set…`), Installationen in `Installations-Scripte` (`install<Tool>.ps1`, ein
+  Skript je Tool; Silent-Schalter zusätzlich in
+  `Installations-Scripte/SilentSwitches.md` dokumentieren).
+  / One standalone script per file in the matching topic folder; cleanup in
+  `08 - Cleanup`, settings in `09 - Configuration`, one install script per tool
+  in `Installations-Scripte` (document its switches in `SilentSwitches.md`).
+- **Installationsskripte:** Die Logik ab `function Resolve-Setting` ist in allen
+  `install*.ps1` identisch (wird von `Tests/InstallScripts.Tests.ps1` geprüft);
+  ein neues Tool erhält eine Kopie eines bestehenden Skripts, in der nur Hilfe und
+  die `$Tool`-Tabelle (Name, winget-ID, Erkennungsmuster, Standardargumente)
+  angepasst werden. Änderungen an der Logik in allen Skripten gleich vornehmen
+  und das Tool in `Tests/InstallScripts.Tests.ps1` ergänzen.
+  / The logic from `function Resolve-Setting` onwards is identical in all
+  `install*.ps1` scripts (checked by tests); new tools copy an existing script and
+  only change the help and the `$Tool` table. Apply engine changes to all scripts.
 - **Kodierung:** UTF-8 **mit BOM** (sonst werden Umlaute unter PowerShell 5.1
   falsch gelesen). / Encoding: UTF-8 **with BOM**.
 - **Hilfe:** Kommentarbasierte Hilfe mit `.SYNOPSIS`, `.DESCRIPTION`,
@@ -31,7 +46,8 @@ Pull Requests und Issues sind willkommen! / Pull requests and issues are welcome
   `2` = Warnbefund (in der Hilfe beschreiben).
 - **Sicherheit:** zustandsändernde Skripte nur mit ausdrücklichem Opt-in und
   `SupportsShouldProcess`; keine Geheimnisse ausgeben; keine Downloads zur
-  Laufzeit. Siehe [SECURITY.md](SECURITY.md).
+  Laufzeit (Ausnahme: geprüfte Quellen der Installationsskripte). Siehe
+  [SECURITY.md](SECURITY.md).
 
 ## Prüfung vor dem Pull Request / Checks before a pull request
 

@@ -294,6 +294,68 @@ each script's help. Tests: `Tests/Catalog*.Tests.ps1`.
 | `readUsbStorageHistory.ps1` | Meldet bekannte USB-Massenspeicher (USBSTOR) und die USBSTOR-Sperrrichtlinie. | Reports known USB mass storage devices (USBSTOR) and the USBSTOR block policy. | `usbIncludeSerial`, `usbRequireBlocked`, `usbMaxRecords` |
 | `readWheaErrors.ps1` | Meldet WHEA-Hardwarefehler (korrigiert/schwerwiegend) aus dem System-Log. | Reports WHEA hardware errors (corrected/fatal) from the System log. | `wheaLookbackDays`, `wheaCorrectedThreshold`, `wheaMaxRecords` |
 
+### Installations-Scripte / Installation scripts
+
+Der Ordner `Installations-Scripte` enthält **ein Skript je Tool** für die
+unbeaufsichtigte Installation (Silent Install) sowie
+[`SilentSwitches.md`](Installations-Scripte/SilentSwitches.md) mit
+Silent-Schaltern, Rückgabecodes und Deinstallationsbefehlen für viele weitere
+Programme und Installer-Frameworks. Tests: `Tests/InstallScripts.Tests.ps1`.
+/ The `Installations-Scripte` folder contains **one script per tool** for
+unattended (silent) installation plus `SilentSwitches.md` with silent switches,
+exit codes and uninstall commands for many more programs and installer frameworks.
+
+Ohne `installAllow = true` prüfen die Skripte nur, ob das Tool installiert ist
+(Exit `0` = installiert, `2` = nicht installiert). Mit Opt-in wird über
+**winget** (`--scope machine`, Quelle `winget`) oder eine **lokale/UNC-Datei**
+(`.msi`/`.exe`, optional SHA256-geprüft) installiert; ein bereits installiertes
+Tool wird nur mit `installUpgrade = true` aktualisiert. Es wird nie ein Neustart
+ausgelöst – `RebootRequired` im Bericht zeigt einen ausstehenden Neustart an.
+/ Without `installAllow = true` the scripts only check whether the tool is
+installed (exit `0` = installed, `2` = not installed). With opt-in they install
+via **winget** or a **local/UNC file** (optionally SHA256-verified); installed
+tools are only upgraded with `installUpgrade = true`. No reboot is ever triggered;
+`RebootRequired` in the report flags a pending reboot.
+
+| Skript / Script | Tool | winget-ID |
+| --- | --- | --- |
+| `install7Zip.ps1` | 7-Zip | `7zip.7zip` |
+| `installAdobeAcrobatReader.ps1` | Adobe Acrobat Reader (64-bit) | `Adobe.Acrobat.Reader.64-bit` |
+| `installAnyDesk.ps1` | AnyDesk | `AnyDesk.AnyDesk` |
+| `installCitrixWorkspace.ps1` | Citrix Workspace | `Citrix.Workspace` |
+| `installDotNetDesktopRuntime10.ps1` | .NET Desktop Runtime 10 | `Microsoft.DotNet.DesktopRuntime.10` |
+| `installGit.ps1` | Git for Windows | `Git.Git` |
+| `installGoogleChrome.ps1` | Google Chrome | `Google.Chrome` |
+| `installGreenshot.ps1` | Greenshot | `Greenshot.Greenshot` |
+| `installKeePassXC.ps1` | KeePassXC | `KeePassXCTeam.KeePassXC` |
+| `installLibreOffice.ps1` | LibreOffice | `TheDocumentFoundation.LibreOffice` |
+| `installMozillaFirefox.ps1` | Mozilla Firefox | `Mozilla.Firefox.de` |
+| `installMozillaThunderbird.ps1` | Mozilla Thunderbird | `Mozilla.Thunderbird.de` |
+| `installNotepadPlusPlus.ps1` | Notepad++ | `Notepad++.Notepad++` |
+| `installPdf24Creator.ps1` | PDF24 Creator | `geeksoftwareGmbH.PDF24Creator` |
+| `installPowerShell7.ps1` | PowerShell 7 | `Microsoft.PowerShell` |
+| `installPuTTY.ps1` | PuTTY | `PuTTY.PuTTY` |
+| `installTeamViewer.ps1` | TeamViewer | `TeamViewer.TeamViewer` |
+| `installTemurinJre21.ps1` | Eclipse Temurin JRE 21 | `EclipseAdoptium.Temurin.21.JRE` |
+| `installTreeSizeFree.ps1` | TreeSize Free | `JAMSoftware.TreeSize.Free` |
+| `installVcRedistX64.ps1` | Microsoft Visual C++ Redistributable 2015-2022+ (x64) | `Microsoft.VCRedist.2015+.x64` |
+| `installVisualStudioCode.ps1` | Visual Studio Code | `Microsoft.VisualStudioCode` |
+| `installVlcMediaPlayer.ps1` | VLC media player | `VideoLAN.VLC` |
+| `installWinSCP.ps1` | WinSCP | `WinSCP.WinSCP` |
+| `installWireGuard.ps1` | WireGuard | `WireGuard.WireGuard` |
+| `installZoomWorkplace.ps1` | Zoom Workplace | `Zoom.Zoom` |
+
+| NinjaOne-Variable | Typ / Type | Standard / Default | Bedeutung / Meaning |
+| --- | --- | --- | --- |
+| `installAllow` | Checkbox | `false` | Installation erlauben (sonst nur Prüfung) / allow installation (otherwise audit only) |
+| `installSource` | Dropdown `Winget` / `File` | `Winget` | Installationsquelle / installation source |
+| `installerPath` | Text | – | Nur `File`: lokaler (`C:\…`) oder UNC-Pfad zu `.msi`/`.exe` / `File` only: local or UNC path |
+| `installerSha256` | Text | – | Optional: erwarteter SHA256-Hash der Datei / expected SHA256 hash |
+| `installerArguments` | Text | Werte aus `SilentSwitches.md` / values from `SilentSwitches.md` | Nur `File`: ersetzt die Standard-Schalter (bei MSI die Zusatz-Eigenschaften) / replaces default switches |
+| `installUpgrade` | Checkbox | `false` | Vorhandene Installation aktualisieren / upgrade existing installation |
+| `installTimeoutMinutes` | Integer, 1..240 | `30` | Maximale Wartezeit / maximum wait time |
+| `resultCustomField` | Text | – | Interner Name eines MultiLine-Feldes für den JSON-Bericht / internal MultiLine field name |
+
 ### Gemeinsame NinjaOne-Konfiguration / Common NinjaOne configuration
 
 Beispielkonfiguration für die neuen Systemprüfungen / Example configuration for
