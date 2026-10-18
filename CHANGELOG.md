@@ -10,6 +10,45 @@ Git-Historie und den Pull Requests rekonstruiert.
 / The repository has no release tags. Every entry is therefore dated (newest
 first); older entries were reconstructed from the Git history and pull requests.
 
+## 2026-10-18 – 80 weitere Installations-Scripte / 80 additional installation scripts
+
+### Hinzugefügt / Added
+- `Installations-Scripte`: 80 weitere Silent-Installationsskripte (insgesamt 105)
+  mit derselben Engine wie die bestehenden Skripte; winget-IDs, Scope und
+  Anzeigenamen gegen `microsoft/winget-pkgs` geprüft. Schwerpunkt
+  Business-Anwendungen:
+  - Browser: Microsoft Edge, Edge WebView2, Brave, Firefox ESR.
+  - Office, PDF, Kommunikation und Cloud: Microsoft 365 Apps, Foxit PDF
+    Reader/Editor, PDF-XChange Editor, PDFsam Basic, ONLYOFFICE, eM Client,
+    Power BI Desktop, Power Automate for desktop, Webex, Jabber, GoTo Meeting,
+    Zoom Outlook Plugin, Mattermost, Nextcloud, Dropbox, Google Drive, Box Drive,
+    OneDrive, draw.io.
+  - Sicherheit: 1Password, Bitwarden, KeePass, Gpg4win, VeraCrypt, Yubico
+    Authenticator.
+  - Fernwartung und VPN: OpenVPN, OpenVPN Connect, Tailscale, Omnissa Horizon
+    Client, RealVNC Viewer, mRemoteNG, Remote Desktop Manager, Royal TS,
+    Splashtop Business, TeamViewer Host, MobaXterm, SonicWall NetExtender,
+    Microsoft Remote Help.
+  - Laufzeiten: .NET 8/10 (Desktop, Runtime, ASP.NET Core, Hosting Bundle),
+    Visual C++ x86 und 2013, Temurin JRE 8/11/17/25 und JDK 21, Python 3.14,
+    Node.js LTS, ODBC Driver 18 for SQL Server.
+  - Admin-Werkzeuge: PowerToys, SSMS, Azure CLI, AWS CLI, Azure Storage
+    Explorer, Wireshark, Everything, WinMerge, TortoiseGit, TortoiseSVN,
+    Advanced IP Scanner, DBeaver, ShareX, IrfanView, PeaZip, WinRAR.
+  - Hersteller-Tools: Dell Command | Update, Lenovo System Update, Intel Driver
+    & Support Assistant, Jabra Direct.
+  / 80 additional silent install scripts (105 in total) sharing the existing
+  engine, focused on business applications; winget IDs, scope and display names
+  verified against `microsoft/winget-pkgs`.
+
+### Geändert / Changed
+- `SilentSwitches.md`: winget-Tabelle und Anwendungstabellen um die neuen
+  Skripte ergänzt. / winget and application tables list the new scripts.
+- `Tests/InstallScripts.Tests.ps1`: Beispiel- und Negativ-Anzeigenamen für alle
+  neuen Skripte. / sample and negative display names for all new scripts.
+- `README.md`: Katalog und Tabelle der Installations-Scripte aktualisiert.
+  / catalog and installation script table updated.
+
 ## 2026-10-17 – Bereinigung, Einstellungen und Installations-Scripte / Cleanup, configuration and installation scripts
 
 ### Hinzugefügt / Added

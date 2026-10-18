@@ -123,7 +123,7 @@ DNS scripts (`00-`/`01-`) keep their own guides and exit codes.
 | `10 - Network` | 18 | `auditFirewallProfiles.ps1`, `auditTcpConnections.ps1`, `checkAdapterLinkSpeed.ps1`, `checkInternetConnectivity.ps1`, `checkIpAddressConflicts.ps1`, `checkNetworkProfile.ps1`, `checkOpenPorts.ps1`, `checkProxySettings.ps1`, `checkVpnConnections.ps1`, `listNetworkAdapters.ps1`, `readArpTable.ps1`, `readRoutingTable.ps1`, `readSmbShares.ps1`, `readWifiProfiles.ps1`, `readWifiStatus.ps1`, `testPingTargets.ps1`, `testTcpEndpoint.ps1`, `testTraceRoute.ps1` |
 | `11 - User` | 16 | `checkAutoLogon.ps1`, `checkInactiveLocalUsers.ps1`, `checkLockedOutUsers.ps1`, `checkPasswordNeverExpires.ps1`, `checkStaleProfiles.ps1`, `checkTemporaryProfiles.ps1`, `listLocalGroupMembers.ps1`, `listLocalGroups.ps1`, `listLocalUsers.ps1`, `listUsersProfiles.ps1`, `readEntraJoinStatus.ps1`, `readLastLogonTimes.ps1`, `readLoggedOnUsers.ps1`, `readLogonEvents.ps1`, `readRdpSessionHistory.ps1`, `readUserProfileSizes.ps1` |
 | `50 - Misc` | 17 | `checkPowerPlan.ps1`, `checkPrinterStatus.ps1`, `checkTempFolderSize.ps1`, `emptyFolders.ps1`, `readApplicationCrashes.ps1`, `readBugChecks.ps1`, `readEventLogErrors.ps1`, `readLargeFiles.ps1`, `readNinjaAgentStatus.ps1`, `readReliabilityIndex.ps1`, `readScheduledTaskState.ps1`, `readServiceCrashes.ps1`, `readTimeSyncStatus.ps1`, `readUnexpectedShutdowns.ps1`, `readUsbStorageHistory.ps1`, `readWheaErrors.ps1`, `restartPendingCheck.ps1` |
-| `Installations-Scripte` | 25 | `install7Zip.ps1`, `installAdobeAcrobatReader.ps1`, `installAnyDesk.ps1`, `installCitrixWorkspace.ps1`, `installDotNetDesktopRuntime10.ps1`, `installGit.ps1`, `installGoogleChrome.ps1`, `installGreenshot.ps1`, `installKeePassXC.ps1`, `installLibreOffice.ps1`, `installMozillaFirefox.ps1`, `installMozillaThunderbird.ps1`, `installNotepadPlusPlus.ps1`, `installPdf24Creator.ps1`, `installPowerShell7.ps1`, `installPuTTY.ps1`, `installTeamViewer.ps1`, `installTemurinJre21.ps1`, `installTreeSizeFree.ps1`, `installVcRedistX64.ps1`, `installVisualStudioCode.ps1`, `installVlcMediaPlayer.ps1`, `installWinSCP.ps1`, `installWireGuard.ps1`, `installZoomWorkplace.ps1` |
+| `Installations-Scripte` | 105 | `install1Password.ps1`, `install7Zip.ps1`, `installAdobeAcrobatReader.ps1`, `installAdvancedIpScanner.ps1`, `installAnyDesk.ps1`, `installAwsCli.ps1`, `installAzureCli.ps1`, `installAzureStorageExplorer.ps1`, `installBitwarden.ps1`, `installBoxDrive.ps1`, `installBraveBrowser.ps1`, `installCiscoJabber.ps1`, `installCiscoWebex.ps1`, `installCitrixWorkspace.ps1`, `installDBeaverCommunity.ps1`, `installDellCommandUpdate.ps1`, `installDotNetAspNetCoreRuntime10.ps1`, `installDotNetAspNetCoreRuntime8.ps1`, `installDotNetDesktopRuntime10.ps1`, `installDotNetDesktopRuntime8.ps1`, `installDotNetHostingBundle10.ps1`, `installDotNetHostingBundle8.ps1`, `installDotNetRuntime10.ps1`, `installDotNetRuntime8.ps1`, `installDrawIo.ps1`, `installDropbox.ps1`, `installEmClient.ps1`, `installEverything.ps1`, `installFoxitPdfEditor.ps1`, `installFoxitPdfReader.ps1`, `installGit.ps1`, `installGoogleChrome.ps1`, `installGoogleDrive.ps1`, `installGoToMeeting.ps1`, `installGpg4win.ps1`, `installGreenshot.ps1`, `installIntelDriverSupportAssistant.ps1`, `installIrfanView.ps1`, `installJabraDirect.ps1`, `installKeePass.ps1`, `installKeePassXC.ps1`, `installLenovoSystemUpdate.ps1`, `installLibreOffice.ps1`, `installMattermostDesktop.ps1`, `installMicrosoft365Apps.ps1`, `installMicrosoftEdge.ps1`, `installMicrosoftEdgeWebView2.ps1`, `installMicrosoftOneDrive.ps1`, `installMicrosoftRemoteHelp.ps1`, `installMobaXterm.ps1`, `installMozillaFirefox.ps1`, `installMozillaFirefoxEsr.ps1`, `installMozillaThunderbird.ps1`, `installMRemoteNG.ps1`, `installMsOdbcSql18.ps1`, `installNextcloudDesktop.ps1`, `installNodeJsLts.ps1`, `installNotepadPlusPlus.ps1`, `installOmnissaHorizonClient.ps1`, `installOnlyOfficeDesktopEditors.ps1`, `installOpenVpn.ps1`, `installOpenVpnConnect.ps1`, `installPdf24Creator.ps1`, `installPdfsamBasic.ps1`, `installPdfXChangeEditor.ps1`, `installPeaZip.ps1`, `installPowerAutomateDesktop.ps1`, `installPowerBIDesktop.ps1`, `installPowerShell7.ps1`, `installPowerToys.ps1`, `installPuTTY.ps1`, `installPython314.ps1`, `installRealVncViewer.ps1`, `installRemoteDesktopManager.ps1`, `installRoyalTs.ps1`, `installShareX.ps1`, `installSonicWallNetExtender.ps1`, `installSplashtopBusiness.ps1`, `installSqlServerManagementStudio.ps1`, `installTailscale.ps1`, `installTeamViewer.ps1`, `installTeamViewerHost.ps1`, `installTemurinJdk21.ps1`, `installTemurinJre11.ps1`, `installTemurinJre17.ps1`, `installTemurinJre21.ps1`, `installTemurinJre25.ps1`, `installTemurinJre8.ps1`, `installTortoiseGit.ps1`, `installTortoiseSvn.ps1`, `installTreeSizeFree.ps1`, `installVcRedist2013X64.ps1`, `installVcRedistX64.ps1`, `installVcRedistX86.ps1`, `installVeraCrypt.ps1`, `installVisualStudioCode.ps1`, `installVlcMediaPlayer.ps1`, `installWinMerge.ps1`, `installWinRar.ps1`, `installWinSCP.ps1`, `installWireGuard.ps1`, `installWireshark.ps1`, `installYubicoAuthenticator.ps1`, `installZoomOutlookPlugin.ps1`, `installZoomWorkplace.ps1` |
 
 ### Erweiterung 2026-10-14 / Extension 2026-10-14
 
@@ -379,30 +379,110 @@ tools are only upgraded with `installUpgrade = true`. No reboot is ever triggere
 
 | Skript / Script | Tool | winget-ID |
 | --- | --- | --- |
+| `install1Password.ps1` | 1Password | `AgileBits.1Password` |
 | `install7Zip.ps1` | 7-Zip | `7zip.7zip` |
 | `installAdobeAcrobatReader.ps1` | Adobe Acrobat Reader (64-bit) | `Adobe.Acrobat.Reader.64-bit` |
+| `installAdvancedIpScanner.ps1` | Advanced IP Scanner | `Famatech.AdvancedIPScanner` |
 | `installAnyDesk.ps1` | AnyDesk | `AnyDesk.AnyDesk` |
+| `installAwsCli.ps1` | AWS Command Line Interface v2 | `Amazon.AWSCLI` |
+| `installAzureCli.ps1` | Microsoft Azure CLI | `Microsoft.AzureCLI` |
+| `installAzureStorageExplorer.ps1` | Microsoft Azure Storage Explorer | `Microsoft.Azure.StorageExplorer` |
+| `installBitwarden.ps1` | Bitwarden | `Bitwarden.Bitwarden` |
+| `installBoxDrive.ps1` | Box Drive | `Box.Box` |
+| `installBraveBrowser.ps1` | Brave | `Brave.Brave` |
+| `installCiscoJabber.ps1` | Cisco Jabber | `Cisco.Jabber` |
+| `installCiscoWebex.ps1` | Webex | `Cisco.Webex` |
 | `installCitrixWorkspace.ps1` | Citrix Workspace | `Citrix.Workspace` |
+| `installDBeaverCommunity.ps1` | DBeaver Community | `DBeaver.DBeaver.Community` |
+| `installDellCommandUpdate.ps1` | Dell Command \| Update | `Dell.CommandUpdate.Universal` |
+| `installDotNetAspNetCoreRuntime10.ps1` | ASP.NET Core Runtime 10 | `Microsoft.DotNet.AspNetCore.10` |
+| `installDotNetAspNetCoreRuntime8.ps1` | ASP.NET Core Runtime 8 | `Microsoft.DotNet.AspNetCore.8` |
 | `installDotNetDesktopRuntime10.ps1` | .NET Desktop Runtime 10 | `Microsoft.DotNet.DesktopRuntime.10` |
+| `installDotNetDesktopRuntime8.ps1` | .NET Desktop Runtime 8 | `Microsoft.DotNet.DesktopRuntime.8` |
+| `installDotNetHostingBundle10.ps1` | .NET 10 Windows Server Hosting Bundle | `Microsoft.DotNet.HostingBundle.10` |
+| `installDotNetHostingBundle8.ps1` | .NET 8 Windows Server Hosting Bundle | `Microsoft.DotNet.HostingBundle.8` |
+| `installDotNetRuntime10.ps1` | .NET Runtime 10 | `Microsoft.DotNet.Runtime.10` |
+| `installDotNetRuntime8.ps1` | .NET Runtime 8 | `Microsoft.DotNet.Runtime.8` |
+| `installDrawIo.ps1` | draw.io | `JGraph.Draw` |
+| `installDropbox.ps1` | Dropbox | `Dropbox.Dropbox` |
+| `installEmClient.ps1` | eM Client | `eMClient.eMClient` |
+| `installEverything.ps1` | Everything | `voidtools.Everything` |
+| `installFoxitPdfEditor.ps1` | Foxit PDF Editor | `Foxit.PhantomPDF` |
+| `installFoxitPdfReader.ps1` | Foxit PDF Reader | `Foxit.FoxitReader` |
 | `installGit.ps1` | Git for Windows | `Git.Git` |
 | `installGoogleChrome.ps1` | Google Chrome | `Google.Chrome` |
+| `installGoogleDrive.ps1` | Google Drive | `Google.GoogleDrive` |
+| `installGoToMeeting.ps1` | GoTo Meeting | `GoTo.GoToMeeting` |
+| `installGpg4win.ps1` | Gpg4win | `GnuPG.Gpg4win` |
 | `installGreenshot.ps1` | Greenshot | `Greenshot.Greenshot` |
+| `installIntelDriverSupportAssistant.ps1` | Intel Driver & Support Assistant | `Intel.IntelDriverAndSupportAssistant` |
+| `installIrfanView.ps1` | IrfanView | `IrfanSkiljan.IrfanView` |
+| `installJabraDirect.ps1` | Jabra Direct | `Jabra.Direct` |
+| `installKeePass.ps1` | KeePass Password Safe 2 | `DominikReichl.KeePass` |
 | `installKeePassXC.ps1` | KeePassXC | `KeePassXCTeam.KeePassXC` |
+| `installLenovoSystemUpdate.ps1` | Lenovo System Update | `Lenovo.SystemUpdate` |
 | `installLibreOffice.ps1` | LibreOffice | `TheDocumentFoundation.LibreOffice` |
+| `installMattermostDesktop.ps1` | Mattermost | `Mattermost.MattermostDesktop` |
+| `installMicrosoft365Apps.ps1` | Microsoft 365 Apps | `Microsoft.Office` |
+| `installMicrosoftEdge.ps1` | Microsoft Edge | `Microsoft.Edge` |
+| `installMicrosoftEdgeWebView2.ps1` | Microsoft Edge WebView2 Runtime | `Microsoft.EdgeWebView2Runtime` |
+| `installMicrosoftOneDrive.ps1` | Microsoft OneDrive | `Microsoft.OneDrive` |
+| `installMicrosoftRemoteHelp.ps1` | Microsoft Remote Help | `Microsoft.RemoteHelp` |
+| `installMobaXterm.ps1` | MobaXterm | `Mobatek.MobaXterm` |
 | `installMozillaFirefox.ps1` | Mozilla Firefox | `Mozilla.Firefox.de` |
+| `installMozillaFirefoxEsr.ps1` | Mozilla Firefox ESR | `Mozilla.Firefox.ESR.de` |
 | `installMozillaThunderbird.ps1` | Mozilla Thunderbird | `Mozilla.Thunderbird.de` |
+| `installMRemoteNG.ps1` | mRemoteNG | `mRemoteNG.mRemoteNG` |
+| `installMsOdbcSql18.ps1` | Microsoft ODBC Driver 18 for SQL Server | `Microsoft.msodbcsql.18` |
+| `installNextcloudDesktop.ps1` | Nextcloud Desktop | `Nextcloud.NextcloudDesktop` |
+| `installNodeJsLts.ps1` | Node.js LTS | `OpenJS.NodeJS.LTS` |
 | `installNotepadPlusPlus.ps1` | Notepad++ | `Notepad++.Notepad++` |
+| `installOmnissaHorizonClient.ps1` | Omnissa Horizon Client | `Omnissa.HorizonClient` |
+| `installOnlyOfficeDesktopEditors.ps1` | ONLYOFFICE Desktop Editors | `ONLYOFFICE.DesktopEditors` |
+| `installOpenVpn.ps1` | OpenVPN (Community) | `OpenVPNTechnologies.OpenVPN` |
+| `installOpenVpnConnect.ps1` | OpenVPN Connect | `OpenVPNTechnologies.OpenVPNConnect` |
 | `installPdf24Creator.ps1` | PDF24 Creator | `geeksoftwareGmbH.PDF24Creator` |
+| `installPdfsamBasic.ps1` | PDFsam Basic | `PDFsam.PDFsam` |
+| `installPdfXChangeEditor.ps1` | PDF-XChange Editor | `TrackerSoftware.PDF-XChangeEditor` |
+| `installPeaZip.ps1` | PeaZip | `Giorgiotani.Peazip` |
+| `installPowerAutomateDesktop.ps1` | Power Automate for desktop | `Microsoft.PowerAutomateDesktop` |
+| `installPowerBIDesktop.ps1` | Microsoft Power BI Desktop | `Microsoft.PowerBI` |
 | `installPowerShell7.ps1` | PowerShell 7 | `Microsoft.PowerShell` |
+| `installPowerToys.ps1` | Microsoft PowerToys | `Microsoft.PowerToys` |
 | `installPuTTY.ps1` | PuTTY | `PuTTY.PuTTY` |
+| `installPython314.ps1` | Python 3.14 | `Python.Python.3.14` |
+| `installRealVncViewer.ps1` | RealVNC Viewer | `RealVNC.VNCViewer` |
+| `installRemoteDesktopManager.ps1` | Remote Desktop Manager | `Devolutions.RemoteDesktopManager` |
+| `installRoyalTs.ps1` | Royal TS V7 | `RoyalApps.RoyalTS.7` |
+| `installShareX.ps1` | ShareX | `ShareX.ShareX` |
+| `installSonicWallNetExtender.ps1` | SonicWall NetExtender | `SonicWall.NetExtender` |
+| `installSplashtopBusiness.ps1` | Splashtop Business | `Splashtop.SplashtopBusiness` |
+| `installSqlServerManagementStudio.ps1` | SQL Server Management Studio 22 | `Microsoft.SQLServerManagementStudio.22` |
+| `installTailscale.ps1` | Tailscale | `Tailscale.Tailscale` |
 | `installTeamViewer.ps1` | TeamViewer | `TeamViewer.TeamViewer` |
+| `installTeamViewerHost.ps1` | TeamViewer Host | `TeamViewer.TeamViewer.Host` |
+| `installTemurinJdk21.ps1` | Eclipse Temurin JDK 21 | `EclipseAdoptium.Temurin.21.JDK` |
+| `installTemurinJre11.ps1` | Eclipse Temurin JRE 11 | `EclipseAdoptium.Temurin.11.JRE` |
+| `installTemurinJre17.ps1` | Eclipse Temurin JRE 17 | `EclipseAdoptium.Temurin.17.JRE` |
 | `installTemurinJre21.ps1` | Eclipse Temurin JRE 21 | `EclipseAdoptium.Temurin.21.JRE` |
+| `installTemurinJre25.ps1` | Eclipse Temurin JRE 25 | `EclipseAdoptium.Temurin.25.JRE` |
+| `installTemurinJre8.ps1` | Eclipse Temurin JRE 8 | `EclipseAdoptium.Temurin.8.JRE` |
+| `installTortoiseGit.ps1` | TortoiseGit | `TortoiseGit.TortoiseGit` |
+| `installTortoiseSvn.ps1` | TortoiseSVN | `TortoiseSVN.TortoiseSVN` |
 | `installTreeSizeFree.ps1` | TreeSize Free | `JAMSoftware.TreeSize.Free` |
+| `installVcRedist2013X64.ps1` | Microsoft Visual C++ 2013 Redistributable (x64) | `Microsoft.VCRedist.2013.x64` |
 | `installVcRedistX64.ps1` | Microsoft Visual C++ Redistributable 2015-2022+ (x64) | `Microsoft.VCRedist.2015+.x64` |
+| `installVcRedistX86.ps1` | Microsoft Visual C++ Redistributable 2015-2022+ (x86) | `Microsoft.VCRedist.2015+.x86` |
+| `installVeraCrypt.ps1` | VeraCrypt | `IDRIX.VeraCrypt` |
 | `installVisualStudioCode.ps1` | Visual Studio Code | `Microsoft.VisualStudioCode` |
 | `installVlcMediaPlayer.ps1` | VLC media player | `VideoLAN.VLC` |
+| `installWinMerge.ps1` | WinMerge | `WinMerge.WinMerge` |
+| `installWinRar.ps1` | WinRAR | `RARLab.WinRAR` |
 | `installWinSCP.ps1` | WinSCP | `WinSCP.WinSCP` |
 | `installWireGuard.ps1` | WireGuard | `WireGuard.WireGuard` |
+| `installWireshark.ps1` | Wireshark | `WiresharkFoundation.Wireshark` |
+| `installYubicoAuthenticator.ps1` | Yubico Authenticator | `Yubico.Authenticator` |
+| `installZoomOutlookPlugin.ps1` | Zoom Outlook Plugin | `Zoom.ZoomOutlookPlugin` |
 | `installZoomWorkplace.ps1` | Zoom Workplace | `Zoom.Zoom` |
 
 | NinjaOne-Variable | Typ / Type | Standard / Default | Bedeutung / Meaning |
