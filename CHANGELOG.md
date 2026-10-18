@@ -10,6 +10,36 @@ Git-Historie und den Pull Requests rekonstruiert.
 / The repository has no release tags. Every entry is therefore dated (newest
 first); older entries were reconstructed from the Git history and pull requests.
 
+## 2026-10-17 – Bereinigung, Einstellungen und Installations-Scripte / Cleanup, configuration and installation scripts
+
+### Hinzugefügt / Added
+- `08 - Cleanup`: 9 Bereinigungsskripte (Temp-Dateien, Papierkorb, WER-Berichte,
+  Übermittlungsoptimierungs-Cache, Komponentenspeicher, Browser-Cache, veraltete
+  Benutzerprofile, Software-Deinstallation, AppX-Bloatware). Ohne Opt-in nur
+  Inventur; `-WhatIf`/`-Confirm`, JSON-Bericht, `resultCustomField`, Exit 0/1/2.
+  / 9 cleanup scripts; audit only without opt-in, `-WhatIf`/`-Confirm`, JSON
+  report, `resultCustomField`, exit 0/1/2.
+- `09 - Configuration`: 10 Einstellungsskripte für System und Programme
+  (Energiesparplan, Zeitzone, Schnellstart, Remotedesktop, Dienst-Starttyp,
+  Registrywert, USB-Speicher, Consumer-Funktionen, Edge-Richtlinien,
+  Microsoft-365-Updatekanal) mit Soll-/Ist-Vergleich und Opt-in.
+  / 10 configuration scripts for system and program settings with desired-state
+  comparison and opt-in.
+- `Installations-Scripte`: 25 Silent-Installationsskripte (je Tool eines) über
+  winget oder eine lokale/UNC-Datei mit optionaler SHA256-Prüfung, sowie
+  `SilentSwitches.md` mit Silent-Schaltern, Rückgabecodes und
+  Deinstallationsbefehlen für Installer-Frameworks und viele Programme.
+  / 25 silent install scripts (one per tool) via winget or a local/UNC file with
+  optional SHA256 verification, plus `SilentSwitches.md` with silent switches,
+  exit codes and uninstall commands.
+- Tests: `Tests/CatalogCleanup.Tests.ps1`, `Tests/CatalogConfiguration.Tests.ps1`,
+  `Tests/InstallScripts.Tests.ps1`.
+
+### Geändert / Changed
+- README (Katalog, Variablen, sichere Nutzung), CONTRIBUTING (Ablage/Namensregeln)
+  und SECURITY (Ausnahme für geprüfte Installationsquellen) ergänzt.
+  / README, CONTRIBUTING and SECURITY updated accordingly.
+
 ## 2026-10-14 – Erweiterung der Skriptbibliothek um 114 Skripte / Script library extended by 114 scripts
 
 ### Hinzugefügt / Added
