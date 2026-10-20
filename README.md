@@ -361,6 +361,14 @@ unbeaufsichtigte Installation (Silent Install) sowie
 [`SilentSwitches.md`](Installations-Scripte/SilentSwitches.md) mit
 Silent-Schaltern, Rückgabecodes und Deinstallationsbefehlen für viele weitere
 Programme und Installer-Frameworks. Tests: `Tests/InstallScripts.Tests.ps1`.
+Zusätzlich bietet `Installations-Scripte/InstallationAuswahl/InstallationAuswahl.ps1`
+eine eigenständige WPF-Oberfläche für kategorisierte Mehrfachauswahl und
+Installationsstart außerhalb von NinjaOne. Sie benötigt Windows PowerShell 5.1
+und eine administrative Sitzung.
+/ `Installations-Scripte/InstallationAuswahl/InstallationAuswahl.ps1` also
+provides a standalone WPF interface for categorized multi-selection and
+installation outside NinjaOne. It requires Windows PowerShell 5.1 and an
+elevated session.
 / The `Installations-Scripte` folder contains **one script per tool** for
 unattended (silent) installation plus `SilentSwitches.md` with silent switches,
 exit codes and uninstall commands for many more programs and installer frameworks.
