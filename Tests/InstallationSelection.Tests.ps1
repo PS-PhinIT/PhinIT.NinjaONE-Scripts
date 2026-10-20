@@ -1,11 +1,11 @@
 ﻿BeforeAll {
     $root = Split-Path $PSScriptRoot -Parent
-    $selectionScript = Join-Path $root 'Installations-Scripte/InstallationAuswahl/InstallationAuswahl.ps1'
+    $script:selectionScript = Join-Path $root 'Installations-Scripte/InstallationAuswahl/InstallationAuswahl.ps1'
 }
 
 Describe 'Standalone installation selector / Eigenständige Installationsauswahl' {
     It 'lists all install scripts with a category and tool name / listet alle Installationsskripte kategorisiert' {
-        $catalog = @(& $selectionScript -ListOnly | ConvertFrom-Json)
+        $catalog = @(& $script:selectionScript -ListOnly | ConvertFrom-Json)
         $expectedCount = @(Get-ChildItem -LiteralPath (Join-Path $root 'Installations-Scripte') -Filter 'install*.ps1' -File).Count
 
         $catalog.Count | Should -Be $expectedCount
@@ -14,6 +14,6 @@ Describe 'Standalone installation selector / Eigenständige Installationsauswahl
     }
 
     It 'does not start the graphical interface in list-only mode / öffnet im Listenmodus keine Oberfläche' {
-        { & $selectionScript -ListOnly | ConvertFrom-Json } | Should -Not -Throw
+        { & $script:selectionScript -ListOnly | ConvertFrom-Json } | Should -Not -Throw
     }
 }
