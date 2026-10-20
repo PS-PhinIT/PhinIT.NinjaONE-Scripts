@@ -96,7 +96,7 @@ $form = New-Object System.Windows.Forms.Form
 $form.Text = 'PhinIT – Installationsauswahl'
 $form.StartPosition = 'CenterScreen'
 $form.Size = New-Object System.Drawing.Size(1000, 700)
-$form.MinimumSize = New-Object System.Drawing.Size(820, 560)
+$form.MinimumSize = New-Object System.Drawing.Size(1000, 700)
 
 $description = New-Object System.Windows.Forms.Label
 $description.Text = 'Programme nach Kategorie auswählen. Die Installation startet erst nach Bestätigung.'
