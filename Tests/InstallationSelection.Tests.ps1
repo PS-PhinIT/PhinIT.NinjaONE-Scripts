@@ -16,4 +16,13 @@ Describe 'Standalone installation selector / Eigenständige Installationsauswahl
     It 'does not start the graphical interface in list-only mode / öffnet im Listenmodus keine Oberfläche' {
         { & $script:selectionScript -ListOnly | ConvertFrom-Json } | Should -Not -Throw
     }
+
+    It 'uses well-formed WPF markup instead of Windows Forms / nutzt gültiges WPF-Markup statt Windows Forms' {
+        $source = Get-Content -LiteralPath $script:selectionScript -Raw
+        $source | Should -Match 'PresentationFramework'
+        $source | Should -Not -Match 'System\.Windows\.Forms'
+        $xamlMatch = [regex]::Match($source, '(?s)\$xaml\s*=\s*@''\r?\n(.*?)\r?\n''@')
+        $xamlMatch.Success | Should -BeTrue
+        { [xml]$xamlMatch.Groups[1].Value | Out-Null } | Should -Not -Throw
+    }
 }

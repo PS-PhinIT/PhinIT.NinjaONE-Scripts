@@ -325,7 +325,7 @@ Add-Type -AssemblyName PresentationFramework
 Add-Type -AssemblyName PresentationCore
 Add-Type -AssemblyName WindowsBase
 $xmlReader = New-Object System.Xml.XmlNodeReader ([xml]$xaml)
-$window = [Windows.Markup.XamlReader]::Load($xmlReader)
+$window = [System.Windows.Markup.XamlReader]::Load($xmlReader)
 
 $categoryList = $window.FindName('CategoryList')
 $itemsTitle = $window.FindName('ItemsTitle')
@@ -354,15 +354,15 @@ $categoryList.ItemsSource = $categoryItems
 $categoryList.SelectedIndex = 0
 $installerList.ItemsSource = $script:visibleCatalog
 
-function Update-SelectionSummary {
+function Show-SelectionSummary {
     param([bool]$InstallationActive = $false)
     $count = @($catalog | Where-Object { $_.IsSelected }).Count
     $selectionCount.Text = '{0} Programm{1} ausgewählt' -f $count, $(if ($count -eq 1) { '' } else { 'e' })
-    $selectionDot.Fill = if ($count -gt 0) { [Windows.Media.BrushConverter]::new().ConvertFromString('#35A879') } else { [Windows.Media.BrushConverter]::new().ConvertFromString('#A8B2C1') }
+    $selectionDot.Fill = if ($count -gt 0) { [System.Windows.Media.Brushes]::SeaGreen } else { [System.Windows.Media.Brushes]::SlateGray }
     $installButton.IsEnabled = ($count -gt 0 -and -not $InstallationActive)
 }
 
-function Update-VisibleInstallers {
+function Show-VisibleInstallerList {
     $selectedCategory = $categoryList.SelectedItem
     if ($null -eq $selectedCategory) { return }
     $searchTerm = [string]$searchBox.Text
@@ -376,33 +376,31 @@ function Update-VisibleInstallers {
     $filtered = @($matchingCategory | Where-Object {
         [string]::IsNullOrWhiteSpace($searchTerm) -or $_.Name.IndexOf($searchTerm, [StringComparison]::OrdinalIgnoreCase) -ge 0
     } | Sort-Object Name)
-    $itemsSubtitle.Text = '{0} Programme{1}' -f $filtered.Count, $(if ($filtered.Count -eq 1) { '' } else { ' verfügbar' })
+    $itemsSubtitle.Text = if ($filtered.Count -eq 1) { '1 Programm verfügbar' } else { '{0} Programme verfügbar' -f $filtered.Count }
     $script:visibleCatalog.Clear()
     foreach ($entry in $filtered) { $script:visibleCatalog.Add($entry) }
 }
 
-$categoryList.Add_SelectionChanged({ Update-VisibleInstallers })
-$searchBox.Add_TextChanged({ Update-VisibleInstallers })
-$installerList.Add_DataContextChanged({ Update-SelectionSummary })
-$installerList.Add_TargetUpdated({ Update-SelectionSummary })
+$categoryList.Add_SelectionChanged({ Show-VisibleInstallerList })
+$searchBox.Add_TextChanged({ Show-VisibleInstallerList })
+$checkedHandler = [System.Windows.RoutedEventHandler]{ Show-SelectionSummary }
+$installerList.AddHandler([System.Windows.Controls.Primitives.ToggleButton]::CheckedEvent, $checkedHandler)
+$installerList.AddHandler([System.Windows.Controls.Primitives.ToggleButton]::UncheckedEvent, $checkedHandler)
 $selectAllButton.Add_Click({
     foreach ($entry in $script:visibleCatalog) { $entry.IsSelected = $true }
     $installerList.Items.Refresh()
-    Update-SelectionSummary
+    Show-SelectionSummary
 })
 $clearButton.Add_Click({
     foreach ($entry in $catalog) { $entry.IsSelected = $false }
     $installerList.Items.Refresh()
-    Update-SelectionSummary
+    Show-SelectionSummary
 })
-$installerList.Add_PreviewMouseLeftButtonUp({ Update-SelectionSummary })
-$installerList.Add_KeyUp({ Update-SelectionSummary })
-
-function Invoke-WpfDispatcherEvents {
-    $frame = New-Object Windows.Threading.DispatcherFrame
+function Invoke-WpfDispatcherPump {
+    $frame = New-Object System.Windows.Threading.DispatcherFrame
     $stopFrame = [Action]{ $frame.Continue = $false }
-    $null = $window.Dispatcher.BeginInvoke([Windows.Threading.DispatcherPriority]::Background, $stopFrame)
-    [Windows.Threading.Dispatcher]::PushFrame($frame)
+    $null = $window.Dispatcher.BeginInvoke([System.Windows.Threading.DispatcherPriority]::Background, $stopFrame)
+    [System.Windows.Threading.Dispatcher]::PushFrame($frame)
 }
 
 $installButton.Add_Click({
@@ -443,7 +441,7 @@ $installButton.Add_Click({
         foreach ($entry in $selected) {
             $resultsBox.AppendText(('Starte: {0}{1}' -f $entry.Name, [Environment]::NewLine))
             $resultsBox.ScrollToEnd()
-            Invoke-WpfDispatcherEvents
+            Invoke-WpfDispatcherPump
             $safeName = [regex]::Replace($entry.Name, '[^\p{L}\p{Nd}._-]', '_')
             $stdout = Join-Path $runLog ($safeName + '.stdout.log')
             $stderr = Join-Path $runLog ($safeName + '.stderr.log')
@@ -453,7 +451,7 @@ $installButton.Add_Click({
                     -RedirectStandardOutput $stdout -RedirectStandardError $stderr -WindowStyle Hidden -PassThru
                 while (-not $process.HasExited) {
                     Start-Sleep -Milliseconds 200
-                    Invoke-WpfDispatcherEvents
+                    Invoke-WpfDispatcherPump
                 }
                 $process.WaitForExit()
                 $status = if ($process.ExitCode -eq 0) { 'ERFOLG' } else { 'FEHLER' }
@@ -472,7 +470,7 @@ $installButton.Add_Click({
             }
             $resultsBox.AppendText([Environment]::NewLine)
             $resultsBox.ScrollToEnd()
-            Invoke-WpfDispatcherEvents
+            Invoke-WpfDispatcherPump
         }
         $runStatus.Text = 'Auswahl abgeschlossen'
         [System.Windows.MessageBox]::Show(
@@ -493,10 +491,10 @@ $installButton.Add_Click({
         $categoryList.IsEnabled = $true
         $searchBox.IsEnabled = $true
         $installerList.IsEnabled = $true
-        Update-SelectionSummary
+        Show-SelectionSummary
     }
 })
 
-Update-VisibleInstallers
-Update-SelectionSummary
+Show-VisibleInstallerList
+Show-SelectionSummary
 $window.ShowDialog() | Out-Null

@@ -13,15 +13,15 @@ first); older entries were reconstructed from the Git history and pull requests.
 ## 2026-10-20 – Eigenständige Installationsauswahl / Standalone installation selector
 
 ### Hinzugefügt / Added
-- `Installations-Scripte/InstallationAuswahl/InstallationAuswahl.ps1`: Windows-
-  PowerShell-GUI zur kategorisierten Mehrfachauswahl und bestätigten Installation
-  bestehender Installationsskripte unabhängig von NinjaOne; mit Protokollen und
-  JSON-Katalogmodus für Tests.
+- `Installations-Scripte/InstallationAuswahl/InstallationAuswahl.ps1`: moderne
+  Windows-PowerShell-WPF-Oberfläche zur kategorisierten Mehrfachauswahl und
+  bestätigten Installation bestehender Installationsskripte unabhängig von
+  NinjaOne; mit Protokollen und JSON-Katalogmodus für Tests.
 - `Tests/InstallationSelection.Tests.ps1`: prüft den Katalogmodus und die
   Kategorisierung sämtlicher Installationsskripte.
-/ Added a standalone Windows PowerShell GUI for categorized multi-selection and
-confirmed execution of existing installer scripts outside NinjaOne, with logs
-and a JSON catalog mode for tests.
+/ Added a standalone modern Windows PowerShell WPF interface for categorized
+multi-selection and confirmed execution of existing installer scripts outside
+NinjaOne, with logs and a JSON catalog mode for tests.
 
 ## 2026-10-18 – 80 weitere Installations-Scripte / 80 additional installation scripts
 
