@@ -10,6 +10,19 @@ Git-Historie und den Pull Requests rekonstruiert.
 / The repository has no release tags. Every entry is therefore dated (newest
 first); older entries were reconstructed from the Git history and pull requests.
 
+## 2026-10-20 – Eigenständige Installationsauswahl / Standalone installation selector
+
+### Hinzugefügt / Added
+- `Installations-Scripte/InstallationAuswahl/InstallationAuswahl.ps1`: Windows-
+  PowerShell-GUI zur kategorisierten Mehrfachauswahl und bestätigten Installation
+  bestehender Installationsskripte unabhängig von NinjaOne; mit Protokollen und
+  JSON-Katalogmodus für Tests.
+- `Tests/InstallationSelection.Tests.ps1`: prüft den Katalogmodus und die
+  Kategorisierung sämtlicher Installationsskripte.
+/ Added a standalone Windows PowerShell GUI for categorized multi-selection and
+confirmed execution of existing installer scripts outside NinjaOne, with logs
+and a JSON catalog mode for tests.
+
 ## 2026-10-18 – 80 weitere Installations-Scripte / 80 additional installation scripts
 
 ### Hinzugefügt / Added
