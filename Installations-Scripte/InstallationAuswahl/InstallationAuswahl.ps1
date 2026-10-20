@@ -147,15 +147,15 @@ $form.Controls.Add($clearButton)
 
 $installButton = New-Object System.Windows.Forms.Button
 $installButton.Text = 'Installation Auswahl durchführen'
-$installButton.Location = New-Object System.Drawing.Point(714, 612)
-$installButton.Size = New-Object System.Drawing.Size(210, 30)
+$installButton.Location = New-Object System.Drawing.Point(710, 612)
+$installButton.Size = New-Object System.Drawing.Size(190, 30)
 $installButton.Anchor = 'Bottom, Right'
 $form.Controls.Add($installButton)
 
 $closeButton = New-Object System.Windows.Forms.Button
 $closeButton.Text = 'Schließen'
-$closeButton.Location = New-Object System.Drawing.Point(930, 612)
-$closeButton.Size = New-Object System.Drawing.Size(75, 30)
+$closeButton.Location = New-Object System.Drawing.Point(910, 612)
+$closeButton.Size = New-Object System.Drawing.Size(65, 30)
 $closeButton.Anchor = 'Bottom, Right'
 $form.Controls.Add($closeButton)
 
@@ -174,19 +174,19 @@ foreach ($categoryName in $categories) {
 }
 
 $tree.Add_AfterCheck({
-    param($sender, $eventArgs)
+    param($treeControl, $checkEvent)
     if ($script:updatingTree) { return }
     $script:updatingTree = $true
     try {
-        if ($eventArgs.Node.Nodes.Count -gt 0) {
-            foreach ($child in $eventArgs.Node.Nodes) { $child.Checked = $eventArgs.Node.Checked }
+        if ($checkEvent.Node.Nodes.Count -gt 0) {
+            foreach ($child in $checkEvent.Node.Nodes) { $child.Checked = $checkEvent.Node.Checked }
         }
-        elseif ($eventArgs.Node.Parent) {
-            $siblings = @($eventArgs.Node.Parent.Nodes)
-            $eventArgs.Node.Parent.Checked = ($siblings.Count -gt 0 -and @($siblings | Where-Object { -not $_.Checked }).Count -eq 0)
+        elseif ($checkEvent.Node.Parent) {
+            $siblings = @($checkEvent.Node.Parent.Nodes)
+            $checkEvent.Node.Parent.Checked = ($siblings.Count -gt 0 -and @($siblings | Where-Object { -not $_.Checked }).Count -eq 0)
         }
         $selectedCount = 0
-        foreach ($group in $tree.Nodes) {
+        foreach ($group in $treeControl.Nodes) {
             foreach ($item in $group.Nodes) {
                 if ($item.Checked) { $selectedCount++ }
             }
@@ -206,11 +206,11 @@ $clearButton.Add_Click({
 })
 $closeButton.Add_Click({ $form.Close() })
 $form.Add_FormClosing({
-    param($sender, $eventArgs)
+    param($closingForm, $closeEvent)
     if ($script:installationRunning) {
-        $eventArgs.Cancel = $true
+        $closeEvent.Cancel = $true
         [System.Windows.Forms.MessageBox]::Show(
-            'Bitte warten, bis die laufende Installation abgeschlossen ist.',
+            ('Bitte warten, bis die laufende Installation in "{0}" abgeschlossen ist.' -f $closingForm.Text),
             'Installation läuft',
             [System.Windows.Forms.MessageBoxButtons]::OK,
             [System.Windows.Forms.MessageBoxIcon]::Information
@@ -254,10 +254,10 @@ $installButton.Add_Click({
     $results.Clear()
     $logRoot = Join-Path ([System.IO.Path]::GetTempPath()) 'PhinIT-Installation-Auswahl'
     $runLog = Join-Path $logRoot (Get-Date -Format 'yyyyMMdd-HHmmss')
-    New-Item -Path $runLog -ItemType Directory -Force | Out-Null
-    $results.AppendText(('Protokollordner: {0}{1}{1}' -f $runLog, [Environment]::NewLine))
 
     try {
+        New-Item -Path $runLog -ItemType Directory -Force | Out-Null
+        $results.AppendText(('Protokollordner: {0}{1}{1}' -f $runLog, [Environment]::NewLine))
         foreach ($entry in $selected) {
             $results.AppendText(('Starte: {0}{1}' -f $entry.Name, [Environment]::NewLine))
             $safeName = [regex]::Replace($entry.Name, '[^\p{L}\p{Nd}._-]', '_')
