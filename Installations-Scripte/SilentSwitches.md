@@ -374,6 +374,19 @@ Weitere nützliche IDs / Further useful IDs: `dotPDN.PaintDotNet`, `GIMP.GIMP`, 
 Benutzerpakete (z. B. `Microsoft.Teams`, `SlackTechnologies.Slack`) eignen sich nicht für `SYSTEM` (Teams: Bootstrapper bzw. Slack: MSI, siehe oben).
 *Verify with `winget show --id <Id> --exact` before use; MSIX and per-user packages are not suitable for `SYSTEM`.*
 
+### WinGet selbst aktualisieren / Update WinGet itself
+
+[updateWinGet.ps1](updateWinGet.ps1) installiert bzw. aktualisiert winget (App Installer, MSIX) für `SYSTEM`. winget kann
+sich als `SYSTEM` nicht zuverlässig selbst aktualisieren; das Skript lädt deshalb das neueste stabile Release von
+[microsoft/winget-cli](https://github.com/microsoft/winget-cli/releases) (`Microsoft.DesktopAppInstaller_8wekyb3d8bbwe.msixbundle`,
+`*_License1.xml`, `DesktopAppInstaller_Dependencies.zip`), prüft SHA256 (`*.txt` des Releases) und die Authenticode-Signatur
+(`Microsoft Corporation`) und stellt es maschinenweit bereit:
+`Add-AppxProvisionedPackage -Online -PackagePath <msixbundle> -DependencyPackagePath <x64\*.appx> -LicensePath <License1.xml>`.
+Ohne `installAllow = true` nur Prüfung (Exit `2` = fehlt/veraltet); `installTimeoutMinutes` und `resultCustomField` wie oben.
+*[updateWinGet.ps1](updateWinGet.ps1) installs or updates winget (App Installer, MSIX) for `SYSTEM` from the latest stable
+microsoft/winget-cli release, verifies SHA256 and the Authenticode signature and provisions it machine-wide with
+`Add-AppxProvisionedPackage`. Without `installAllow = true` it only checks (exit `2` = missing/outdated).*
+
 ## Deinstallation / Uninstall
 
 | Methode / Method | Befehl / Command | Hinweise / Notes |
@@ -402,4 +415,4 @@ Die Skripte im Ordner `08 - Cleanup` übernehmen die Deinstallation geprüft (Op
 | NSIS ignoriert `/s`. | NSIS ignores `/s`. | Großes `/S` verwenden. |
 | `/D=` bei NSIS wirkt nicht. | NSIS `/D=` has no effect. | Als letzten Parameter ohne Anführungszeichen angeben. |
 | EXE kehrt sofort zurück, Installation läuft weiter. | EXE returns immediately while installing. | MSI verwenden oder Herstelleroption zum Warten (`--wait`, `_?=`) nutzen; danach Erkennung prüfen (die Skripte prüfen die Registry nach der Installation erneut). |
-| winget als `SYSTEM` nicht gefunden. | winget not found as `SYSTEM`. | Vollständigen Pfad unter `C:\Program Files\WindowsApps\Microsoft.DesktopAppInstaller_*` verwenden; App Installer aktuell halten (siehe `03 - Software/checkWingetStatus.ps1`). |
+| winget als `SYSTEM` nicht gefunden. | winget not found as `SYSTEM`. | Vollständigen Pfad unter `C:\Program Files\WindowsApps\Microsoft.DesktopAppInstaller_*` verwenden; App Installer aktuell halten (siehe `03 - Software/checkWingetStatus.ps1`, installieren/aktualisieren mit [updateWinGet.ps1](updateWinGet.ps1)). |

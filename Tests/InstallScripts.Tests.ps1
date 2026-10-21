@@ -1,5 +1,5 @@
 ﻿BeforeDiscovery {
-    $installScriptCases = @(Get-ChildItem -LiteralPath (Join-Path (Split-Path $PSScriptRoot -Parent) 'Installations-Scripte') -Filter '*.ps1' |
+    $installScriptCases = @(Get-ChildItem -LiteralPath (Join-Path (Split-Path $PSScriptRoot -Parent) 'Installations-Scripte') -Filter 'install*.ps1' |
         ForEach-Object { @{ Script = $_.Name; Path = $_.FullName } })
 }
 
@@ -347,7 +347,7 @@ Describe 'Installation scripts / Installations-Skripte' {
 
         It 'All scripts share the identical engine / Alle Skripte nutzen dieselbe Logik' {
             # DE: Änderungen an der Logik müssen in allen Skripten gleich erfolgen. EN: Engine changes must be applied to all scripts alike.
-            $files = @([IO.Directory]::GetFiles($folder, '*.ps1'))
+            $files = @([IO.Directory]::GetFiles($folder, 'install*.ps1'))
             $files.Count | Should -BeGreaterOrEqual 20
             $engines = @($files | ForEach-Object {
                     $text = [IO.File]::ReadAllText($_)
