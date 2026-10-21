@@ -10,6 +10,32 @@ Git-Historie und den Pull Requests rekonstruiert.
 / The repository has no release tags. Every entry is therefore dated (newest
 first); older entries were reconstructed from the Git history and pull requests.
 
+## 2026-10-21 – Microsoft 365 Apps ohne winget-Hashfehler / Microsoft 365 Apps without winget hash errors
+
+### Behoben / Fixed
+- `installMicrosoft365Apps.ps1`: winget brach bei `Microsoft.Office` mit
+  „Installer hash does not match“ ab, weil Microsoft `setup.exe` auf dem CDN
+  ohne Manifest-Update ersetzt. Standardquelle ist jetzt `Download`: das Office
+  Deployment Tool wird per HTTPS von `officecdn.microsoft.com` geladen, die
+  Authenticode-Signatur (`CN=Microsoft Corporation`) geprüft und mit
+  `/configure https://aka.ms/fhlwingetconfig` bzw. eigenen `installerArguments`
+  (z. B. `/configure \\server\share\config.xml`) ausgeführt.
+- Alle Installationsskripte: Fehlermeldungen verwiesen auf ein Log, das nie
+  erstellt wurde (`--log` wirkt nur bei Manifesten mit Log-Schalter). Die
+  winget-Ausgabe wird jetzt in `<Temp>\<Skript>-<Zeit>-winget.log`
+  protokolliert, Meldungen nennen nur vorhandene Logs plus die letzten
+  winget-Zeilen und erklären Hashfehler (`0x8A150011`).
+
+### Hinzugefügt / Added
+- Engine: Quelle `installSource = Download` für Tools mit fest hinterlegter
+  Hersteller-URL und erwartetem Signierer (`$Tool.DownloadUrl`,
+  `$Tool.DownloadSigner`, optional `$Tool.DefaultSource`); Bericht um
+  `DownloadUrl` und `InstallerSigner` ergänzt.
+/ Microsoft 365 Apps now installs by default via the Authenticode-verified Office
+Deployment Tool downloaded from Microsoft instead of winget (stale hash). All
+install scripts capture winget output, only reference logs that exist and explain
+winget hash mismatches.
+
 ## 2026-10-20 – Eigenständige Installationsauswahl / Standalone installation selector
 
 ### Hinzugefügt / Added

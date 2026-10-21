@@ -8,6 +8,8 @@ BeforeAll {
     $folder = Join-Path $root 'Installations-Scripte'
     $sevenZipScript = Join-Path $folder 'install7Zip.ps1'
     $puttyScript = Join-Path $folder 'installPuTTY.ps1'
+    $officeScript = Join-Path $folder 'installMicrosoft365Apps.ps1'
+    $officeCdn = 'https://officecdn.microsoft.com/pr/wsus/setup.exe'
     $uninstall64 = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall'
     $uninstall32 = 'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall'
     $appsRoot = 'C:\Program Files\WindowsApps'
@@ -18,6 +20,11 @@ BeforeAll {
     # DE: Windows-/NinjaOne-Aufrufe isolieren. EN: Isolate Windows/NinjaOne calls.
     function icacls { param([Parameter(ValueFromRemainingArguments = $true)]$Arguments) }
     function Ninja-Property-Set { param($Name, $Value) }
+    function Get-AuthenticodeSignature { param($LiteralPath, $ErrorAction) }
+    function New-FakeSignature {
+        param([string]$Status = 'Valid', [string]$Subject = 'CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US')
+        [pscustomobject]@{ Status = $Status; SignerCertificate = [pscustomobject]@{ Subject = $Subject } }
+    }
     function Add-UninstallEntry {
         param([string]$Root, [string]$Key, [string]$DisplayName, [string]$Version = '1.0')
         $installFake.Reg[('{0}\{1}' -f $Root, $Key)] = @{ DisplayName = $DisplayName; DisplayVersion = $Version; Publisher = 'Vendor' }
@@ -269,6 +276,9 @@ Describe 'Installation scripts / Installations-Skripte' {
         Mock Copy-Item {}
         Mock Remove-Item {}
         Mock Get-FileHash { [pscustomobject]@{ Hash = ('ab' * 32) } }
+        Mock Invoke-WebRequest {}
+        Mock Get-AuthenticodeSignature { New-FakeSignature }
+        Mock Get-Content { @() }
         Mock Ninja-Property-Set {}
     }
     AfterEach {
@@ -314,14 +324,15 @@ Describe 'Installation scripts / Installations-Skripte' {
         It '<Script> installs via winget with machine scope / installiert per winget' -TestCases $installScriptCases {
             param($Script, $Path)
             $installFake.OnInstall = { Add-UninstallEntry -Root $uninstall64 -Key 'Product' -DisplayName ($sampleDisplayNames[$Script][0]) }
-            $report = & $Path -AllowInstall true | ConvertFrom-Json
+            $report = & $Path -AllowInstall true -Source Winget | ConvertFrom-Json
             $LASTEXITCODE | Should -Be 0
             $report.Action | Should -Be 'Installed'
             $report.WingetPath | Should -Be $wingetExe
             $id = [regex]::Escape($report.WingetId)
             Should -Invoke Start-Process -Times 1 -Exactly -ParameterFilter {
                 $FilePath -eq $wingetExe -and $ArgumentList -match "^install --id $id --exact --source winget --silent " -and
-                $ArgumentList -match '--accept-package-agreements' -and $ArgumentList -match '--disable-interactivity' -and $ArgumentList -match '--scope machine$'
+                $ArgumentList -match '--accept-package-agreements' -and $ArgumentList -match '--disable-interactivity' -and $ArgumentList -match '--scope machine$' -and
+                $RedirectStandardOutput -like '*-winget.log'
             }
         }
         It 'SilentSwitches.md documents every script / SilentSwitches.md dokumentiert jedes Skript' {
@@ -393,6 +404,26 @@ Describe 'Installation scripts / Installations-Skripte' {
             $output = & $sevenZipScript -AllowInstall true
             $LASTEXITCODE | Should -Be 1
             ($output -join ' ') | Should -Match '0x8A150008'
+        }
+        It 'Explains a winget hash mismatch and only names existing logs / Erklärt Hash-Fehler und nennt nur vorhandene Logs' {
+            $installFake.Process = New-FakeProcess -ExitCode -1978335215
+            Mock Test-Path { $true } -ParameterFilter { [string]$LiteralPath -like '*-winget.log' }
+            Mock Get-Content { @('Found 7-Zip [7zip.7zip]', "`r  ██████  6.30 MB / 6.30 MB", 'Installer hash does not match.') }
+            $output = & $sevenZipScript -AllowInstall true
+            $LASTEXITCODE | Should -Be 1
+            $text = $output -join ' '
+            $text | Should -Match '0x8A150011'
+            $text | Should -Match 'Log: .*-winget\.log;'
+            $text | Should -Not -Match 'install7Zip-\d{8}-\d{6}\.log'
+            $text | Should -Match 'Installer hash does not match\.'
+            $text | Should -Not -Match 'MB /'
+            $text | Should -Match 'installSource=Download'
+        }
+        It 'Reports no log when none was written / Meldet fehlendes Log' {
+            $installFake.Process = New-FakeProcess -ExitCode -1978335224
+            $output = & $sevenZipScript -AllowInstall true
+            $LASTEXITCODE | Should -Be 1
+            ($output -join ' ') | Should -Match 'kein Log / no log'
         }
         It 'Fails when the product is not detected afterwards / Fehler ohne Erkennung danach' {
             $installFake.OnInstall = $null
@@ -477,6 +508,49 @@ Describe 'Installation scripts / Installations-Skripte' {
                 $LASTEXITCODE | Should -Be 1 -Because ($case | ConvertTo-Json -Compress)
             }
             Should -Invoke Start-Process -Times 0 -Exactly
+        }
+        It 'Installs Microsoft 365 Apps via the signed Office Deployment Tool by default / Installiert Microsoft 365 Apps per signiertem ODT' {
+            $installFake.OnInstall = { Add-UninstallEntry -Root $uninstall64 -Key 'O365' -DisplayName 'Microsoft 365 Apps for enterprise - de-de' }
+            $report = & $officeScript -AllowInstall true | ConvertFrom-Json
+            $LASTEXITCODE | Should -Be 0
+            $report.Source | Should -Be 'Download'
+            $report.Action | Should -Be 'Installed'
+            $report.DownloadUrl | Should -Be $officeCdn
+            $report.InstallerSigner | Should -Match '^CN=Microsoft Corporation,'
+            Should -Invoke Invoke-WebRequest -Times 1 -Exactly -ParameterFilter { $Uri -eq $officeCdn -and $OutFile -like '*PhinIT-Install-*installer.exe' -and $UseBasicParsing }
+            Should -Invoke Start-Process -Times 1 -Exactly -ParameterFilter {
+                $FilePath -like '*PhinIT-Install-*installer.exe' -and $ArgumentList -eq '/configure https://aka.ms/fhlwingetconfig' -and -not $RedirectStandardOutput
+            }
+            Should -Invoke Remove-Item -Times 1 -Exactly -ParameterFilter { $LiteralPath -like '*PhinIT-Install-*' -and $Recurse }
+            $installFake.Reg.Clear()
+            $null = & $officeScript -AllowInstall true -InstallerArguments '/configure https://raw.githubusercontent.com/o/r/main/office365.xml'
+            $LASTEXITCODE | Should -Be 0
+            Should -Invoke Start-Process -Times 1 -Exactly -ParameterFilter { $ArgumentList -eq '/configure https://raw.githubusercontent.com/o/r/main/office365.xml' }
+        }
+        It 'Refuses a download with an invalid signature / Verweigert Download mit ungültiger Signatur' {
+            foreach ($signature in @((New-FakeSignature -Status 'HashMismatch'), (New-FakeSignature -Subject 'CN=Contoso Ltd, O=Contoso'), [pscustomobject]@{ Status = 'NotSigned'; SignerCertificate = $null })) {
+                Mock Get-AuthenticodeSignature { $signature }.GetNewClosure()
+                $output = & $officeScript -AllowInstall true
+                $LASTEXITCODE | Should -Be 1
+                ($output -join ' ') | Should -Match 'Signatur'
+            }
+            Should -Invoke Start-Process -Times 0 -Exactly
+            Should -Invoke Remove-Item -Times 3 -Exactly -ParameterFilter { $LiteralPath -like '*PhinIT-Install-*' }
+        }
+        It 'Rejects Download for tools without a vendor URL / Lehnt Download ohne Hersteller-URL ab' {
+            $null = & $sevenZipScript -AllowInstall true -Source Download
+            $LASTEXITCODE | Should -Be 1
+            $null = & $officeScript -AllowInstall true -Source Download -InstallerPath 'C:\Install\setup.exe'
+            $LASTEXITCODE | Should -Be 1
+            Should -Invoke Invoke-WebRequest -Times 0 -Exactly
+            Should -Invoke Start-Process -Times 0 -Exactly
+        }
+        It 'Still installs Microsoft 365 Apps via winget on request / Installiert Microsoft 365 Apps auf Wunsch per winget' {
+            $installFake.OnInstall = { Add-UninstallEntry -Root $uninstall64 -Key 'O365' -DisplayName 'Microsoft 365 Apps for enterprise - en-us' }
+            $report = & $officeScript -AllowInstall true -Source winget | ConvertFrom-Json
+            $LASTEXITCODE | Should -Be 0
+            $report.Source | Should -Be 'Winget'
+            Should -Invoke Invoke-WebRequest -Times 0 -Exactly
         }
         It 'Treats null values as unset / Behandelt null als nicht gesetzt' {
             $env:installAllow = 'null'
