@@ -186,6 +186,12 @@ Describe 'Network drives and credentials / Netzlaufwerke und Anmeldeinformatione
             @($report.Targets.Before) | Should -Be @('Present', 'DifferentUser', 'Missing')
             [PhinIT.CredentialVault]::Writes | Should -Be 0
         }
+        It 'ignores quotes around targets and user name / ignoriert Anführungszeichen' {
+            $report = & $script:credentialScript -Targets "'192.168.70.6', `"nas01`"" -UserName "'nas01\backup'" | ConvertFrom-Json
+            $LASTEXITCODE | Should -Be 2
+            @($report.Targets.Target) | Should -Be @('192.168.70.6', 'nas01')
+            $report.UserName | Should -Be 'nas01\backup'
+        }
         It 'stores credentials without exposing the password / speichert ohne Kennwort-Ausgabe' {
             $env:configCredentialTargets = 'nas01,nas01.partner.local'
             $env:configCredentialUserName = 'PARTNER\svc-scan'

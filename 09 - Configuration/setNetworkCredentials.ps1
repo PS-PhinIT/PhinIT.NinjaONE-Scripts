@@ -36,8 +36,8 @@
         credentials for network authentication" prevents storing.
         Report: Targets (Target, Before, After, StoredUserName, Changed, Error), UserName, PasswordSource, Compliant.
 .PARAMETER Targets
-    DE: NinjaOne Text configCredentialTargets; erforderlich; Servername, FQDN, IPv4 oder *.Domäne, mehrere durch Komma/Semikolon/Leerzeichen getrennt (z. B. "nas01,nas01.partner.local"); "\\Server\Freigabe" wird auf den Server gekürzt; max. 10.
-    EN: NinjaOne text configCredentialTargets; required; server name, FQDN, IPv4 or *.domain, several separated by comma/semicolon/space (e.g. "nas01,nas01.partner.local"); "\\server\share" is reduced to the server; max. 10.
+    DE: NinjaOne Text configCredentialTargets; erforderlich; Servername, FQDN, IPv4 oder *.Domäne, mehrere durch Komma/Semikolon/Leerzeichen getrennt (z. B. "nas01,nas01.partner.local"); "\\Server\Freigabe" wird auf den Server gekürzt; Anführungszeichen werden ignoriert; max. 10.
+    EN: NinjaOne text configCredentialTargets; required; server name, FQDN, IPv4 or *.domain, several separated by comma/semicolon/space (e.g. "nas01,nas01.partner.local"); "\\server\share" is reduced to the server; quotes are ignored; max. 10.
 .PARAMETER UserName
     DE: NinjaOne Text configCredentialUserName; erforderlich; Konto als DOMÄNE\Benutzer, Server\Benutzer oder benutzer@domäne (max. 256 Zeichen).
     EN: NinjaOne text configCredentialUserName; required; account as DOMAIN\user, server\user or user@domain (max. 256 characters).
@@ -110,7 +110,9 @@ function ConvertTo-CredentialTarget {
     param([string]$Text)
     $list = @()
     foreach ($entry in @($Text -split '[,;\s]+' | Where-Object { $_ })) {
-        $target = $entry
+        # DE: Anführungszeichen aus der NinjaOne-Eingabe entfernen ('192.168.1.10'). EN: Strip quotes typed into NinjaOne.
+        $target = $entry.Trim([char[]]@([char]39, [char]34))
+        if (-not $target) { continue }
         if ($target -match '^\\\\([^\\]+)') { $target = $Matches[1] }
         if ($target.Length -gt 253 -or $target -notmatch '^(\*\.)?[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?(\.[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?)*$') {
             throw ('configCredentialTargets: Servername, FQDN, IPv4 oder / or *.domain erwartet / expected: {0}' -f $entry)
@@ -198,6 +200,7 @@ function Get-CredentialState {
 try {
     $Targets = Resolve-Setting $Targets ''
     $UserName = Resolve-Setting $UserName ''
+    if ($UserName -match '^([''"])(.*)\1$') { $UserName = $Matches[2].Trim() }
     $PasswordField = Resolve-Setting $PasswordField ''
     $Allow = Resolve-Setting $Allow 'false'
     $CustomField = Resolve-Setting $CustomField ''
