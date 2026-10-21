@@ -10,6 +10,25 @@ Git-Historie und den Pull Requests rekonstruiert.
 / The repository has no release tags. Every entry is therefore dated (newest
 first); older entries were reconstructed from the Git history and pull requests.
 
+## 2026-10-21 – PowerShell 7 per MSI statt MSIX / PowerShell 7 via MSI instead of MSIX
+
+### Behoben / Fixed
+- `installPowerShell7.ps1`: Die Installation endete mit „PowerShell 7 nach der
+  Installation nicht erkannt“. Das winget-Manifest `Microsoft.PowerShell` bietet
+  zuerst MSIX-Pakete an; winget bevorzugt MSIX, ignoriert dafür `--scope machine`
+  (Provisionierung) und es entsteht kein Uninstall-Eintrag `PowerShell 7-x64`.
+  Das Skript erzwingt jetzt mit `--installer-type wix` das maschinenweite MSI.
+  / Installation ended with "not detected after installation": winget preferred
+  the MSIX package, which ignores `--scope machine` and creates no Uninstall
+  entry. The script now forces the machine-wide MSI with `--installer-type wix`.
+
+### Hinzugefügt / Added
+- Engine: optionaler `$Tool`-Schlüssel `WingetInstallerType` → `winget
+  --installer-type <Typ>`. Die Meldung „nach der Installation nicht erkannt“
+  nennt jetzt Exitcode und die letzten winget-Zeilen.
+  / Engine: optional `$Tool` key `WingetInstallerType`; the "not detected after
+  installation" error now includes the exit code and the last winget lines.
+
 ## 2026-10-21 – Microsoft 365 Apps ohne winget-Hashfehler / Microsoft 365 Apps without winget hash errors
 
 ### Behoben / Fixed
