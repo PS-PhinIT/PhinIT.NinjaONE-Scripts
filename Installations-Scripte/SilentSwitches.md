@@ -248,9 +248,13 @@ Spalte **Skript** verweist auf das passende Installationsskript in diesem Ordner
 
 Alle Skripte nutzen standardmäßig winget (`installSource = Winget`) mit `--scope machine`; Ausnahme ist
 `installMicrosoft365Apps.ps1` (Standard `Download`: Office Deployment Tool von Microsoft, Authenticode-geprüft).
+`installPowerShell7.ps1` ergänzt `--installer-type wix`, da winget sonst das MSIX-Paket wählt (ignoriert
+`--scope machine`, kein Uninstall-Eintrag).
 Die IDs wurden gegen [microsoft/winget-pkgs](https://github.com/microsoft/winget-pkgs) geprüft.
 *All scripts use winget by default with `--scope machine`, except `installMicrosoft365Apps.ps1` (default `Download`:
-Office Deployment Tool from Microsoft, Authenticode-verified); IDs were checked against microsoft/winget-pkgs.*
+Office Deployment Tool from Microsoft, Authenticode-verified); IDs were checked against microsoft/winget-pkgs.
+`installPowerShell7.ps1` adds `--installer-type wix`, otherwise winget picks the MSIX package (ignores
+`--scope machine`, no Uninstall entry).*
 
 | Skript / Script | winget-ID | Standardargumente bei Datei-Quelle / Default arguments for file source |
 | --- | --- | --- |
@@ -322,7 +326,7 @@ Office Deployment Tool from Microsoft, Authenticode-verified); IDs were checked 
 | [installPeaZip.ps1](installPeaZip.ps1) | `Giorgiotani.Peazip` | EXE `/VERYSILENT /NORESTART /SUPPRESSMSGBOXES /SP-` |
 | [installPowerAutomateDesktop.ps1](installPowerAutomateDesktop.ps1) | `Microsoft.PowerAutomateDesktop` | EXE `-Silent -ACCEPTEULA` |
 | [installPowerBIDesktop.ps1](installPowerBIDesktop.ps1) | `Microsoft.PowerBI` | EXE `-quiet -norestart ACCEPT_EULA=1` |
-| [installPowerShell7.ps1](installPowerShell7.ps1) | `Microsoft.PowerShell` | MSI `ADD_PATH=1 REGISTER_MANIFEST=1 USE_MU=1 ENABLE_MU=1` |
+| [installPowerShell7.ps1](installPowerShell7.ps1) | `Microsoft.PowerShell` (winget `--installer-type wix`) | MSI `ADD_PATH=1 REGISTER_MANIFEST=1 USE_MU=1 ENABLE_MU=1` |
 | [installPowerToys.ps1](installPowerToys.ps1) | `Microsoft.PowerToys` | EXE `/quiet /norestart` |
 | [installPuTTY.ps1](installPuTTY.ps1) | `PuTTY.PuTTY` | MSI `/qn /norestart` |
 | [installPython314.ps1](installPython314.ps1) | `Python.Python.3.14` | EXE `/quiet InstallAllUsers=1 PrependPath=1 Include_test=0` |

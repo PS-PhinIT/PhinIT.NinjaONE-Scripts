@@ -9,6 +9,7 @@ BeforeAll {
     $sevenZipScript = Join-Path $folder 'install7Zip.ps1'
     $puttyScript = Join-Path $folder 'installPuTTY.ps1'
     $officeScript = Join-Path $folder 'installMicrosoft365Apps.ps1'
+    $pwshScript = Join-Path $folder 'installPowerShell7.ps1'
     $officeCdn = 'https://officecdn.microsoft.com/pr/wsus/setup.exe'
     $uninstall64 = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall'
     $uninstall32 = 'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall'
@@ -427,8 +428,23 @@ Describe 'Installation scripts / Installations-Skripte' {
         }
         It 'Fails when the product is not detected afterwards / Fehler ohne Erkennung danach' {
             $installFake.OnInstall = $null
-            $null = & $sevenZipScript -AllowInstall true
+            Mock Test-Path { $true } -ParameterFilter { [string]$LiteralPath -like '*-winget.log' }
+            Mock Get-Content { @('Successfully installed') }
+            $output = & $sevenZipScript -AllowInstall true
             $LASTEXITCODE | Should -Be 1
+            $text = $output -join ' '
+            $text | Should -Match 'not detected after installation \(Exitcode / exit code 0\); Log: .*-winget\.log; Successfully installed'
+        }
+        It 'Forces the PowerShell 7 MSI instead of MSIX / Erzwingt das PowerShell-7-MSI statt MSIX' {
+            $installFake.OnInstall = { Add-UninstallEntry -Root $uninstall64 -Key 'Pwsh' -DisplayName 'PowerShell 7-x64' -Version '7.6.7.0' }
+            $report = & $pwshScript -AllowInstall true | ConvertFrom-Json
+            $LASTEXITCODE | Should -Be 0
+            $report.Action | Should -Be 'Installed'
+            Should -Invoke Start-Process -Times 1 -Exactly -ParameterFilter { $ArgumentList -match ' --installer-type wix --scope machine$' }
+            $installFake.OnInstall = { Add-UninstallEntry -Root $uninstall64 -Key '7-Zip' -DisplayName '7-Zip 26.04 (x64)' -Version '26.04' }
+            $null = & $sevenZipScript -AllowInstall true
+            $LASTEXITCODE | Should -Be 0
+            Should -Invoke Start-Process -Times 1 -Exactly -ParameterFilter { $ArgumentList -match '--installer-type' }
         }
         It 'Fails on timeout / Fehler bei Zeitüberschreitung' {
             $installFake.Process = New-FakeProcess -Finished $false

@@ -276,6 +276,8 @@ try {
             $verb = if ($mode -eq 'Upgrade') { 'upgrade' } else { 'install' }
             $arguments = @($verb, '--id', $Tool.WingetId, '--exact', '--source', 'winget', '--silent',
                 '--accept-package-agreements', '--accept-source-agreements', '--disable-interactivity', '--log', ('"{0}"' -f $logPath))
+            # DE: Installertyp erzwingen (z. B. MSI statt MSIX, das --scope machine ignoriert). EN: Force the installer type (e.g. MSI instead of MSIX, which ignores --scope machine).
+            if ($Tool['WingetInstallerType']) { $arguments += @('--installer-type', $Tool.WingetInstallerType) }
             if ($Tool.WingetScope) { $arguments += @('--scope', $Tool.WingetScope) }
             $commandLine = $arguments -join ' '
             # DE: 0x8A15002B kein Update, 0x8A150061 bereits installiert, 0x8A150109/0x8A15010B Neustart. EN: no update, already installed, reboot.
@@ -324,7 +326,10 @@ try {
             }
             $rebootRequired = $rebootCodes -contains $exitCode
             $after = @(Get-InstalledProduct -Pattern $Tool.DetectPattern)
-            if ($after.Count -eq 0) { throw ('{0} nach der Installation nicht erkannt / not detected after installation; {1}' -f $Tool.Name, $logHint) }
+            if ($after.Count -eq 0) {
+                $detail = Get-OutputTail $outputPath
+                throw ('{0} nach der Installation nicht erkannt / not detected after installation (Exitcode / exit code {1}); {2}{3}' -f $Tool.Name, $exitCode, $logHint, $(if ($detail) { '; ' + $detail } else { '' }))
+            }
             $action = if ($mode -eq 'Upgrade') { 'Upgraded' } else { 'Installed' }
         }
     }

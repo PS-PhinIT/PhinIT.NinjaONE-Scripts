@@ -8,8 +8,9 @@
     DE: Ohne installAllow=true wird nur geprüft, ob PowerShell 7 maschinenweit installiert ist (Uninstall-Registry
         64/32 Bit, DisplayName-Muster '^PowerShell 7\b'); es wird nichts installiert. Mit installAllow=true:
         - Quelle Winget (Standard): winget install --id Microsoft.PowerShell --exact --source winget --silent
-          --accept-package-agreements --accept-source-agreements --disable-interactivity --scope machine.
-          winget.exe wird für SYSTEM unter "$env:ProgramFiles\WindowsApps" (App Installer x64) gesucht.
+          --accept-package-agreements --accept-source-agreements --disable-interactivity --installer-type wix --scope machine.
+          --installer-type wix erzwingt das MSI (das Manifest bietet zuerst MSIX an, das --scope machine ignoriert
+          und keinen Uninstall-Eintrag erzeugt). winget.exe wird für SYSTEM unter "$env:ProgramFiles\WindowsApps" (App Installer x64) gesucht.
           winget prüft den SHA256-Hash des Herstellerinstallers gegen das Manifest.
         - Quelle File: installerPath (lokaler Pfad oder UNC, .msi oder .exe) wird in ein neues, nur für
           SYSTEM/Administratoren beschreibbares Arbeitsverzeichnis kopiert, optional per installerSha256
@@ -23,8 +24,9 @@
     EN: Without installAllow=true the script only checks whether PowerShell 7 is installed machine-wide (Uninstall
         registry 64/32-bit, DisplayName pattern '^PowerShell 7\b'); nothing is installed. With installAllow=true:
         - Source Winget (default): winget install --id Microsoft.PowerShell --exact --source winget --silent
-          --accept-package-agreements --accept-source-agreements --disable-interactivity --scope machine.
-          winget.exe is located for SYSTEM under "$env:ProgramFiles\WindowsApps" (App Installer x64).
+          --accept-package-agreements --accept-source-agreements --disable-interactivity --installer-type wix --scope machine.
+          --installer-type wix forces the MSI (the manifest lists MSIX first, which ignores --scope machine and
+          creates no Uninstall entry). winget.exe is located for SYSTEM under "$env:ProgramFiles\WindowsApps" (App Installer x64).
           winget verifies the vendor installer's SHA256 hash against the manifest.
         - Source File: installerPath (local or UNC path, .msi or .exe) is copied into a new work directory that
           only SYSTEM/Administrators can write, optionally verified with installerSha256 and executed from there.
@@ -98,13 +100,14 @@ $ErrorActionPreference = 'Stop'
 
 # DE: Werkzeugspezifische Einstellungen. EN: Tool-specific settings.
 $Tool = [ordered]@{
-    Name          = 'PowerShell 7'
-    LogName       = 'installPowerShell7'
-    WingetId      = 'Microsoft.PowerShell'
-    WingetScope   = 'machine'
-    DetectPattern = '^PowerShell 7\b'
-    MsiArguments  = 'ADD_PATH=1 REGISTER_MANIFEST=1 USE_MU=1 ENABLE_MU=1'
-    ExeArguments  = ''
+    Name                = 'PowerShell 7'
+    LogName             = 'installPowerShell7'
+    WingetId            = 'Microsoft.PowerShell'
+    WingetScope         = 'machine'
+    WingetInstallerType = 'wix'
+    DetectPattern       = '^PowerShell 7\b'
+    MsiArguments        = 'ADD_PATH=1 REGISTER_MANIFEST=1 USE_MU=1 ENABLE_MU=1'
+    ExeArguments        = ''
 }
 
 function Resolve-Setting {
@@ -276,6 +279,8 @@ try {
             $verb = if ($mode -eq 'Upgrade') { 'upgrade' } else { 'install' }
             $arguments = @($verb, '--id', $Tool.WingetId, '--exact', '--source', 'winget', '--silent',
                 '--accept-package-agreements', '--accept-source-agreements', '--disable-interactivity', '--log', ('"{0}"' -f $logPath))
+            # DE: Installertyp erzwingen (z. B. MSI statt MSIX, das --scope machine ignoriert). EN: Force the installer type (e.g. MSI instead of MSIX, which ignores --scope machine).
+            if ($Tool['WingetInstallerType']) { $arguments += @('--installer-type', $Tool.WingetInstallerType) }
             if ($Tool.WingetScope) { $arguments += @('--scope', $Tool.WingetScope) }
             $commandLine = $arguments -join ' '
             # DE: 0x8A15002B kein Update, 0x8A150061 bereits installiert, 0x8A150109/0x8A15010B Neustart. EN: no update, already installed, reboot.
@@ -324,7 +329,10 @@ try {
             }
             $rebootRequired = $rebootCodes -contains $exitCode
             $after = @(Get-InstalledProduct -Pattern $Tool.DetectPattern)
-            if ($after.Count -eq 0) { throw ('{0} nach der Installation nicht erkannt / not detected after installation; {1}' -f $Tool.Name, $logHint) }
+            if ($after.Count -eq 0) {
+                $detail = Get-OutputTail $outputPath
+                throw ('{0} nach der Installation nicht erkannt / not detected after installation (Exitcode / exit code {1}); {2}{3}' -f $Tool.Name, $exitCode, $logHint, $(if ($detail) { '; ' + $detail } else { '' }))
+            }
             $action = if ($mode -eq 'Upgrade') { 'Upgraded' } else { 'Installed' }
         }
     }
