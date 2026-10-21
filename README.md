@@ -376,12 +376,17 @@ exit codes and uninstall commands for many more programs and installer framework
 Ohne `installAllow = true` prüfen die Skripte nur, ob das Tool installiert ist
 (Exit `0` = installiert, `2` = nicht installiert). Mit Opt-in wird über
 **winget** (`--scope machine`, Quelle `winget`) oder eine **lokale/UNC-Datei**
-(`.msi`/`.exe`, optional SHA256-geprüft) installiert; ein bereits installiertes
+(`.msi`/`.exe`, optional SHA256-geprüft) installiert; `installMicrosoft365Apps.ps1`
+lädt standardmäßig das Office Deployment Tool signaturgeprüft direkt von Microsoft
+(`installSource = Download`), weil winget bei `Microsoft.Office` häufig mit
+„Installer hash does not match“ abbricht; ein bereits installiertes
 Tool wird nur mit `installUpgrade = true` aktualisiert. Es wird nie ein Neustart
 ausgelöst – `RebootRequired` im Bericht zeigt einen ausstehenden Neustart an.
 / Without `installAllow = true` the scripts only check whether the tool is
 installed (exit `0` = installed, `2` = not installed). With opt-in they install
-via **winget** or a **local/UNC file** (optionally SHA256-verified); installed
+via **winget** or a **local/UNC file** (optionally SHA256-verified);
+`installMicrosoft365Apps.ps1` downloads the Authenticode-verified Office Deployment
+Tool from Microsoft by default (`installSource = Download`); installed
 tools are only upgraded with `installUpgrade = true`. No reboot is ever triggered;
 `RebootRequired` in the report flags a pending reboot.
 
@@ -496,10 +501,10 @@ tools are only upgraded with `installUpgrade = true`. No reboot is ever triggere
 | NinjaOne-Variable | Typ / Type | Standard / Default | Bedeutung / Meaning |
 | --- | --- | --- | --- |
 | `installAllow` | Checkbox | `false` | Installation erlauben (sonst nur Prüfung) / allow installation (otherwise audit only) |
-| `installSource` | Dropdown `Winget` / `File` | `Winget` | Installationsquelle / installation source |
+| `installSource` | Dropdown `Winget` / `File` / `Download` | `Winget` (`installMicrosoft365Apps.ps1`: `Download`) | Installationsquelle; `Download` nur bei fest hinterlegter Hersteller-URL / installation source; `Download` only with a built-in vendor URL |
 | `installerPath` | Text | – | Nur `File`: lokaler (`C:\…`) oder UNC-Pfad zu `.msi`/`.exe` / `File` only: local or UNC path |
-| `installerSha256` | Text | – | Optional: erwarteter SHA256-Hash der Datei / expected SHA256 hash |
-| `installerArguments` | Text | Werte aus `SilentSwitches.md` / values from `SilentSwitches.md` | Nur `File`: ersetzt die Standard-Schalter (bei MSI die Zusatz-Eigenschaften) / replaces default switches |
+| `installerSha256` | Text | – | Optional (`File`/`Download`): erwarteter SHA256-Hash der Datei / expected SHA256 hash |
+| `installerArguments` | Text | Werte aus `SilentSwitches.md` / values from `SilentSwitches.md` | Nur `File`/`Download`: ersetzt die Standard-Schalter (bei MSI die Zusatz-Eigenschaften) / replaces default switches |
 | `installUpgrade` | Checkbox | `false` | Vorhandene Installation aktualisieren / upgrade existing installation |
 | `installTimeoutMinutes` | Integer, 1..240 | `30` | Maximale Wartezeit / maximum wait time |
 | `resultCustomField` | Text | – | Interner Name eines MultiLine-Feldes für den JSON-Bericht / internal MultiLine field name |
@@ -624,14 +629,16 @@ Bereinigungs-, Einstellungs- und Installationsskripte zuerst ohne Opt-in
 (Audit) bzw. mit `-WhatIf` ausführen und den Bericht prüfen.
 `removeStaleUserProfiles.ps1` und `uninstallSoftware.ps1` löschen Daten bzw.
 Programme unwiderruflich – Ausschlussliste, Höchstzahl und Namensabgleich
-(`Exact`) bewusst setzen. Installationsskripte laden Software nur über winget
-oder aus einer vom Administrator angegebenen lokalen/UNC-Quelle (siehe
+(`Exact`) bewusst setzen. Installationsskripte laden Software nur über winget,
+aus einer fest hinterlegten, signaturgeprüften Herstellerquelle oder aus einer
+vom Administrator angegebenen lokalen/UNC-Quelle (siehe
 [SECURITY.md](SECURITY.md)) und lösen keinen Neustart aus.
 / Run cleanup, configuration and installation scripts first without opt-in
 (audit) or with `-WhatIf` and review the report. `removeStaleUserProfiles.ps1`
 and `uninstallSoftware.ps1` remove data/programs irreversibly – set exclusion
 list, maximum count and name matching (`Exact`) deliberately. Installation
-scripts only obtain software via winget or an admin-supplied local/UNC source and
+scripts only obtain software via winget, a built-in signature-verified vendor
+source or an admin-supplied local/UNC source and
 never trigger a reboot.
 
 Zusätzliche Systemtests:

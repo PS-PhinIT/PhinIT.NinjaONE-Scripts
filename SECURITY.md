@@ -34,17 +34,23 @@ expected impact.
 - Keine Downloads oder Ausführung externer Skripte zur Laufzeit.
   / No runtime download or execution of external scripts.
   **Ausnahme / Exception:** Die Skripte in `Installations-Scripte` installieren
-  Software ausschließlich nach Opt-in (`installAllow`) und nur aus zwei Quellen:
-  winget (feste Paket-ID, Quelle `winget`, Hash-Prüfung durch winget) oder eine
+  Software ausschließlich nach Opt-in (`installAllow`) und nur aus drei Quellen:
+  winget (feste Paket-ID, Quelle `winget`, Hash-Prüfung durch winget), eine
   vom Administrator angegebene lokale/UNC-Datei (`.msi`/`.exe`, optional mit
-  SHA256-Prüfung), die vor der Ausführung in ein nur für SYSTEM und
-  Administratoren beschreibbares Arbeitsverzeichnis kopiert wird. Beliebige URLs
-  werden nicht unterstützt.
+  SHA256-Prüfung) oder eine im Skript fest hinterlegte HTTPS-Herstellerquelle
+  (`Download`, derzeit nur das Office Deployment Tool von
+  `officecdn.microsoft.com`), deren Authenticode-Signatur gültig und vom
+  erwarteten Herausgeber (`CN=Microsoft Corporation`) sein muss. Dateien werden
+  vor der Ausführung in ein nur für SYSTEM und Administratoren beschreibbares
+  Arbeitsverzeichnis kopiert bzw. geladen. Beliebige URLs werden nicht unterstützt.
   / The scripts in `Installations-Scripte` install software only after opt-in
   and only from winget (fixed package ID, `winget` source, hash verified by
-  winget) or an admin-supplied local/UNC file (optionally SHA256-verified) that is
-  copied to a working directory writable only by SYSTEM and administrators
-  before execution. Arbitrary URLs are not supported.
+  winget), an admin-supplied local/UNC file (optionally SHA256-verified) or a
+  built-in HTTPS vendor source (`Download`, currently only the Office Deployment
+  Tool from `officecdn.microsoft.com`) whose Authenticode signature must be valid
+  and issued to the expected publisher. Files are copied/downloaded to a working
+  directory writable only by SYSTEM and administrators before execution.
+  Arbitrary URLs are not supported.
 - Custom-Field-Inhalte können interne Metadaten enthalten (Benutzer, Netzwerk);
   Leserechte in NinjaOne entsprechend einschränken.
   / Custom fields may contain internal metadata; restrict read permissions.

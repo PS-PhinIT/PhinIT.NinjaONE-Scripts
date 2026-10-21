@@ -156,8 +156,10 @@ function Find-Winget {
     return $null
 }
 function Invoke-InstallerProcess {
-    param([string]$FilePath, [string]$Arguments, [int]$Minutes)
-    $process = Start-Process -FilePath $FilePath -ArgumentList $Arguments -PassThru -WindowStyle Hidden
+    param([string]$FilePath, [string]$Arguments, [int]$Minutes, [string]$OutputPath)
+    $startArguments = @{ FilePath = $FilePath; ArgumentList = $Arguments; PassThru = $true; WindowStyle = 'Hidden' }
+    if ($OutputPath) { $startArguments.RedirectStandardOutput = $OutputPath }
+    $process = Start-Process @startArguments
     # DE: Handle cachen, damit ExitCode verfügbar bleibt. EN: Cache the handle so ExitCode stays available.
     $null = $process.Handle
     if (-not $process.WaitForExit($Minutes * 60000)) {
@@ -177,11 +179,37 @@ function Initialize-SecureWorkDirectory {
     }
     return $path
 }
+function Save-VendorInstaller {
+    param([string]$Uri, [string]$Destination, [string]$Signer, [int]$Minutes)
+    [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+    # DE: Fortschrittsanzeige bremst Downloads in PowerShell 5.1. EN: The progress bar slows downloads in PowerShell 5.1.
+    $ProgressPreference = 'SilentlyContinue'
+    Invoke-WebRequest -Uri $Uri -OutFile $Destination -UseBasicParsing -TimeoutSec ($Minutes * 60) -ErrorAction Stop
+    # DE: Herstellerdatei per Authenticode prüfen (Datei ändert sich, fester Hash wäre veraltet). EN: Verify the vendor file via Authenticode (file changes, a fixed hash would be stale).
+    $signature = Get-AuthenticodeSignature -LiteralPath $Destination -ErrorAction Stop
+    $subject = if ($signature.SignerCertificate) { [string]$signature.SignerCertificate.Subject } else { '' }
+    if ([string]$signature.Status -ne 'Valid' -or $subject -notmatch ('^CN="?{0}"?(,|$)' -f [regex]::Escape($Signer))) {
+        throw ('Signatur ungültig / Invalid signature: {0} {1}' -f $signature.Status, $subject)
+    }
+    return $subject
+}
+function Get-ExistingLog {
+    param([string[]]$Path)
+    @($Path | Where-Object { $_ -and (Test-Path -LiteralPath $_ -PathType Leaf) })
+}
+function Get-OutputTail {
+    param([string]$Path)
+    if (-not $Path -or -not (Test-Path -LiteralPath $Path -PathType Leaf)) { return '' }
+    # DE: Fortschrittsbalken und leere Zeilen auslassen. EN: Skip progress bars and empty lines.
+    $lines = @(Get-Content -LiteralPath $Path -Encoding UTF8 -ErrorAction SilentlyContinue | ForEach-Object { ([string]$_ -split "`r")[-1].Trim() } |
+        Where-Object { $_ -match '^[\p{L}\p{N}]' })
+    return (@($lines | Select-Object -Last 3) -join ' | ')
+}
 
 $workDirectory = $null
 try {
     $AllowInstall = Resolve-Setting $AllowInstall 'false'
-    $Source = Resolve-Setting $Source 'Winget'
+    $Source = Resolve-Setting $Source (Resolve-Setting $Tool['DefaultSource'] 'Winget')
     $InstallerPath = Resolve-Setting $InstallerPath ''
     $InstallerSha256 = Resolve-Setting $InstallerSha256 ''
     $InstallerArguments = Resolve-Setting $InstallerArguments ''
@@ -191,15 +219,21 @@ try {
 
     $allow = ConvertTo-Switch $AllowInstall 'installAllow'
     $upgradeRequested = ConvertTo-Switch $Upgrade 'installUpgrade'
-    if ($Source -notin @('Winget', 'File')) { throw 'installSource: Winget oder/or File.' }
-    $Source = if ($Source -eq 'Winget') { 'Winget' } else { 'File' }
+    $Source = @('Winget', 'File', 'Download') | Where-Object { $_ -eq $Source } | Select-Object -First 1
+    if (-not $Source) { throw 'installSource: Winget, File oder/or Download.' }
     $minutes = 0
     if (-not [int]::TryParse($TimeoutMinutes, [ref]$minutes) -or $minutes -lt 1 -or $minutes -gt 240) { throw 'installTimeoutMinutes: 1-240.' }
     if ($CustomField -and $CustomField -notmatch '^[A-Za-z][A-Za-z0-9_]{0,99}$') { throw 'Ungültiges resultCustomField / Invalid resultCustomField.' }
     if ($InstallerSha256 -and $InstallerSha256 -notmatch '^[A-Fa-f0-9]{64}$') { throw 'installerSha256: 64 Hex-Zeichen / hex characters.' }
     if ($InstallerArguments -and ($InstallerArguments.Length -gt 1000 -or $InstallerArguments -match '[\x00-\x1f]')) { throw 'installerArguments: max. 1000 Zeichen, keine Steuerzeichen / characters, no control characters.' }
     $extension = ''
-    if ($Source -eq 'File') {
+    if ($Source -eq 'Download') {
+        if (-not $Tool['DownloadUrl'] -or -not $Tool['DownloadSigner']) { throw 'installSource=Download für dieses Tool nicht verfügbar / not available for this tool.' }
+        if ($InstallerPath) { throw 'installerPath nur bei installSource=File / only with installSource=File.' }
+        $extension = [IO.Path]::GetExtension(([uri]$Tool.DownloadUrl).AbsolutePath).ToLowerInvariant()
+        if ($Tool.DownloadUrl -notmatch '^https://' -or $extension -notin @('.msi', '.exe')) { throw 'DownloadUrl: nur HTTPS mit .msi/.exe / HTTPS .msi/.exe only.' }
+        if ($extension -eq '.exe' -and -not $InstallerArguments -and -not $Tool.ExeArguments) { throw 'Keine EXE-Silent-Schalter bekannt; installerArguments angeben / No EXE silent switches known; specify installerArguments.' }
+    } elseif ($Source -eq 'File') {
         if (-not $InstallerPath) { throw 'installerPath ist bei installSource=File erforderlich / is required for installSource=File.' }
         if ($InstallerPath.Length -gt 260 -or $InstallerPath -match '[\x00-\x1f*?"<>|]' -or $InstallerPath -match '(^|\\)\.\.(\\|$)' -or
             $InstallerPath -notmatch '^([A-Za-z]:\\|\\\\[^\\]+\\[^\\]+\\)[^\\]') {
@@ -209,7 +243,7 @@ try {
         if ($extension -notin @('.msi', '.exe')) { throw 'installerPath: nur .msi oder .exe / only .msi or .exe.' }
         if ($extension -eq '.exe' -and -not $InstallerArguments -and -not $Tool.ExeArguments) { throw 'Keine EXE-Silent-Schalter bekannt; installerArguments angeben / No EXE silent switches known; specify installerArguments.' }
     } elseif ($InstallerPath -or $InstallerSha256 -or $InstallerArguments) {
-        throw 'installerPath/installerSha256/installerArguments nur bei installSource=File / only with installSource=File.'
+        throw 'installerPath/installerSha256/installerArguments nur bei installSource=File/Download / only with installSource=File/Download.'
     }
     if (-not [Environment]::Is64BitProcess) { throw '64-Bit-PowerShell erforderlich / 64-bit PowerShell required.' }
 
@@ -219,7 +253,10 @@ try {
     $exitCode = $null
     $rebootRequired = $false
     $logPath = $null
+    $outputPath = $null
+    $logs = @()
     $computedHash = $null
+    $signer = $null
     $wingetPath = $null
     $mode = if (-not $allow) { 'Audit' } elseif ($before.Count -gt 0 -and $upgradeRequested) { 'Upgrade' } else { 'Install' }
 
@@ -234,6 +271,7 @@ try {
         $rebootCodes = @(3010, 1641)
         if ($Source -eq 'Winget') {
             $wingetPath = Find-Winget
+            $outputPath = Join-Path ([IO.Path]::GetTempPath()) ('{0}-{1}-winget.log' -f $Tool.LogName, $stamp)
             if (-not $wingetPath) { throw 'winget.exe nicht gefunden; installSource=File nutzen / winget.exe not found; use installSource=File.' }
             $verb = if ($mode -eq 'Upgrade') { 'upgrade' } else { 'install' }
             $arguments = @($verb, '--id', $Tool.WingetId, '--exact', '--source', 'winget', '--silent',
@@ -244,14 +282,20 @@ try {
             $successCodes = @(0, -1978335189, -1978335135, -1978334967, -1978334965)
             $rebootCodes = @(-1978334967, -1978334965)
             if ($PSCmdlet.ShouldProcess($Tool.Name, ('winget {0} {1}' -f $verb, $Tool.WingetId))) {
-                $exitCode = Invoke-InstallerProcess -FilePath $wingetPath -Arguments $commandLine -Minutes $minutes
+                # DE: winget-Ausgabe protokollieren; --log greift nur, wenn das Manifest einen Log-Schalter hat. EN: Capture winget output; --log only applies if the manifest has a log switch.
+                $exitCode = Invoke-InstallerProcess -FilePath $wingetPath -Arguments $commandLine -Minutes $minutes -OutputPath $outputPath
             } else { $action = 'WhatIf' }
         } else {
-            if (-not (Test-Path -LiteralPath $InstallerPath -PathType Leaf)) { throw ('installerPath nicht gefunden / not found: {0}' -f $InstallerPath) }
-            if ($PSCmdlet.ShouldProcess($Tool.Name, ('Installieren aus / Install from {0}' -f $InstallerPath))) {
+            if ($Source -eq 'File' -and -not (Test-Path -LiteralPath $InstallerPath -PathType Leaf)) { throw ('installerPath nicht gefunden / not found: {0}' -f $InstallerPath) }
+            $origin = if ($Source -eq 'Download') { $Tool.DownloadUrl } else { $InstallerPath }
+            if ($PSCmdlet.ShouldProcess($Tool.Name, ('Installieren aus / Install from {0}' -f $origin))) {
                 $workDirectory = Initialize-SecureWorkDirectory
                 $localInstaller = Join-Path $workDirectory ('installer{0}' -f $extension)
-                Copy-Item -LiteralPath $InstallerPath -Destination $localInstaller -Force -ErrorAction Stop
+                if ($Source -eq 'Download') {
+                    $signer = Save-VendorInstaller -Uri $Tool.DownloadUrl -Destination $localInstaller -Signer $Tool.DownloadSigner -Minutes $minutes
+                } else {
+                    Copy-Item -LiteralPath $InstallerPath -Destination $localInstaller -Force -ErrorAction Stop
+                }
                 $computedHash = (Get-FileHash -LiteralPath $localInstaller -Algorithm SHA256 -ErrorAction Stop).Hash.ToUpperInvariant()
                 if ($InstallerSha256 -and $computedHash -ne $InstallerSha256.ToUpperInvariant()) {
                     throw ('SHA256 stimmt nicht überein / SHA256 mismatch: {0}' -f $computedHash)
@@ -268,12 +312,19 @@ try {
             } else { $action = 'WhatIf' }
         }
         if ($action -ne 'WhatIf') {
+            $logs = @(Get-ExistingLog @($logPath, $outputPath))
+            $logHint = if ($logs.Count -gt 0) { 'Log: {0}' -f ($logs -join ', ') } else { 'kein Log / no log' }
             if ($successCodes -notcontains $exitCode) {
-                throw ('Installer-Exitcode / installer exit code {0} (0x{1:X8}); Log: {2}' -f $exitCode, $exitCode, $logPath)
+                $detail = Get-OutputTail $outputPath
+                if ($Source -eq 'Winget' -and $exitCode -eq -1978335215) {
+                    # DE: 0x8A150011 Hash passt nicht zum Manifest (Herstellerdatei geändert). EN: Hash does not match the manifest (vendor file changed).
+                    $detail = ('{0} Installer-Hash weicht vom winget-Manifest ab / installer hash does not match the winget manifest; installSource=Download oder/or File nutzen / use.' -f $detail).Trim()
+                }
+                throw ('Installer-Exitcode / installer exit code {0} (0x{1:X8}); {2}{3}' -f $exitCode, $exitCode, $logHint, $(if ($detail) { '; ' + $detail } else { '' }))
             }
             $rebootRequired = $rebootCodes -contains $exitCode
             $after = @(Get-InstalledProduct -Pattern $Tool.DetectPattern)
-            if ($after.Count -eq 0) { throw ('{0} nach der Installation nicht erkannt / not detected after installation; Log: {1}' -f $Tool.Name, $logPath) }
+            if ($after.Count -eq 0) { throw ('{0} nach der Installation nicht erkannt / not detected after installation; {1}' -f $Tool.Name, $logHint) }
             $action = if ($mode -eq 'Upgrade') { 'Upgraded' } else { 'Installed' }
         }
     }
@@ -282,8 +333,8 @@ try {
         Computer = $env:COMPUTERNAME; Tool = $Tool.Name; WingetId = $Tool.WingetId; Mode = $mode; Source = $Source
         Allowed = $allow; WhatIf = [bool]$WhatIfPreference; Action = $action
         InstalledBefore = @($before | Select-Object -First 5); InstalledAfter = @($after | Select-Object -First 5)
-        ExitCode = $exitCode; RebootRequired = $rebootRequired; LogPath = $logPath; WingetPath = $wingetPath
-        InstallerSha256 = $computedHash
+        ExitCode = $exitCode; RebootRequired = $rebootRequired; LogPath = $(if ($logs) { $logs -join ', ' } else { $null }); WingetPath = $wingetPath
+        DownloadUrl = $(if ($Source -eq 'Download') { $Tool.DownloadUrl } else { $null }); InstallerSha256 = $computedHash; InstallerSigner = $signer
     })
     Write-Output $report
     if ($CustomField) {

@@ -23,7 +23,10 @@ Pull Requests und Issues sind willkommen! / Pull requests and issues are welcome
   ein neues Tool erhält eine Kopie eines bestehenden Skripts, in der nur Hilfe und
   die `$Tool`-Tabelle (Name, winget-ID, Erkennungsmuster, Standardargumente)
   angepasst werden. Änderungen an der Logik in allen Skripten gleich vornehmen
-  und das Tool in `Tests/InstallScripts.Tests.ps1` ergänzen.
+  und das Tool in `Tests/InstallScripts.Tests.ps1` ergänzen. Optional:
+  `DownloadUrl` (HTTPS, `.msi`/`.exe`) und `DownloadSigner` (erwarteter
+  Authenticode-Signierer) für `installSource = Download`, `DefaultSource` für
+  eine abweichende Standardquelle (nur wenn winget unzuverlässig ist).
   / The logic from `function Resolve-Setting` onwards is identical in all
   `install*.ps1` scripts (checked by tests); new tools copy an existing script and
   only change the help and the `$Tool` table. Apply engine changes to all scripts.

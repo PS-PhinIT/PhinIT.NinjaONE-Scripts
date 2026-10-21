@@ -114,7 +114,7 @@ Spalte **Skript** verweist auf das passende Installationsskript in diesem Ordner
 
 | Anwendung / Application | Paket / Package | Silent-Installation / Silent install | Hinweise / Notes | Skript / Script |
 | --- | --- | --- | --- | --- |
-| Microsoft 365 Apps / Office LTSC / Visio / Project | Office Deployment Tool | `setup.exe /configure configuration.xml` | XML mit [config.office.com](https://config.office.com) erstellen; `<Display Level="None" AcceptEULA="TRUE" />`. Vorab laden: `setup.exe /download configuration.xml`. | [installMicrosoft365Apps.ps1](installMicrosoft365Apps.ps1) |
+| Microsoft 365 Apps / Office LTSC / Visio / Project | Office Deployment Tool | `setup.exe /configure configuration.xml` | XML mit [config.office.com](https://config.office.com) erstellen; `<Display Level="None" AcceptEULA="TRUE" />`. Vorab laden: `setup.exe /download configuration.xml`. Das Skript lädt `setup.exe` standardmäßig signaturgeprüft von `officecdn.microsoft.com` (`installSource = Download`), da winget bei `Microsoft.Office` oft „Installer hash does not match“ meldet; `--override` bzw. `installerArguments` braucht `/configure <Rohdaten-URL oder Pfad>`. | [installMicrosoft365Apps.ps1](installMicrosoft365Apps.ps1) |
 | Microsoft Teams (neu / new) | Bootstrapper | `teamsbootstrapper.exe -p` | Provisioniert für alle Benutzer. Offline: `teamsbootstrapper.exe -p -o "C:\Temp\MSTeams-x64.msix"`. Entfernen: `teamsbootstrapper.exe -x`. | – |
 | Microsoft OneDrive | EXE | `OneDriveSetup.exe /allusers /silent` | Per-Machine-Installation unter `C:\Program Files\Microsoft OneDrive`. | [installMicrosoftOneDrive.ps1](installMicrosoftOneDrive.ps1) |
 | Adobe Acrobat Reader | EXE | `AcroRdrDCx64<ver>.exe /sAll /rs /msi EULA_ACCEPT=YES` | `/sAll` = Silent, `/rs` = kein Neustart; Anpassung per Adobe Customization Wizard (`.mst`). | [installAdobeAcrobatReader.ps1](installAdobeAcrobatReader.ps1) |
@@ -246,9 +246,11 @@ Spalte **Skript** verweist auf das passende Installationsskript in diesem Ordner
 
 ## winget-IDs der Skripte / winget IDs of the scripts
 
-Alle Skripte nutzen standardmäßig winget (`installSource = Winget`) mit `--scope machine`. Die IDs wurden gegen
-[microsoft/winget-pkgs](https://github.com/microsoft/winget-pkgs) geprüft.
-*All scripts use winget by default with `--scope machine`; IDs were checked against microsoft/winget-pkgs.*
+Alle Skripte nutzen standardmäßig winget (`installSource = Winget`) mit `--scope machine`; Ausnahme ist
+`installMicrosoft365Apps.ps1` (Standard `Download`: Office Deployment Tool von Microsoft, Authenticode-geprüft).
+Die IDs wurden gegen [microsoft/winget-pkgs](https://github.com/microsoft/winget-pkgs) geprüft.
+*All scripts use winget by default with `--scope machine`, except `installMicrosoft365Apps.ps1` (default `Download`:
+Office Deployment Tool from Microsoft, Authenticode-verified); IDs were checked against microsoft/winget-pkgs.*
 
 | Skript / Script | winget-ID | Standardargumente bei Datei-Quelle / Default arguments for file source |
 | --- | --- | --- |
@@ -296,7 +298,7 @@ Alle Skripte nutzen standardmäßig winget (`installSource = Winget`) mit `--sco
 | [installLenovoSystemUpdate.ps1](installLenovoSystemUpdate.ps1) | `Lenovo.SystemUpdate` | EXE `/VERYSILENT /NORESTART /SUPPRESSMSGBOXES /SP-` |
 | [installLibreOffice.ps1](installLibreOffice.ps1) | `TheDocumentFoundation.LibreOffice` | MSI `CREATEDESKTOPLINK=0 REGISTER_NO_MSO_TYPES=1 ISCHECKFORPRODUCTUPDATES=0 QUICKSTART=0 RebootYesNo=No` |
 | [installMattermostDesktop.ps1](installMattermostDesktop.ps1) | `Mattermost.MattermostDesktop` | MSI `/qn /norestart` |
-| [installMicrosoft365Apps.ps1](installMicrosoft365Apps.ps1) | `Microsoft.Office` | EXE – (`installerArguments` erforderlich / required, z. B. / e.g. `/configure config.xml`) |
+| [installMicrosoft365Apps.ps1](installMicrosoft365Apps.ps1) | `Microsoft.Office` | EXE `/configure https://aka.ms/fhlwingetconfig` (auch für / also for `Download`; eigene XML / own XML: `installerArguments` `/configure \\server\share\config.xml`) |
 | [installMicrosoftEdge.ps1](installMicrosoftEdge.ps1) | `Microsoft.Edge` | MSI `/qn /norestart` |
 | [installMicrosoftEdgeWebView2.ps1](installMicrosoftEdgeWebView2.ps1) | `Microsoft.EdgeWebView2Runtime` | EXE `/silent /install` |
 | [installMicrosoftOneDrive.ps1](installMicrosoftOneDrive.ps1) | `Microsoft.OneDrive` | EXE `/allusers /silent` |
