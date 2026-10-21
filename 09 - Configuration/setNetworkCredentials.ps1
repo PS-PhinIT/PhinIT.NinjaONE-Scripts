@@ -45,8 +45,8 @@
     DE: NinjaOne Text configCredentialPassword; Kennwort (max. 1024 Zeichen); nur mit Allow=true erforderlich, alternativ PasswordField. Wird nie ausgegeben.
     EN: NinjaOne text configCredentialPassword; password (max. 1024 characters); only required with Allow=true, alternatively PasswordField. Never output.
 .PARAMETER PasswordField
-    DE: NinjaOne Text configCredentialPasswordField; optional; interner Name eines Custom Fields mit dem Kennwort (Skript-Leserecht erforderlich).
-    EN: NinjaOne text configCredentialPasswordField; optional; internal name of a custom field holding the password (script read permission required).
+    DE: NinjaOne Text configCredentialPasswordField; optional; interner Name eines Custom Fields mit dem Kennwort (Skript-Leserecht erforderlich). Ist der Wert kein vorhandenes Feld (ungültiger Name oder "Unable to find the specified field"), wird er selbst als Kennwort verwendet (PasswordSource=PasswordFieldValue). Wird nie ausgegeben.
+    EN: NinjaOne text configCredentialPasswordField; optional; internal name of a custom field holding the password (script read permission required). If the value is no existing field (invalid name or "Unable to find the specified field"), it is used as the password itself (PasswordSource=PasswordFieldValue). Never output.
 .PARAMETER Allow
     DE: NinjaOne Checkbox/Text configCredentialAllow; true/false; Standard false (nur Prüfung). Ausdrückliches Opt-in für Änderungen.
     EN: NinjaOne checkbox/text configCredentialAllow; true/false; default false (audit only). Explicit opt-in for changes.
@@ -211,21 +211,42 @@ try {
         throw 'configCredentialUserName erforderlich (DOMÄNE\Benutzer oder benutzer@domäne, max. 256 Zeichen) / required (DOMAIN\user or user@domain, max. 256 characters).'
     }
     $allowed = ConvertTo-BooleanSetting $Allow 'configCredentialAllow'
-    if ($PasswordField -and $PasswordField -notmatch '^[A-Za-z][A-Za-z0-9_]{0,99}$') { throw 'Ungültiges configCredentialPasswordField / Invalid configCredentialPasswordField.' }
     if ($Password -and $PasswordField) { throw 'configCredentialPassword oder / or configCredentialPasswordField, nicht beides / not both.' }
+    # DE: Kein gültiger Feldname = Kennwort wurde direkt eingetragen. EN: Not a valid field name = password was entered directly.
+    $passwordIsFieldValue = $PasswordField -and $PasswordField -notmatch '^[A-Za-z][A-Za-z0-9_]{0,99}$'
     if ($CustomField -and $CustomField -notmatch '^[A-Za-z][A-Za-z0-9_]{0,99}$') { throw 'Ungültiges resultCustomField / Invalid resultCustomField.' }
     if ($CustomField -and -not (Get-Command Ninja-Property-Set -ErrorAction SilentlyContinue)) { throw 'Ninja-Property-Set fehlt / unavailable.' }
     if (-not [Environment]::Is64BitProcess) { throw '64-Bit-PowerShell erforderlich / 64-bit PowerShell required.' }
     if (Test-IsSystem) { throw 'Als angemeldeter Benutzer ausführen, nicht als SYSTEM / Run as the logged-on user, not as SYSTEM.' }
 
-    $passwordSource = if ($PasswordField) { 'CustomField' } elseif ($Password) { 'Parameter' } else { $null }
+    $passwordSource = if ($passwordIsFieldValue) { 'PasswordFieldValue' } elseif ($PasswordField) { 'CustomField' } elseif ($Password) { 'Parameter' } else { $null }
     if ($allowed) {
-        if ($PasswordField) {
+        if ($PasswordField -and -not $passwordIsFieldValue) {
             if (-not (Get-Command Ninja-Property-Get -ErrorAction SilentlyContinue)) { throw 'Ninja-Property-Get fehlt / unavailable.' }
-            $global:LASTEXITCODE = 0
-            $Password = ([string](@(Ninja-Property-Get $PasswordField) -join "`n")).TrimEnd("`r", "`n")
-            if ($global:LASTEXITCODE -ne 0) { throw ('Custom Field nicht lesbar / Custom field not readable: {0}' -f $PasswordField) }
+            # DE: Fehlertexte von Ninja-Property-Get enthalten den Feldwert (evtl. das Kennwort) und werden nie ausgegeben.
+            # EN: Ninja-Property-Get error texts contain the field value (possibly the password) and are never output.
+            $notFoundPattern = 'Unable to find the specified field'
+            $fieldMissing = $false
+            $fieldValue = $null
+            try {
+                $global:LASTEXITCODE = 0
+                $fieldValue = ([string](@(Ninja-Property-Get $PasswordField 2>&1) -join "`n")).TrimEnd("`r", "`n")
+                if ($fieldValue -match $notFoundPattern) { $fieldMissing = $true }
+                elseif ($global:LASTEXITCODE -ne 0) { throw 'not readable' }
+            }
+            catch {
+                if ($_.Exception.Message -match $notFoundPattern) { $fieldMissing = $true }
+                else { throw 'Custom Field nicht lesbar / Custom field not readable (configCredentialPasswordField).' }
+            }
+            if ($fieldMissing) {
+                # DE: Kein solches Feld = Wert ist das Kennwort selbst. EN: No such field = the value is the password itself.
+                $Password = $PasswordField
+                $passwordSource = 'PasswordFieldValue'
+            }
+            else { $Password = $fieldValue }
+            $fieldValue = $null
         }
+        elseif ($passwordIsFieldValue) { $Password = $PasswordField }
         if (-not $Password) { throw 'Kennwort erforderlich (configCredentialPassword oder configCredentialPasswordField) / Password required.' }
         if ($Password.Length -gt 1024 -or $Password.Contains([char]0)) { throw 'Kennwort ungültig (max. 1024 Zeichen) / Invalid password (max. 1024 characters).' }
     }

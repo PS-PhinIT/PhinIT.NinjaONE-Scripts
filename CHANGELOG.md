@@ -37,6 +37,18 @@ first); older entries were reconstructed from the Git history and pull requests.
 - Beide Netzwerk-Skripte laufen als angemeldeter Benutzer (nicht SYSTEM).
   / Both network scripts run as the logged-on user (not SYSTEM).
 
+### Behoben / Fixed
+- `setNetworkCredentials.ps1`: Ein in `configCredentialPasswordField` eingetragenes
+  Kennwort endete mit „Unable to find the specified field: <Kennwort>“ – das Kennwort
+  stand dabei im Aktivitätsprotokoll. Ist der Wert kein vorhandenes Custom Field
+  (ungültiger Feldname oder „Unable to find the specified field“), wird er jetzt als
+  Kennwort verwendet (`PasswordSource = PasswordFieldValue`); Fehlertexte von
+  `Ninja-Property-Get` werden nie mehr ausgegeben.
+  / A password entered in `configCredentialPasswordField` failed with "Unable to find
+  the specified field: <password>" and exposed the password in the activity log. A
+  value that is no existing custom field is now used as the password itself, and
+  `Ninja-Property-Get` error texts are never output.
+
 ### Geändert / Changed
 - `Tests/InstallScripts.Tests.ps1` prüft Engine-Gleichheit und Installationsverhalten
   nur noch für `install*.ps1`; `SilentSwitches.md` muss weiterhin jedes Skript nennen.

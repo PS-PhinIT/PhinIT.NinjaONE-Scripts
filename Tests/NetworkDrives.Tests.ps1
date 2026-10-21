@@ -217,6 +217,28 @@ Describe 'Network drives and credentials / Netzlaufwerke und Anmeldeinformatione
             [PhinIT.CredentialVault]::Store['nas01'][1] | Should -Be 'Feld-Geheim!1'
             Should -Invoke Ninja-Property-Get -Times 1 -Exactly -ParameterFilter { $Name -eq 'nasPassword' }
         }
+        It 'uses the PasswordField value as password if no such field exists / nutzt den Wert als Kennwort, wenn kein Feld existiert' {
+            Mock Ninja-Property-Get { throw ('Unable to find the specified field: {0}' -f $Name) }
+            $output = & $script:credentialScript -Targets 'nas01' -UserName 'nas01\backup' -PasswordField 'api2012server1' -Allow true
+            $LASTEXITCODE | Should -Be 0
+            ($output -join ' ') | Should -Not -Match 'api2012server1'
+            ($output | ConvertFrom-Json).PasswordSource | Should -Be 'PasswordFieldValue'
+            [PhinIT.CredentialVault]::Store['nas01'] | Should -Be @('nas01\backup', 'api2012server1')
+        }
+        It 'uses a PasswordField value that is no field name as password / nutzt Wert ohne Feldnamen-Format als Kennwort' {
+            $output = & $script:credentialScript -Targets 'nas01' -UserName 'nas01\backup' -PasswordField 'Ge heim!23' -Allow true
+            $LASTEXITCODE | Should -Be 0
+            ($output -join ' ') | Should -Not -Match 'heim'
+            [PhinIT.CredentialVault]::Store['nas01'] | Should -Be @('nas01\backup', 'Ge heim!23')
+            Should -Invoke Ninja-Property-Get -Times 0 -Exactly
+        }
+        It 'hides custom field read errors / verbirgt Lesefehler des Custom Fields' {
+            Mock Ninja-Property-Get { throw ('Access denied: {0}' -f $Name) }
+            $output = & $script:credentialScript -Targets 'nas01' -UserName 'nas01\backup' -PasswordField 'secretField' -Allow true
+            $LASTEXITCODE | Should -Be 1
+            ($output -join ' ') | Should -Not -Match 'secretField'
+            [PhinIT.CredentialVault]::Writes | Should -Be 0
+        }
         It 'supports wildcard targets and -WhatIf / unterstützt Platzhalter und -WhatIf' {
             $report = & $script:credentialScript -Targets '*.partner.local' -UserName 'user@partner.local' -Password 'x' -Allow true -WhatIf | ConvertFrom-Json
             $LASTEXITCODE | Should -Be 0
@@ -239,7 +261,7 @@ Describe 'Network drives and credentials / Netzlaufwerke und Anmeldeinformatione
         It 'rejects invalid input / lehnt ungültige Eingaben ab' {
             foreach ($case in @(@{ UserName = 'a\b' }, @{ Targets = 'nas01' }, @{ Targets = 'nas 01!'; UserName = 'a\b' }, @{ Targets = 'nas01'; UserName = 'a"b' },
                     @{ Targets = 'nas01'; UserName = 'a\b'; Allow = 'true' }, @{ Targets = 'nas01'; UserName = 'a\b'; Password = 'x'; PasswordField = 'pw' },
-                    @{ Targets = 'nas01'; UserName = 'a\b'; PasswordField = '1pw' }, @{ Targets = 'nas01'; UserName = 'a\b'; Allow = 'yes' },
+                    @{ Targets = 'nas01'; UserName = 'a\b'; Allow = 'yes' },
                     @{ Targets = (1..11 | ForEach-Object { "nas$_" }) -join ','; UserName = 'a\b' })) {
                 $output = & $script:credentialScript @case
                 $LASTEXITCODE | Should -Be 1 -Because ($case | ConvertTo-Json -Compress)
