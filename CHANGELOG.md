@@ -10,6 +10,38 @@ Git-Historie und den Pull Requests rekonstruiert.
 / The repository has no release tags. Every entry is therefore dated (newest
 first); older entries were reconstructed from the Git history and pull requests.
 
+## 2026-10-21 – WinGet aktualisieren, Netzlaufwerke und Anmeldeinformationen / Update WinGet, network drives and credentials
+
+### Hinzugefügt / Added
+- `Installations-Scripte/updateWinGet.ps1`: prüft winget (App Installer) für
+  `SYSTEM` gegen das neueste stabile Release von `microsoft/winget-cli` und
+  installiert bzw. aktualisiert es mit `installAllow = true`: Paket, Lizenz und
+  Abhängigkeiten werden von GitHub geladen, per SHA256 und Authenticode
+  (`Microsoft Corporation`) geprüft und mit `Add-AppxProvisionedPackage`
+  maschinenweit bereitgestellt.
+  / Checks winget (App Installer) for `SYSTEM` against the latest stable release
+  and installs or updates it with `installAllow = true` (SHA256- and
+  Authenticode-verified, provisioned machine-wide).
+- `09 - Configuration/setNetworkDrives.ps1`: verbindet mehrere Netzlaufwerke
+  (`configNetworkDrives = "P=\\fs01\daten;S=\\fs01\scan$"`) dauerhaft mit festen
+  Laufwerksbuchstaben (`net use /persistent:yes`); abweichende Zuordnungen nur mit
+  `configNetworkDrivesReplace = true`, lokale Laufwerke nie.
+  / Maps several network drives persistently to fixed drive letters.
+- `09 - Configuration/setNetworkCredentials.ps1`: hinterlegt Netzwerk-
+  Anmeldeinformationen (Windows-Anmeldeinformation, wie `cmdkey /add`) für einen
+  oder mehrere Server per `CredWrite` in der Anmeldeinformationsverwaltung, damit
+  Netzlaufwerke auch mit abweichenden Konten erreichbar sind; Kennwort aus
+  Skriptvariable oder Custom Field, nie in Befehlszeile oder Ausgabe.
+  / Stores network credentials for servers in Credential Manager via `CredWrite`;
+  the password never appears on a command line or in the output.
+- Beide Netzwerk-Skripte laufen als angemeldeter Benutzer (nicht SYSTEM).
+  / Both network scripts run as the logged-on user (not SYSTEM).
+
+### Geändert / Changed
+- `Tests/InstallScripts.Tests.ps1` prüft Engine-Gleichheit und Installationsverhalten
+  nur noch für `install*.ps1`; `SilentSwitches.md` muss weiterhin jedes Skript nennen.
+  / Engine and install checks now only cover `install*.ps1`.
+
 ## 2026-10-21 – PowerShell 7 per MSI statt MSIX / PowerShell 7 via MSI instead of MSIX
 
 ### Behoben / Fixed
